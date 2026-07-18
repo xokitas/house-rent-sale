@@ -1,65 +1,94 @@
-import Image from "next/image";
+import { supabase } from '@/lib/supabase';
+import { Property } from '@/lib/types';
 
-export default function Home() {
+// Forzamos a Next.js a que traiga datos frescos en cada visita (SSR)
+export const revalidate = 0;
+
+export default async function HomePage() {
+  // 1. Llamada directa a Supabase desde el Servidor
+  const { data: properties, error } = await supabase
+    .from('properties')
+    .select('*')
+    .order('created_at', { ascending: false }) as { data: Property[] | null, error: any };
+
+  if (error) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 text-red-500 font-medium">
+        Error al cargar las propiedades: {error.message}
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        
+        {/* Encabezado */}
+        <header className="mb-10 text-center sm:text-left">
+          <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
+            Directorio de Casas
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mt-2 text-lg text-slate-600">
+            Explora alquileres y ventas disponibles en Camagüey.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        </header>
+
+        {/* Listado de Tarjetas */}
+        {!properties || properties.length === 0 ? (
+          <div className="bg-white rounded-xl p-10 text-center shadow-sm border border-slate-200">
+            <p className="text-slate-500 text-lg">No hay propiedades publicadas todavía.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {properties.map((property) => (
+              <div 
+                key={property.id} 
+                className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between transition hover:shadow-md"
+              >
+                <div className="p-6">
+                  {/* Etiqueta de Estado */}
+                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wide uppercase mb-3 ${
+                    property.status === 'rent' 
+                      ? 'bg-emerald-100 text-emerald-800' 
+                      : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {property.status === 'rent' ? 'Alquiler' : 'Venta'}
+                  </span>
+
+                  {/* Título y Dirección */}
+                  <h2 className="text-xl font-bold text-slate-900 line-clamp-1 mb-1">
+                    {property.title}
+                  </h2>
+                  <p className="text-sm text-slate-500 mb-4 flex items-center">
+                    📍 {property.address}
+                  </p>
+
+                  {/* Descripción corta */}
+                  <p className="text-slate-600 text-sm line-clamp-3">
+                    {property.description || 'Sin descripción disponible.'}
+                  </p>
+                </div>
+
+                {/* Pie de la Tarjeta con Precio y Contacto */}
+                <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                  <div className="text-lg font-black text-slate-900">
+                    {property.price.toLocaleString()} <span className="text-xs font-bold text-blue-600">{property.currency}</span>
+                  </div>
+                  <a 
+                    href={`https://wa.me/${property.contact.replace('+', '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-lg text-white bg-slate-900 hover:bg-slate-800 transition"
+                  >
+                    Contactar
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+      </div>
+    </main>
   );
 }
