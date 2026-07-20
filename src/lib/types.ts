@@ -7,6 +7,8 @@ export interface Property {
   price: number;
   currency: string;
   contact: string;
-  status: 'rent' | 'sale' | 'occupied' | 'sold';
+  status: 'rent' | 'vacation' | 'sale' | 'occupied' | 'sold';
   images: string[];
+  latitude: number | null;
+  longitude: number | null;
 }
