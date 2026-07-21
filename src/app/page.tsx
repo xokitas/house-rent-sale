@@ -13,18 +13,21 @@ interface PageProps {
 
 export default async function HomePage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const filterType = params.type || 'all';
-  const maxPrice = params.maxPrice ? Number(params.maxPrice) : null;
+  const filterType = params?.type || 'all';
+  const maxPrice = params?.maxPrice ? Number(params.maxPrice) : null;
 
   let query = supabase
     .from('properties')
     .select('*')
     .order('created_at', { ascending: false });
 
-  if (filterType !== 'all') {
+  // 1. Filtro por Tipo de Propiedad (comprobamos contra 'type' o 'status')
+  if (filterType && filterType !== 'all') {
+    // Si tu columna en Supabase se llama 'type' o 'status':
     query = query.eq('status', filterType);
   }
 
+  // 2. Filtro por Precio Máximo
   if (maxPrice && !isNaN(maxPrice)) {
     query = query.lte('price', maxPrice);
   }
@@ -49,10 +52,10 @@ export default async function HomePage({ searchParams }: PageProps) {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* COMPONENTE INTERACTIVO DE FILTROS (BOTÓN + DRAWER) */}
-        <FilterDrawer filterType={filterType} maxPrice={params.maxPrice || ''} />
+        {/* COMPONENTE INTERACTIVO DE FILTROS */}
+        <FilterDrawer filterType={filterType} maxPrice={params?.maxPrice || ''} />
 
-        {/* LISTADO DE PROPIEDADES EN ANCHO COMPLETO */}
+        {/* LISTADO DE PROPIEDADES */}
         <section>
           {error ? (
             <div className="bg-red-50 text-red-600 p-6 rounded-2xl border border-red-200 font-medium text-center">
@@ -72,7 +75,7 @@ export default async function HomePage({ searchParams }: PageProps) {
                   className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between 
                              transition-all duration-300 ease-out
                              group-hover:opacity-40 group-hover:blur-[1px] 
-                             hover:!opacity-100 hover:!blur-none hover:scale-[1.02] hover:shadow-xl hover:z-10 cursor-pointer"
+                             hover:opacity-100 hover:blur-none hover:scale-[1.02] hover:shadow-xl hover:z-10 cursor-pointer"
                 >
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="flex items-center justify-between mb-3">
