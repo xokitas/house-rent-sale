@@ -10,6 +10,7 @@ interface PropertyListProps {
 
 export default function PropertyList({ properties }: PropertyListProps) {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [pendingMapUrl, setPendingMapUrl] = useState<string | null>(null);
 
   if (!properties || properties.length === 0) {
     return (
@@ -21,6 +22,18 @@ export default function PropertyList({ properties }: PropertyListProps) {
     );
   }
 
+  const handleMapClick = (e: React.MouseEvent, mapUrl: string) => {
+    e.stopPropagation();
+    setPendingMapUrl(mapUrl);
+  };
+
+  const confirmNavigation = () => {
+    if (pendingMapUrl) {
+      window.open(pendingMapUrl, '_blank', 'noopener,noreferrer');
+      setPendingMapUrl(null);
+    }
+  };
+
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 group">
@@ -28,6 +41,10 @@ export default function PropertyList({ properties }: PropertyListProps) {
           const mainImage = property.images && property.images.length > 0 
             ? property.images[0] 
             : null;
+
+          const mapUrl = property.latitude && property.longitude
+            ? `https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`
+            : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(property.address + ', Camagüey')}`;
 
           return (
             <div 
@@ -70,17 +87,14 @@ export default function PropertyList({ properties }: PropertyListProps) {
                     {property.status === 'rent' ? 'Alquiler' : property.status === 'vacation' ? 'Renta Hostal' : 'Venta'}
                   </span>
                   
-                  {property.latitude && property.longitude && (
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-blue-600 transition bg-slate-100 hover:bg-blue-50 px-2.5 py-1 rounded-md border border-slate-200"
-                    >
-                      📍 Ver en mapa
-                    </a>
-                  )}
+                  {/* BOTÓN DEL MAPA EN TARJETA */}
+                  <button
+                    type="button"
+                    onClick={(e) => handleMapClick(e, mapUrl)}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-blue-600 transition bg-slate-100 hover:bg-blue-50 px-2.5 py-1 rounded-md border border-slate-200 cursor-pointer"
+                  >
+                    📍 Ver ubicación en el mapa
+                  </button>
                 </div>
 
                 <h2 className="text-xl font-bold text-slate-900 line-clamp-1 mb-1">
@@ -128,12 +142,53 @@ export default function PropertyList({ properties }: PropertyListProps) {
         })}
       </div>
 
-      {/* MODAL CON EL CARRUSEL Y ANIMACIÓN */}
+      {/* MODAL DETALLE */}
       <PropertyModal 
         property={selectedProperty}
         isOpen={!!selectedProperty}
         onClose={() => setSelectedProperty(null)}
       />
+
+      {/* MODAL ADVERTENCIA MAPA DE TARJETA */}
+      {pendingMapUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100 text-center space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto text-2xl font-bold border border-amber-100">
+              📍
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">Aviso sobre la ubicación</h3>
+              <div className="text-xs text-slate-500 mt-2 space-y-2 text-left leading-relaxed">
+                <p>
+                  • <strong>Referencial:</strong> La ubicación indica la calle o zona general, no el número exacto de la vivienda.
+                </p>
+                <p>
+                  • <strong>Nombres de calles:</strong> Google Maps a veces usa nombres antiguos. Si vas a desplazarte, se recomienda verificar en aplicaciones como <strong>Maps.me</strong> o coordinar directamente con el dueño.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setPendingMapUrl(null)}
+                className="flex-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition cursor-pointer"
+              >
+                Cancelar
+              </button>
+              
+              <button
+                type="button"
+                onClick={confirmNavigation}
+                className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition shadow-sm active:scale-95 cursor-pointer"
+              >
+                Abrir mapa ↗
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

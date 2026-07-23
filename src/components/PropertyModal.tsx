@@ -13,8 +13,8 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [rendered, setRendered] = useState(false);
   const [active, setActive] = useState(false);
+  const [showMapAlert, setShowMapAlert] = useState(false);
 
-  // Manejador para coordinar la animación de entrada y salida sin destruir el DOM bruscamente
   useEffect(() => {
     if (isOpen) {
       setRendered(true);
@@ -23,7 +23,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
       return () => clearTimeout(timer);
     } else {
       setActive(false);
-      const timer = setTimeout(() => setRendered(false), 300); // Espera a que termine la animación
+      const timer = setTimeout(() => setRendered(false), 300);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
@@ -34,9 +34,18 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
     ? property.images 
     : ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80'];
 
+  const mapUrl = property.latitude && property.longitude
+    ? `https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(property.address + ', Camagüey')}`;
+
+  const confirmMapNavigation = () => {
+    window.open(mapUrl, '_blank', 'noopener,noreferrer');
+    setShowMapAlert(false);
+  };
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 sm:p-6">
-      {/* Fondo oscuro con transición de opacidad */}
+      {/* Fondo oscuro */}
       <div 
         className={`fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 ease-out ${
           active ? 'opacity-100' : 'opacity-0'
@@ -44,7 +53,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
         onClick={onClose}
       />
 
-      {/* Contenedor principal con animación de escala y desvanecimiento desde la tarjeta */}
+      {/* Contenedor principal del Modal */}
       <div 
         className={`relative bg-white w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[90vh] transition-all duration-300 ease-out transform ${
           active 
@@ -52,8 +61,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
             : 'opacity-0 scale-90 translate-y-4'
         }`}
       >
-        
-        {/* Cabecera del Modal */}
+        {/* Cabecera */}
         <div className="p-4 sm:px-6 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-20">
           <div className="flex items-center gap-2">
             <span className={`px-2.5 py-1 rounded-md text-xs font-bold tracking-wide uppercase ${
@@ -78,10 +86,9 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
           </button>
         </div>
 
-        {/* Cuerpo con scroll */}
+        {/* Cuerpo */}
         <div className="overflow-y-auto p-4 sm:p-6 space-y-6 flex-1">
-          
-          {/* Carrusel de Imágenes */}
+          {/* Carrusel */}
           <div className="space-y-3">
             <div className="relative h-64 sm:h-80 w-full bg-slate-900 rounded-2xl overflow-hidden shadow-inner">
               <img 
@@ -129,7 +136,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
             )}
           </div>
 
-          {/* Título y Precio (arreglado el error de Hydration) */}
+          {/* Título y Precio */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
             <div>
               <h2 className="text-2xl font-black text-slate-900 tracking-tight">
@@ -158,20 +165,16 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
             </div>
           </div>
 
-          {/* Mapa */}
-          {property.latitude && property.longitude && (
-            <div>
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2.5 rounded-xl border border-blue-200 transition"
-              >
-                📍 Ver ubicación exacta en Google Maps
-              </a>
-            </div>
-          )}
-
+          {/* Botón de Mapa en el Modal */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setShowMapAlert(true)}
+              className="inline-flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2.5 rounded-xl border border-blue-200 transition cursor-pointer"
+            >
+              📍 Ver ubicación en el mapa
+            </button>
+          </div>
         </div>
 
         {/* Pie del Modal */}
@@ -198,8 +201,48 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
             </a>
           </div>
         </div>
-
       </div>
+
+      {/* MODAL DE ADVERTENCIA PARA EL MAPA DENTRO DEL DETALLE */}
+      {showMapAlert && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100 text-center space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto text-2xl font-bold border border-amber-100">
+              📍
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">Aviso sobre la ubicación</h3>
+              <div className="text-xs text-slate-500 mt-2 space-y-2 text-left leading-relaxed">
+                <p>
+                  • <strong>Referencial:</strong> La ubicación indica la calle o zona general, no el número exacto de la vivienda.
+                </p>
+                <p>
+                  • <strong>Nombres de calles:</strong> Google Maps a veces usa nombres antiguos. Si vas a desplazarte, se recomienda verificar en aplicaciones como <strong>Maps.me</strong> o coordinar directamente con el dueño.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowMapAlert(false)}
+                className="flex-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition cursor-pointer"
+              >
+                Cancelar
+              </button>
+              
+              <button
+                type="button"
+                onClick={confirmMapNavigation}
+                className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition shadow-sm active:scale-95 cursor-pointer"
+              >
+                Abrir mapa ↗
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
