@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Property } from '@/lib/types';
 import PropertyModal from '@/components/PropertyModal';
+import { getStatusBadge } from '@/lib/utils';
 
 interface PropertyListProps {
   properties: Property[];
@@ -46,6 +47,8 @@ export default function PropertyList({ properties }: PropertyListProps) {
             ? `https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`
             : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(property.address + ', Camagüey')}`;
 
+          const badge = getStatusBadge(property.status);
+
           return (
             <div 
               key={property.id} 
@@ -77,14 +80,8 @@ export default function PropertyList({ properties }: PropertyListProps) {
 
               <div className="p-6 flex-1 flex flex-col">
                 <div className="flex items-center justify-between mb-3">
-                  <span className={`px-2.5 py-1 rounded-md text-xs font-bold tracking-wide uppercase ${
-                    property.status === 'rent' 
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-                      : property.status === 'vacation'
-                      ? 'bg-purple-50 text-purple-700 border border-purple-200'
-                      : 'bg-blue-50 text-blue-700 border border-blue-200'
-                  }`}>
-                    {property.status === 'rent' ? 'Alquiler' : property.status === 'vacation' ? 'Renta Hostal' : 'Venta'}
+                  <span className={`px-2.5 py-1 rounded-md text-xs font-bold tracking-wide uppercase border ${badge.className}`}>
+                    {badge.label}
                   </span>
                   
                   {/* BOTÓN DEL MAPA EN TARJETA */}
@@ -105,7 +102,7 @@ export default function PropertyList({ properties }: PropertyListProps) {
                   📍 {property.address}
                 </p>
 
-                <p className="text-slate-600 text-sm line-clamp-3 mb-6 flex-1">
+                <p className="text-slate-600 text-sm line-clamp-3 mb-6 flex-1 whitespace-pre-line">
                   {property.description || 'Sin descripción disponible.'}
                 </p>
               </div>

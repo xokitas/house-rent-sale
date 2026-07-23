@@ -200,7 +200,7 @@ export default function FilterDrawer({ filterType, maxPrice }: FilterDrawerProps
 
               {/* Pie del Panel */}
               <div className="p-4 bg-slate-50 border-t border-slate-100 text-center text-xs text-slate-400">
-                MiCasita Camagüey • Filtros en tiempo real
+                TuCasita Camagüey • Filtros en tiempo real
               </div>
 
             </div>

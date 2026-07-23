@@ -42,7 +42,7 @@ export default async function HomePage({ searchParams }: PageProps) {
           <div className="flex items-center gap-2">
             <span className="text-2xl">🏠</span>
             <h1 className="text-xl font-black text-slate-900 tracking-tight">
-              MiCasita <span className="text-blue-600 text-sm font-bold bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">Camagüey</span>
+              TuCasita <span className="text-blue-600 text-sm font-bold bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">Camagüey</span>
             </h1>
           </div>
           <p className="text-xs text-slate-500 hidden md:block">
