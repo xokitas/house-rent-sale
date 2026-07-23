@@ -47,7 +47,10 @@ export default function PropertyList({ properties }: PropertyListProps) {
             ? `https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`
             : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(property.address + ', Camagüey')}`;
 
-          const badge = getStatusBadge(property.status);
+          // Garantizamos que status sea tratado siempre como un arreglo
+          const statuses = Array.isArray(property.status) 
+            ? property.status 
+            : [property.status];
 
           return (
             <div 
@@ -79,18 +82,29 @@ export default function PropertyList({ properties }: PropertyListProps) {
               )}
 
               <div className="p-6 flex-1 flex flex-col">
-                <div className="flex items-center justify-between mb-3">
-                  <span className={`px-2.5 py-1 rounded-md text-xs font-bold tracking-wide uppercase border ${badge.className}`}>
-                    {badge.label}
-                  </span>
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  {/* RENDEREAMOS UNO O VARIOS BADGES SEGÚN LAS CLASIFICACIONES DE LA CASA */}
+                  <div className="flex flex-wrap gap-1">
+                    {statuses.map((st) => {
+                      const badge = getStatusBadge(st);
+                      return (
+                        <span 
+                          key={st} 
+                          className={`px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold tracking-wide uppercase border ${badge.className}`}
+                        >
+                          {badge.label}
+                        </span>
+                      );
+                    })}
+                  </div>
                   
                   {/* BOTÓN DEL MAPA EN TARJETA */}
                   <button
                     type="button"
                     onClick={(e) => handleMapClick(e, mapUrl)}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-blue-600 transition bg-slate-100 hover:bg-blue-50 px-2.5 py-1 rounded-md border border-slate-200 cursor-pointer"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-blue-600 transition bg-slate-100 hover:bg-blue-50 px-2.5 py-1 rounded-md border border-slate-200 cursor-pointer shrink-0"
                   >
-                    📍 Ver ubicación en el mapa
+                    📍 Mapa
                   </button>
                 </div>
 
