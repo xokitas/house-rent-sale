@@ -1,21 +1,24 @@
 export type PropertyStatus = 
-  | 'sale' 
-  | 'long_term' 
-  | 'international_hostel' 
-  | 'local_rent'
-  | 'day_pass';
+  | 'long_term'            // Alquiler Larga Estadía
+  | 'local_rent'           // Renta Nacional (CUP)
+  | 'international_hostel' // Hostal / Renta Internacional (USD/EUR)
+  | 'sale'                 // Venta
+  | 'swap'                 // Permuta
+  | 'day_pass'             // Pasadía / Eventos
+  | 'sold';                // Vendida / Permutada (Cartel especial)
 
 export interface Property {
   id: string;
   title: string;
   address: string;
-  status: PropertyStatus;
+  status: PropertyStatus[]; // Ahora es un arreglo para soportar múltiple selección
   price: number;
   currency: string;
   contact: string;
-  description?: string;
+  description: string;
   latitude?: number | null;
   longitude?: number | null;
   images: string[];
+  is_sold?: boolean;        // Indicador si está vendida/permutada
   created_at?: string;
 }
