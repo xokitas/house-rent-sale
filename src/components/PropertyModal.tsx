@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Property } from '@/lib/types';
+import { getStatusBadge } from '@/lib/utils';
 
 interface PropertyModalProps {
   property: Property | null;
@@ -43,6 +44,8 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
     setShowMapAlert(false);
   };
 
+  const badge = getStatusBadge(property.status);
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 sm:p-6">
       {/* Fondo oscuro */}
@@ -64,14 +67,8 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
         {/* Cabecera */}
         <div className="p-4 sm:px-6 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-20">
           <div className="flex items-center gap-2">
-            <span className={`px-2.5 py-1 rounded-md text-xs font-bold tracking-wide uppercase ${
-              property.status === 'rent' 
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-                : property.status === 'vacation'
-                ? 'bg-purple-50 text-purple-700 border border-purple-200'
-                : 'bg-blue-50 text-blue-700 border border-blue-200'
-            }`}>
-              {property.status === 'rent' ? 'Alquiler' : property.status === 'vacation' ? 'Renta Hostal' : 'Venta'}
+            <span className={`px-2.5 py-1 rounded-md text-xs font-bold tracking-wide uppercase border ${badge.className}`}>
+              {badge.label}
             </span>
             <span className="text-xs text-slate-400 font-medium truncate max-w-50 sm:max-w-xs">
               📍 {property.address}
