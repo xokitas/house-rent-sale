@@ -203,7 +203,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
               href={`https://wa.me/${property.contact.replace('+', '')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 sm:flex-none px-5 py-3 bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white font-bold text-xs rounded-xl transition text-center shadow-md active:scale-95"
+              className="flex-1 sm:flex-none px-5 py-3 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white font-bold text-xs rounded-xl transition text-center shadow-md active:scale-95"
             >
               💬 WhatsApp
             </a>
@@ -243,7 +243,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
               <button
                 type="button"
                 onClick={confirmMapNavigation}
-                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white text-xs font-bold rounded-xl transition shadow-xs active:scale-95 cursor-pointer"
+                className="flex-1 px-4 py-2.5 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white text-xs font-bold rounded-xl transition shadow-xs active:scale-95 cursor-pointer"
               >
                 Abrir mapa ↗
               </button>
