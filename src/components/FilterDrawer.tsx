@@ -53,27 +53,31 @@ export default function FilterDrawer({ filterType, maxPrice }: FilterDrawerProps
     setIsOpen(false);
   };
 
+  const hasActiveFilters = filterType !== 'all' || (maxPrice && maxPrice !== '100000');
+
   return (
     <>
-      {/* BOTÓN FLOTANTE PARA ABRIR FILTROS */}
-      <div className="mb-6 flex items-center justify-between">
-        <button
-          onClick={() => setIsOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition shadow-md active:scale-95 cursor-pointer"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      {/* BOTÓN ICONO EXPANDIBLE EN HOVER */}
+      <button
+        onClick={() => setIsOpen(true)}
+        className="group relative inline-flex items-center bg-slate-900 hover:bg-black text-white p-2.5 rounded-2xl shadow-md transition-all duration-300 ease-in-out cursor-pointer active:scale-95"
+      >
+        <div className="relative flex items-center justify-center">
+          <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
           </svg>
-          <span>Filtrar Búsqueda</span>
-          {(filterType !== 'all' || (maxPrice && maxPrice !== '100000')) && (
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+          
+          {/* Indicador de filtro activo en el propio icono */}
+          {hasActiveFilters && (
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-blue-500 rounded-full ring-2 ring-slate-900 animate-pulse" />
           )}
-        </button>
+        </div>
 
-        <p className="text-xs text-slate-500 font-medium">
-          {filterType !== 'all' || (maxPrice && maxPrice !== '100000') ? 'Filtros activos' : 'Mostrando todo'}
-        </p>
-      </div>
+        {/* Texto que se expande a la derecha en Hover */}
+        <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2.5 transition-all duration-300 ease-in-out text-xs font-bold tracking-wide">
+          Filtrar Búsqueda
+        </span>
+      </button>
 
       {/* PANEL LATERAL (DRAWER) */}
       {isOpen && (
@@ -135,7 +139,7 @@ export default function FilterDrawer({ filterType, maxPrice }: FilterDrawerProps
                   </div>
                 </div>
 
-                {/* Filtro de Precio: Manual + Slider Sincronizados */}
+                {/* Filtro de Precio */}
                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
                   <div className="flex items-center justify-between">
                     <label htmlFor="maxPrice" className="text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -144,7 +148,6 @@ export default function FilterDrawer({ filterType, maxPrice }: FilterDrawerProps
                     <span className="text-xs font-semibold text-slate-400">Exacto o Rango</span>
                   </div>
 
-                  {/* Input manual de precio exacto */}
                   <div className="relative">
                     <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">$</span>
                     <input 
@@ -159,7 +162,6 @@ export default function FilterDrawer({ filterType, maxPrice }: FilterDrawerProps
                     />
                   </div>
 
-                  {/* Slider de Precio */}
                   <input 
                     type="range" 
                     min="100" 
@@ -186,7 +188,7 @@ export default function FilterDrawer({ filterType, maxPrice }: FilterDrawerProps
                     Ver Resultados
                   </button>
 
-                  {(filterType !== 'all' || (maxPrice && maxPrice !== '100000')) && (
+                  {hasActiveFilters && (
                     <button 
                       type="button"
                       onClick={handleReset}

@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase';
 import { Property, STATUS_OPTIONS } from '@/lib/types';
 import FilterDrawer from '@/components/FilterDrawer';
 import PropertyList from '@/components/PropertyList';
+import ActionMenu from '@/components/ActionMenu';
 import Link from 'next/link';
 
 export const revalidate = 0;
@@ -59,22 +60,6 @@ export default async function HomePage({ searchParams }: PageProps) {
     return `/?${typeParam}${priceParam}`;
   };
 
-  // TEXTO DINÁMICO DE UX
-  let dynamicStatusText = '';
-  if (selectedTypes.length === 0) {
-    dynamicStatusText = `Mostrando todas las propiedades (${propertyList.length})`;
-  } else {
-    const labels = selectedTypes
-      .map((st) => STATUS_OPTIONS.find((opt) => opt.value === st)?.label)
-      .filter(Boolean)
-      .join(', ');
-    dynamicStatusText = `Mostrando ${propertyList.length} ${propertyList.length === 1 ? 'opción' : 'opciones'} en: ${labels}`;
-  }
-
-  if (maxPrice && !isNaN(maxPrice)) {
-    dynamicStatusText += ` • Hasta ${maxPrice} USD`;
-  }
-
   return (
     <main className="min-h-screen bg-[#FBF9F5]">
       {/* ENCABEZADO PRINCIPAL CON LOS COLORES DEL LOGO */}
@@ -116,28 +101,7 @@ export default async function HomePage({ searchParams }: PageProps) {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         
-        {/* BOTÓN COLAPSADO CON HOVER EXPANDIBLE (ARRIBA A LA IZQUIERDA) */}
-        <div className="flex items-center justify-between">
-          <div className="group relative inline-flex items-center">
-            <div className="flex items-center bg-white border border-[#E2D8C7] shadow-sm rounded-2xl p-1.5 hover:border-[#1E67AD] transition-all duration-300">
-              <FilterDrawer filterType={rawTypes} maxPrice={params?.maxPrice || ''} />
-              <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-500 ease-in-out text-xs font-bold text-[#1E67AD] group-hover:px-2">
-                Filtrar Búsqueda
-              </span>
-            </div>
-          </div>
-
-          {selectedTypes.length > 0 && (
-            <Link
-              href="/"
-              className="text-xs font-bold text-[#1E67AD] hover:underline bg-[#EAF2FA] px-3 py-1.5 rounded-xl border border-[#D0E2F4]"
-            >
-              ✕ Limpiar filtros ({selectedTypes.length})
-            </Link>
-          )}
-        </div>
-
-        {/* PARRILLA / PESTAÑAS DE CLASIFICACIONES CON ESTILOS DEL LOGO */}
+        {/* PARRILLA / PESTAÑAS DE CLASIFICACIONES */}
         <div className="flex flex-wrap gap-2">
           {/* BOTÓN TODAS */}
           <Link
@@ -175,11 +139,26 @@ export default async function HomePage({ searchParams }: PageProps) {
           })}
         </div>
 
-        {/* INDICADOR TEXTUAL DINÁMICO DE RESULTADOS (UX) */}
-        <div className="px-1 border-t border-[#E8E2D8] pt-4">
-          <p className="text-xs font-bold text-[#5A5245] uppercase tracking-wider">
-            {dynamicStatusText}
-          </p>
+        {/* FILA DE HERRAMIENTAS: FILTRO Y MENÚ DE ACCIONES */}
+        <div className="flex items-center justify-between gap-4 pt-1">
+          
+          {/* LADO IZQUIERDO: FILTRO DE BÚSQUEDA Y LIMPIAR */}
+          <div className="flex items-center gap-3">
+            <FilterDrawer filterType={rawTypes} maxPrice={params?.maxPrice || ''} />
+
+            {selectedTypes.length > 0 && (
+              <Link
+                href="/"
+                className="text-xs font-bold text-[#1E67AD] hover:underline bg-[#EAF2FA] px-3 py-2 rounded-xl border border-[#D0E2F4] transition"
+              >
+                ✕ Limpiar filtros ({selectedTypes.length})
+              </Link>
+            )}
+          </div>
+
+          {/* LADO DERECHO: NUEVO COMPONENTE DE CLIENTE */}
+          <ActionMenu />
+
         </div>
 
         {/* LISTADO DE PROPIEDADES */}
