@@ -56,7 +56,7 @@ export default function PropertyList({ properties }: PropertyListProps) {
             <div 
               key={property.id} 
               onClick={() => setSelectedProperty(property)}
-              className="bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] rounded-3xl shadow-md border border-[#E2D8C7] overflow-hidden flex flex-col justify-between 
+              className="bg-linear-to-r from-[#1E67AD] to-[#2A93A6] rounded-3xl shadow-md border border-[#E2D8C7] overflow-hidden flex flex-col justify-between 
                          transition-all duration-200 ease-out
                          hover:scale-[1.01] hover:shadow-xl cursor-pointer active:scale-95 text-white"
             >
@@ -143,7 +143,7 @@ export default function PropertyList({ properties }: PropertyListProps) {
                     href={`https://wa.me/${property.contact.replace('+', '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center px-3.5 py-1.5 text-xs font-bold rounded-xl text-white bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 transition shadow-xs active:scale-95"
+                    className="inline-flex items-center justify-center px-3.5 py-1.5 text-xs font-bold rounded-xl text-white bg-linear-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 transition shadow-xs active:scale-95"
                   >
                     WhatsApp
                   </a>
@@ -193,7 +193,7 @@ export default function PropertyList({ properties }: PropertyListProps) {
               <button
                 type="button"
                 onClick={confirmNavigation}
-                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white text-xs font-bold rounded-xl transition shadow-xs active:scale-95 cursor-pointer"
+                className="flex-1 px-4 py-2.5 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white text-xs font-bold rounded-xl transition shadow-xs active:scale-95 cursor-pointer"
               >
                 Abrir mapa ↗
               </button>
