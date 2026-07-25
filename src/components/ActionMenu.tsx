@@ -7,7 +7,7 @@ export default function ActionMenu() {
         
         {/* Icono del Logo de la Empresa */}
         <div className="w-9 h-9 rounded-xl bg-[#F2ECE1] border border-[#E2D8C7] flex items-center justify-center shrink-0 overflow-hidden cursor-pointer">
-          <img src="/logo.png" alt="Empresa" className="w-6 h-6 object-contain" />
+          <img src="/logoe.png" alt="Empresa" className="w-6 h-6 object-contain" />
         </div>
 
         {/* Contenedor que se despliega suavemente a la derecha en Hover */}
