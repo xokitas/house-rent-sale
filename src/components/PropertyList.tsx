@@ -15,10 +15,10 @@ export default function PropertyList({ properties }: PropertyListProps) {
 
   if (!properties || properties.length === 0) {
     return (
-      <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-slate-200">
+      <div className="bg-white rounded-3xl p-12 text-center shadow-xs border border-[#E2D8C7]">
         <p className="text-4xl mb-3">🔍</p>
-        <h3 className="text-lg font-bold text-slate-900 mb-1">No encontramos propiedades</h3>
-        <p className="text-slate-500 text-sm">Prueba ajustando o quitando los filtros de búsqueda.</p>
+        <h3 className="text-lg font-bold text-[#1E67AD] mb-1">No encontramos propiedades</h3>
+        <p className="text-[#5A5245] text-sm">Prueba ajustando o quitando los filtros de búsqueda.</p>
       </div>
     );
   }
@@ -56,13 +56,13 @@ export default function PropertyList({ properties }: PropertyListProps) {
             <div 
               key={property.id} 
               onClick={() => setSelectedProperty(property)}
-              className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between 
+              className="bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] rounded-3xl shadow-md border border-[#E2D8C7] overflow-hidden flex flex-col justify-between 
                          transition-all duration-200 ease-out
-                         hover:scale-[1.01] hover:shadow-xl cursor-pointer active:scale-95"
+                         hover:scale-[1.01] hover:shadow-xl cursor-pointer active:scale-95 text-white"
             >
               {/* VISTA PREVIA DE LA IMAGEN */}
               {mainImage ? (
-                <div className="relative h-48 w-full bg-slate-100 overflow-hidden border-b border-slate-100">
+                <div className="relative h-48 w-full bg-[#F2ECE1] overflow-hidden border-b border-white/10">
                   <img 
                     src={mainImage} 
                     alt={property.title}
@@ -76,7 +76,7 @@ export default function PropertyList({ properties }: PropertyListProps) {
                   )}
                 </div>
               ) : (
-                <div className="h-48 w-full bg-slate-100 flex items-center justify-center text-slate-400 border-b border-slate-100 text-sm font-medium">
+                <div className="h-48 w-full bg-[#F2ECE1] flex items-center justify-center text-[#5A5245] border-b border-white/10 text-sm font-medium">
                   🏠 Sin vista previa
                 </div>
               )}
@@ -90,7 +90,7 @@ export default function PropertyList({ properties }: PropertyListProps) {
                       return (
                         <span 
                           key={st} 
-                          className={`px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold tracking-wide uppercase border ${badge.className}`}
+                          className="px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-bold tracking-wide uppercase bg-white/20 backdrop-blur-md text-white border border-white/20"
                         >
                           {badge.label}
                         </span>
@@ -102,37 +102,38 @@ export default function PropertyList({ properties }: PropertyListProps) {
                   <button
                     type="button"
                     onClick={(e) => handleMapClick(e, mapUrl)}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-blue-600 transition bg-slate-100 hover:bg-blue-50 px-2.5 py-1 rounded-md border border-slate-200 cursor-pointer shrink-0"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-white hover:text-[#1E67AD] transition bg-white/20 hover:bg-white px-2.5 py-1 rounded-xl border border-white/30 cursor-pointer shrink-0"
                   >
                     📍 Mapa
                   </button>
                 </div>
 
-                <h2 className="text-xl font-bold text-slate-900 line-clamp-1 mb-1">
+                <h2 className="text-xl font-black text-white line-clamp-1 mb-1">
                   {property.title}
                 </h2>
                 
-                <p className="text-sm text-slate-500 mb-4">
+                <p className="text-xs font-medium text-white/80 mb-3">
                   📍 {property.address}
                 </p>
 
-                <p className="text-slate-600 text-sm line-clamp-3 mb-6 flex-1 whitespace-pre-line">
+                <p className="text-white/90 text-sm line-clamp-3 mb-6 flex-1 whitespace-pre-line font-medium">
                   {property.description || 'Sin descripción disponible.'}
                 </p>
               </div>
 
-              <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-3">
+              {/* PIE DE LA TARJETA (FONDO DEL HEADER) */}
+              <div className="px-6 py-4 bg-white/90 backdrop-blur-md border-t border-[#E8E2D8] flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Precio</p>
-                  <div className="text-xl font-black text-slate-900 leading-tight">
-                    {Number(property.price).toLocaleString('en-US')} <span className="text-sm font-bold text-blue-600">{property.currency}</span>
+                  <p className="text-[10px] text-[#5A5245] font-bold uppercase tracking-wider">Precio</p>
+                  <div className="text-xl font-black text-[#1E67AD] leading-tight">
+                    {Number(property.price).toLocaleString('en-US')} <span className="text-xs font-bold text-[#C8976C]">{property.currency}</span>
                   </div>
                 </div>
                 
                 <div className="flex flex-col items-end gap-1" onClick={(e) => e.stopPropagation()}>
                   <a 
                     href={`tel:${property.contact}`}
-                    className="text-xs font-semibold text-slate-600 hover:text-slate-900 transition"
+                    className="text-xs font-bold text-[#5A5245] hover:text-[#1E67AD] transition"
                     title="Toca para llamar"
                   >
                     📞 {property.contact}
@@ -142,7 +143,7 @@ export default function PropertyList({ properties }: PropertyListProps) {
                     href={`https://wa.me/${property.contact.replace('+', '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center px-3.5 py-1.5 text-xs font-bold rounded-lg text-white bg-slate-950 hover:bg-slate-800 transition shadow-sm active:scale-95"
+                    className="inline-flex items-center justify-center px-3.5 py-1.5 text-xs font-bold rounded-xl text-white bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 transition shadow-xs active:scale-95"
                   >
                     WhatsApp
                   </a>
@@ -163,14 +164,14 @@ export default function PropertyList({ properties }: PropertyListProps) {
       {/* MODAL ADVERTENCIA MAPA DE TARJETA */}
       {pendingMapUrl && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100 text-center space-y-4 animate-in zoom-in-95 duration-200">
-            <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto text-2xl font-bold border border-amber-100">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-[#E2D8C7] text-center space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 bg-[#F2ECE1] text-[#1E67AD] rounded-2xl flex items-center justify-center mx-auto text-2xl font-bold border border-[#E2D8C7]">
               📍
             </div>
             
             <div>
-              <h3 className="text-lg font-bold text-slate-900">Aviso sobre la ubicación</h3>
-              <div className="text-xs text-slate-500 mt-2 space-y-2 text-left leading-relaxed">
+              <h3 className="text-lg font-bold text-[#1E67AD]">Aviso sobre la ubicación</h3>
+              <div className="text-xs text-[#5A5245] mt-2 space-y-2 text-left leading-relaxed font-medium">
                 <p>
                   • <strong>Referencial:</strong> La ubicación indica la calle o zona general, no el número exacto de la vivienda.
                 </p>
@@ -184,7 +185,7 @@ export default function PropertyList({ properties }: PropertyListProps) {
               <button
                 type="button"
                 onClick={() => setPendingMapUrl(null)}
-                className="flex-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition cursor-pointer"
+                className="flex-1 px-4 py-2.5 bg-[#F2ECE1] hover:bg-[#E8E2D8] text-[#1E67AD] text-xs font-bold rounded-xl transition cursor-pointer"
               >
                 Cancelar
               </button>
@@ -192,7 +193,7 @@ export default function PropertyList({ properties }: PropertyListProps) {
               <button
                 type="button"
                 onClick={confirmNavigation}
-                className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition shadow-sm active:scale-95 cursor-pointer"
+                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white text-xs font-bold rounded-xl transition shadow-xs active:scale-95 cursor-pointer"
               >
                 Abrir mapa ↗
               </button>
