@@ -101,6 +101,16 @@ export default async function HomePage({ searchParams }: PageProps) {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         
+        {/* SECCIÓN DE BIENVENIDA (HERO) */}
+        <div className="py-2 sm:py-4">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#5A5245] tracking-tight">
+            Encuentra tu próximo <span className="text-[#1E67AD]">hogar</span>
+          </h1>
+          <p className="mt-2 text-sm sm:text-base text-gray-500 max-w-2xl">
+            Explora las mejores opciones de venta y alquiler en Camagüey.
+          </p>
+        </div>
+
         {/* PARRILLA / PESTAÑAS DE CLASIFICACIONES */}
         <div className="flex flex-wrap gap-2">
           {/* BOTÓN TODAS */}
@@ -139,26 +149,36 @@ export default async function HomePage({ searchParams }: PageProps) {
           })}
         </div>
 
-        {/* FILA DE HERRAMIENTAS: FILTRO Y MENÚ DE ACCIONES */}
-        <div className="flex items-center justify-between gap-4 pt-1">
+        {/* BARRA DE HERRAMIENTAS UNIFICADA (TOOLBAR) */}
+        <div className="flex items-center gap-3 w-full max-w-3xl pt-2">
           
-          {/* LADO IZQUIERDO: FILTRO DE BÚSQUEDA Y LIMPIAR */}
-          <div className="flex items-center gap-3">
-            <FilterDrawer filterType={rawTypes} maxPrice={params?.maxPrice || ''} />
+          {/* 1. Botón de Filtro (Izquierda) */}
+          <FilterDrawer filterType={rawTypes} maxPrice={params?.maxPrice || ''} />
 
-            {selectedTypes.length > 0 && (
-              <Link
-                href="/"
-                className="text-xs font-bold text-[#1E67AD] hover:underline bg-[#EAF2FA] px-3 py-2 rounded-xl border border-[#D0E2F4] transition"
-              >
-                ✕ Limpiar filtros ({selectedTypes.length})
-              </Link>
-            )}
+          {/* 2. Barra de Búsqueda (Centro - Elástica) */}
+          <div className="flex-1 relative group">
+            <input 
+              type="text" 
+              placeholder="Buscar por zona, reparto o Calle..." 
+              className="w-full bg-white border border-[#E2D8C7] text-sm font-medium text-[#5A5245] rounded-2xl py-2.5 pl-10 pr-4 shadow-sm placeholder:text-gray-400 focus:outline-none focus:border-[#1E67AD] focus:ring-1 focus:ring-[#1E67AD] transition-all"
+            />
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 opacity-60 text-sm">
+              🔍
+            </span>
           </div>
 
-          {/* LADO DERECHO: NUEVO COMPONENTE DE CLIENTE */}
+          {/* 3. Menú de Acciones de Empresa (Derecha) */}
           <ActionMenu />
 
+          {/* 4. Botón de Limpiar Filtros (Solo visible si hay filtros activos) */}
+          {selectedTypes.length > 0 && (
+            <Link
+              href="/"
+              className="text-xs font-bold text-[#1E67AD] hover:underline bg-[#EAF2FA] px-3 py-2.5 rounded-xl border border-[#D0E2F4] transition-all whitespace-nowrap"
+            >
+              ✕ Limpiar ({selectedTypes.length})
+            </Link>
+          )}
         </div>
 
         {/* LISTADO DE PROPIEDADES */}
