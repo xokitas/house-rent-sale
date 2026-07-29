@@ -5,23 +5,25 @@ import { supabase } from '@/lib/supabase';
 import { Property, PropertyStatus } from '@/lib/types';
 import Link from 'next/link';
 
-// SUBCOMPONENTES
+// SUBCOMPONENTES (EXCLUSIVOS DEL ADMIN)
 import PropertyHeader from './components/PropertyHeader';
 import PropertyProgressSteps from './components/PropertyProgressSteps';
 import PropertyBasicInfoCard from './components/PropertyBasicInfoCard';
-import PropertyLocationCard from './components/PropertyLocationCard';
-import PropertyStructuralCard from './components/PropertyStructuralCard';
-import PropertyAmenitiesCard from './components/PropertyAmenitiesCard';
-import PropertyHostelFieldsCard from './components/PropertyHostelFieldsCard';
-import PropertyDayPassFieldsCard from './components/PropertyDayPassFieldsCard';
-import PropertyCommercialFieldsCard from './components/PropertyCommercialFieldsCard';
-import PropertyDescriptionCard from './components/PropertyDescriptionCard';
-import PropertyGalleryCard from './components/PropertyGalleryCard';
 import PropertySettingsCard from './components/PropertySettingsCard';
 import PropertyPreviewCard from './components/PropertyPreviewCard';
 import PropertyActionsBar from './components/PropertyActionsBar';
 import RegisteredPropertiesList from './components/RegisteredPropertiesList';
-import Toast from './components/Toast';
+
+// COMPONENTES COMPARTIDOS (ÚNICA FUENTE DE VERDAD)
+import PropertyLocationCard from '@/components/property-form/PropertyLocationCard';
+import PropertyStructuralCard from '@/components/property-form/PropertyStructuralCard';
+import PropertyAmenitiesCard from '@/components/property-form/PropertyAmenitiesCard';
+import PropertyHostelFieldsCard from '@/components/property-form/PropertyHostelFieldsCard';
+import PropertyDayPassFieldsCard from '@/components/property-form/PropertyDayPassFieldsCard';
+import PropertyCommercialFieldsCard from '@/components/property-form/PropertyCommercialFieldsCard';
+import PropertyDescriptionCard from '@/components/property-form/PropertyDescriptionCard';
+import PropertyGalleryCard from '@/components/property-form/PropertyGalleryCard';
+import Toast from '@/components/property-form/Toast';
 
 export default function AdminPage() {
   const [properties, setProperties] = useState<Property[]>([]);

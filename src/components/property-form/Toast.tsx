@@ -32,11 +32,12 @@ export default function Toast({ message, type = 'info', onClose, duration = 3000
   }[type];
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 animate-bounce-short">
+    <div className="fixed bottom-6 right-6 z-50 animate-bounce-short animate-in fade-in slide-in-from-bottom-5 duration-300">
       <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl border ${bgColor} shadow-lg transition-all duration-300 transform scale-100 hover:scale-102`}>
         <span className="text-lg">{icon}</span>
         <p className="text-xs font-bold leading-none tracking-tight">{message}</p>
         <button
+          type="button"
           onClick={onClose}
           className="ml-2 w-5 h-5 rounded-full hover:bg-black/5 flex items-center justify-center text-xs font-black transition cursor-pointer"
         >

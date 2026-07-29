@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 export default function ActionMenu() {
   return (
     <div className="group relative inline-flex items-center">
@@ -14,12 +16,12 @@ export default function ActionMenu() {
         <div className="max-w-0 opacity-0 group-hover:max-w-md group-hover:opacity-100 group-hover:ml-2 overflow-hidden transition-all duration-500 ease-in-out flex items-center gap-1.5 whitespace-nowrap pr-1">
           
           {/* 1. Publicar una casa */}
-          <button 
-            onClick={() => alert('Acción provisional: Publicar una casa')}
+          <Link
+            href="/publicar"
             className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
           >
             <span>🏠</span> Publicar una casa
-          </button>
+          </Link>
 
           {/* 2. Sugerir una idea */}
           <button 

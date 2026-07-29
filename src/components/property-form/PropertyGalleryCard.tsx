@@ -33,7 +33,6 @@ export default function PropertyGalleryCard({
     e.preventDefault();
     setIsDragOver(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      // Create a simulated ChangeEvent to reuse parent handler
       const filesList = e.dataTransfer.files;
       const simulatedEvent = {
         target: {

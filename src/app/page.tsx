@@ -185,15 +185,12 @@ export default async function HomePage({ searchParams }: PageProps) {
                   Explorar propiedades
                 </a>
                 <div className="flex flex-col">
-                  <button
-                    disabled
-                    className="inline-flex items-center justify-center px-8 py-4 text-sm font-black text-[#1E67AD] border-2 border-[#1E67AD]/30 rounded-2xl bg-white/50 cursor-not-allowed text-center opacity-70"
+                  <Link
+                    href="/publicar"
+                    className="inline-flex items-center justify-center px-8 py-4 text-sm font-black text-[#1E67AD] border-2 border-[#1E67AD]/30 hover:border-[#1E67AD] rounded-2xl bg-white hover:bg-[#F2ECE1]/40 transition-all duration-200 text-center shadow-xs active:scale-95 cursor-pointer"
                   >
                     Publicar una propiedad
-                  </button>
-                  <span className="text-[10px] font-black text-[#C8976C] tracking-widest uppercase text-center sm:text-left mt-1.5 ml-1">
-                    ⏳ Próximamente
-                  </span>
+                  </Link>
                 </div>
               </div>
             </div>

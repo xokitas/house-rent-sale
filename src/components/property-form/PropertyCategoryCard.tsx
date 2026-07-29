@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { PropertyStatus, STATUS_OPTIONS } from '@/lib/types';
+import { PropertyStatus } from '@/lib/types';
 
 interface PropertyCategoryCardProps {
   opt: { value: PropertyStatus; label: string };
