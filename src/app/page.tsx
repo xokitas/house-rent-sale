@@ -136,9 +136,9 @@ export default async function HomePage({ searchParams }: PageProps) {
             <div className="lg:col-span-7 space-y-6 md:space-y-8 text-left">
               {/* Badge Beta */}
               <div className="space-y-3">
-                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1E67AD]/10 to-[#2A93A6]/10 border border-[#1E67AD]/20 px-3 py-1 rounded-full">
+                <div className="inline-flex items-center gap-2 bg-linear-to-rrom-[#1E67AD]/10 to-[#2A93A6]/10 border border-[#1E67AD]/20 px-3 py-1 rounded-full">
                   <span className="text-xs sm:text-sm">🧪</span>
-                  <span className="text-xs font-black bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] bg-clip-text text-transparent uppercase tracking-wider">
+                  <span className="text-xs font-black bg-linear-to-r from-[#1E67AD] to-[#2A93A6] bg-clip-text text-transparent uppercase tracking-wider">
                     Beta gratuita
                   </span>
                 </div>
@@ -151,26 +151,26 @@ export default async function HomePage({ searchParams }: PageProps) {
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#5A5245] tracking-tight leading-tight">
                 Encuentra la <br className="hidden sm:inline" />
                 propiedad ideal <br className="hidden lg:inline" />
-                en <span className="bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] bg-clip-text text-transparent">Camagüey</span>
+                en <span className="bg-linear-to-rrom-[#1E67AD] to-[#2A93A6] bg-clip-text text-transparent">Camagüey</span>
               </h1>
 
               {/* Beneficios Rápidos (Sin párrafos redundantes) */}
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600">
-                    <Check className="w-4 h-4 stroke-[3]" />
+                    <Check className="w-4 h-4 stroke-3" />
                   </div>
                   <span className="text-sm sm:text-base font-bold text-[#5A5245]">Filtra por presupuesto</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600">
-                    <Check className="w-4 h-4 stroke-[3]" />
+                    <Check className="w-4 h-4 stroke-3" />
                   </div>
                   <span className="text-sm sm:text-base font-bold text-[#5A5245]">Contacta por WhatsApp</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600">
-                    <Check className="w-4 h-4 stroke-[3]" />
+                    <Check className="w-4 h-4 stroke-3" />
                   </div>
                   <span className="text-sm sm:text-base font-bold text-[#5A5245]">Sin intermediarios</span>
                 </div>
@@ -180,7 +180,7 @@ export default async function HomePage({ searchParams }: PageProps) {
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
                 <a
                   href="#properties"
-                  className="inline-flex items-center justify-center px-8 py-4 text-sm font-black text-white bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] rounded-2xl shadow-lg shadow-[#1E67AD]/25 hover:opacity-95 hover:scale-[1.02] transition-all duration-200 text-center active:scale-95"
+                  className="inline-flex items-center justify-center px-8 py-4 text-sm font-black text-white bg-linear-to-r from-[#1E67AD] to-[#2A93A6] rounded-2xl shadow-lg shadow-[#1E67AD]/25 hover:opacity-95 hover:scale-[1.02] transition-all duration-200 text-center active:scale-95"
                 >
                   Explorar propiedades
                 </a>
@@ -200,9 +200,9 @@ export default async function HomePage({ searchParams }: PageProps) {
 
             {/* COLUMNA DERECHA - PLACEHOLDER CON GRADIENTE DE MARCA (PREPARADO PARA FUTURA IMAGEN LOCAL) */}
             <div className="lg:col-span-5 flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-md aspect-square overflow-hidden rounded-[2.5rem] border-8 border-white shadow-xl group bg-gradient-to-br from-[#1E67AD] to-[#2A93A6] flex flex-col items-center justify-center p-8 text-white select-none transition-transform duration-500 hover:scale-[1.01]">
+              <div className="relative w-full max-w-md aspect-square overflow-hidden rounded-[2.5rem] border-8 border-white shadow-xl group bg-linear-to-br from-[#1E67AD] to-[#2A93A6] flex flex-col items-center justify-center p-8 text-white select-none transition-transform duration-500 hover:scale-[1.01]">
                 {/* Patrón de cuadrícula suave decorativo */}
-                <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px] opacity-15 pointer-events-none rounded-[2rem]" />
+                <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] bg-size-[16px_16px] opacity-15 pointer-events-none rounded-4xl" />
 
                 {/* Círculo decorativo difuminado interno */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none" />
@@ -214,7 +214,7 @@ export default async function HomePage({ searchParams }: PageProps) {
 
                   <div className="space-y-1">
                     <h3 className="text-xl font-extrabold tracking-tight">Tu Casita Camagüey</h3>
-                    <p className="text-xs font-medium text-white/80 max-w-[240px]">
+                    <p className="text-xs font-medium text-white/80 max-w-60">
                       Encuentra, publica y gestiona propiedades de manera ágil y directa.
                     </p>
                   </div>
@@ -225,7 +225,7 @@ export default async function HomePage({ searchParams }: PageProps) {
                   📍 Camagüey
                 </div>
 
-                <div className="absolute inset-0 ring-1 ring-black/5 rounded-[2rem] pointer-events-none" />
+                <div className="absolute inset-0 ring-1 ring-black/5 rounded-4xl pointer-events-none" />
               </div>
             </div>
 
@@ -239,7 +239,7 @@ export default async function HomePage({ searchParams }: PageProps) {
           <h2 className="text-3xl font-black text-[#5A5245] tracking-tight">
             ¿Qué puedes encontrar en Tu Casita?
           </h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] mx-auto rounded-full" />
+          <div className="w-16 h-1 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] mx-auto rounded-full" />
         </div>
 
         {/* Grid de 7 categorías (Responsivo: 4+3 en Desktop, 2 en Tablet, 1 en Mobile) */}
@@ -266,7 +266,7 @@ export default async function HomePage({ searchParams }: PageProps) {
       </section>
 
       {/* SECCIÓN BUSCADOR UNIFICADO (BAJO EL GRID DE CATEGORÍAS) */}
-      <section className="py-8 bg-gradient-to-b from-transparent to-[#FBF9F5] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-8 bg-linear-to-b from-transparent to-[#FBF9F5] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-5xl mx-auto bg-white rounded-3xl shadow-sm border border-[#E2D8C7]/60 p-4">
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-4">
             {/* Buscador Input */}
@@ -312,7 +312,7 @@ export default async function HomePage({ searchParams }: PageProps) {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                className="flex-1 lg:flex-none bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white font-black text-sm px-6 py-3.5 rounded-2xl transition shadow-md active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+                className="flex-1 lg:flex-none bg-linear-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white font-black text-sm px-6 py-3.5 rounded-2xl transition shadow-md active:scale-95 cursor-pointer flex items-center justify-center gap-2"
               >
                 <Search className="w-4 h-4" />
                 <span>Buscar</span>
@@ -360,7 +360,7 @@ export default async function HomePage({ searchParams }: PageProps) {
             href={getCategoryUrl('all')}
             className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-xs ${
               selectedTypes.length === 0
-                ? 'bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] text-white shadow-md shadow-[#1E67AD]/20'
+                ? 'bg-linear-to-r from-[#1E67AD] to-[#2A93A6] text-white shadow-md shadow-[#1E67AD]/20'
                 : 'bg-white border border-[#E2D8C7]/60 text-[#5A5245] hover:bg-[#F5EFE6] hover:text-[#1E67AD]'
             }`}
           >
@@ -376,7 +376,7 @@ export default async function HomePage({ searchParams }: PageProps) {
                 href={getCategoryUrl(opt.value)}
                 className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-xs flex items-center gap-2 ${
                   isSelected
-                    ? 'bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] text-white shadow-md shadow-[#1E67AD]/20 ring-2 ring-[#1E67AD]/50 ring-offset-1'
+                    ? 'bg-linear-to-r from-[#1E67AD] to-[#2A93A6] text-white shadow-md shadow-[#1E67AD]/20 ring-2 ring-[#1E67AD]/50 ring-offset-1'
                     : 'bg-white border border-[#E2D8C7]/60 text-[#5A5245] hover:bg-[#F5EFE6] hover:text-[#1E67AD]'
                 }`}
               >

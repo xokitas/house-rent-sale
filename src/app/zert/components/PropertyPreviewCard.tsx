@@ -54,7 +54,7 @@ export default function PropertyPreviewCard({
     <div className="bg-white rounded-3xl border border-[#E2D8C7] shadow-lg sticky top-24 overflow-hidden flex flex-col transition-all duration-300 transform hover:shadow-xl">
 
       {/* SECCIÓN CABECERA VISTA PREVIA */}
-      <div className="px-5 py-4 bg-gradient-to-r from-[#1E67AD]/5 to-[#2A93A6]/5 border-b border-[#E8E2D8] flex items-center justify-between">
+      <div className="px-5 py-4 bg-linear-to-r from-[#1E67AD]/5 to-[#2A93A6]/5 border-b border-[#E8E2D8] flex items-center justify-between">
         <span className="text-[10px] font-black text-[#1E67AD] uppercase tracking-wider flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-[#1E67AD] animate-pulse"></span>
           Vista Previa en Tiempo Real
@@ -72,7 +72,7 @@ export default function PropertyPreviewCard({
             <h4 className="text-xs font-black text-[#1E67AD] uppercase tracking-wide">
               Vista previa de la propiedad
             </h4>
-            <p className="text-[10px] text-[#5A5245]/60 font-medium max-w-[200px] leading-relaxed">
+            <p className="text-[10px] text-[#5A5245]/60 font-medium max-w-50 leading-relaxed">
               Las imágenes aparecerán aquí una vez sean cargadas.
             </p>
           </div>
@@ -164,7 +164,7 @@ export default function PropertyPreviewCard({
             </button>
             <button
               type="button"
-              className="px-3 h-8 bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] text-white text-[10px] font-black uppercase rounded-xl transition duration-200 shadow-sm"
+              className="px-3 h-8 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] text-white text-[10px] font-black uppercase rounded-xl transition duration-200 shadow-sm"
             >
               💬 Mensaje
             </button>

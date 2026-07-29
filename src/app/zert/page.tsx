@@ -135,7 +135,7 @@ export default function AdminPage() {
         const compressedBlob = await compressImage(file);
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.webp`;
 
-        const { error } = await supabase.storage
+        const { data, error } = await supabase.storage
           .from('property-images')
           .upload(fileName, compressedBlob, {
             contentType: 'image/webp',
