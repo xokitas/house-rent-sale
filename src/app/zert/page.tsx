@@ -1,9 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Property, PropertyStatus, STATUS_OPTIONS, PRIORITY_OPTIONS } from '@/lib/types';
+import { Property, PropertyStatus } from '@/lib/types';
 import Link from 'next/link';
+
+// NUEVOS SUBCOMPONENTES SEPARADOS
+import PropertyHeader from './components/PropertyHeader';
+import PropertyProgressSteps from './components/PropertyProgressSteps';
+import PropertyBasicInfoCard from './components/PropertyBasicInfoCard';
+import PropertyLocationCard from './components/PropertyLocationCard';
+import PropertyDescriptionCard from './components/PropertyDescriptionCard';
+import PropertyGalleryCard from './components/PropertyGalleryCard';
+import PropertySettingsCard from './components/PropertySettingsCard';
+import PropertyPreviewCard from './components/PropertyPreviewCard';
+import PropertyActionsBar from './components/PropertyActionsBar';
+import RegisteredPropertiesList from './components/RegisteredPropertiesList';
+import Toast from './components/Toast';
 
 export default function AdminPage() {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -13,6 +26,15 @@ export default function AdminPage() {
 
   // FILTRO RÁPIDO PARA LA LISTA DEL ADMIN
   const [adminFilter, setAdminFilter] = useState<string>('all');
+
+  // ESTADO DE TOAST (MENSAJES INTERACTIVOS)
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<'success' | 'info' | 'error' | 'warning'>('info');
+
+  const showToast = useCallback((message: string, type: 'success' | 'info' | 'error' | 'warning' = 'info') => {
+    setToastMessage(message);
+    setToastType(type);
+  }, []);
 
   // ESTADOS DEL FORMULARIO
   const [formData, setFormData] = useState({
@@ -32,12 +54,11 @@ export default function AdminPage() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isSold, setIsSold] = useState<boolean>(false);
 
-  // CARGAR PROPIEDADES AL INICIAR
-  useEffect(() => {
-    fetchProperties();
-  }, []);
+  // REFERENCIA AL FORMULARIO PARA REALIZAR SUBMIT PROGRAMÁTICO DESDE EL HEADER
+  const formRef = useRef<HTMLFormElement>(null);
 
-  async function fetchProperties() {
+  // CARGAR PROPIEDADES AL INICIAR
+  const fetchProperties = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('properties')
@@ -47,17 +68,24 @@ export default function AdminPage() {
 
     if (error) {
       console.error('Error al cargar propiedades:', error);
+      showToast('Error al conectar con la base de datos', 'error');
     } else {
       setProperties(data || []);
     }
     setLoading(false);
-  }
+  }, [showToast]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchProperties();
+  }, [fetchProperties]);
 
   // MANEJO DE ARCHIVOS SELECCIONADOS
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
       setSelectedFiles((prev) => [...prev, ...filesArray]);
+      showToast(`Imágenes añadidas temporalmente (${filesArray.length})`, 'info');
     }
   };
 
@@ -114,7 +142,7 @@ export default function AdminPage() {
           });
 
         if (error) {
-          console.error('Error subiendo imagen:', error);
+          console.error('Error subiendo imagen:', error, data);
           continue;
         }
 
@@ -143,15 +171,18 @@ export default function AdminPage() {
   };
 
   // GUARDAR / ACTUALIZAR PROPIEDAD
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
 
     if (selectedStatuses.length === 0) {
-      alert('Por favor, selecciona al menos una clasificación para la propiedad.');
+      showToast('Por favor, selecciona al menos una clasificación', 'warning');
       return;
     }
 
     setIsProcessing(true);
+    showToast('Subiendo y optimizando imágenes...', 'info');
 
     try {
       const newImageUrls = await uploadImages();
@@ -179,14 +210,14 @@ export default function AdminPage() {
           .eq('id', editingId);
 
         if (error) throw error;
-        alert('✅ Propiedad actualizada con éxito');
+        showToast('✅ Propiedad actualizada con éxito', 'success');
       } else {
         const { error } = await supabase
           .from('properties')
           .insert([propertyData]);
 
         if (error) throw error;
-        alert('✅ Propiedad publicada con éxito');
+        showToast('✅ Propiedad publicada con éxito', 'success');
       }
 
       resetForm();
@@ -195,10 +226,8 @@ export default function AdminPage() {
       console.error('Error al guardar:', err);
       const errorObject = err as { message?: string; details?: string } | null;
       const errorMessage =
-        errorObject?.message ||
-        errorObject?.details ||
-        (typeof err === 'object' && err !== null ? JSON.stringify(err) : String(err));
-      alert(`Error al guardar: ${errorMessage}`);
+        err instanceof Error ? err.message : String(err);
+      showToast(`Error al guardar: ${errorMessage}`, 'error');
     } finally {
       setIsProcessing(false);
     }
@@ -227,6 +256,7 @@ export default function AdminPage() {
     setExistingImages(property.images || []);
     setSelectedFiles([]);
     setIsSold(!!property.is_sold);
+    showToast(`Editando: ${property.title}`, 'info');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -237,15 +267,15 @@ export default function AdminPage() {
     try {
       const { error } = await supabase.from('properties').delete().eq('id', id);
       if (error) throw error;
-      alert('🗑️ Propiedad eliminada');
+      showToast('🗑️ Propiedad eliminada', 'success');
       fetchProperties();
     } catch (err: unknown) {
-      const errorObject = err as { message?: string } | null;
-      alert(`Error al eliminar: ${errorObject?.message || 'Ocurrió un problema'}`);
+      const errorMessage = err instanceof Error ? err.message : 'Ocurrió un problema';
+      showToast(`Error al eliminar: ${errorMessage}`, 'error');
     }
   };
 
-  // RESETEAR FORMULARIO
+  // RESETEAR FORMULARIO (CUMPLE CON LA REGLA DE LOGIC ANTERIOR DE CANCELAR)
   const resetForm = () => {
     setEditingId(null);
     setFormData({
@@ -265,371 +295,188 @@ export default function AdminPage() {
     setIsSold(false);
   };
 
-  // PROPIEDADES FILTRADAS SEGÚN LA PESTAÑA SELECCIONADA EN EL ADMIN
-  const filteredProperties = properties.filter((prop) => {
-    if (adminFilter === 'all') return true;
-    const propStatuses = Array.isArray(prop.status) ? prop.status : [prop.status];
-    return propStatuses.includes(adminFilter as PropertyStatus);
-  });
+  // MANEJAR EL BOTÓN DRAFT (TOAST ÚNICAMENTE VISUAL)
+  const handleSaveDraft = () => {
+    showToast('Esta funcionalidad estará disponible próximamente.', 'info');
+  };
+
+  // MANEJAR FORMULARIO CAMBIOS
+  const handleFormChange = (field: string, value: string | number | boolean) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // ELIMINAR IMAGEN EXISTENTE
+  const removeExistingImage = (idx: number) => {
+    setExistingImages(existingImages.filter((_, i) => i !== idx));
+    showToast('Imagen eliminada de la lista guardada', 'warning');
+  };
+
+  // ELIMINAR ARCHIVO SELECCIONADO
+  const removeSelectedFile = (idx: number) => {
+    setSelectedFiles(selectedFiles.filter((_, i) => i !== idx));
+    showToast('Imagen temporal descartada', 'warning');
+  };
+
+  // PROGRAMATIC SUBMIT DESDE EL HEADER
+  const triggerSubmit = () => {
+    if (formRef.current) {
+      // Usar HTML5 validation
+      const isValid = formRef.current.reportValidity();
+      if (isValid) {
+        handleSubmit();
+      }
+    }
+  };
+
+  // Calcular paso del progreso (solo visual)
+  const calculateStep = () => {
+    if (selectedFiles.length > 0 || existingImages.length > 0) return 3;
+    if (formData.latitude || formData.longitude) return 2;
+    return 1;
+  };
 
   return (
-    <div className="min-h-screen bg-[#FBF9F5] p-4 md:p-8">
-      <div className="max-w-5xl mx-auto space-y-8">
-        
-        {/* CABECERA */}
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#E2D8C7] flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-black text-[#1E67AD]">
-              {editingId ? '📝 Editar Propiedad' : '➕ Publicar Nueva Propiedad'}
-            </h1>
-            <p className="text-xs text-[#5A5245] font-semibold mt-1">
-              Panel de Administración • Tu Casita Camagüey
-            </p>
-          </div>
+    <div className="min-h-screen bg-[#FBF9F5] p-4 md:p-8 space-y-8 select-none">
+      <div className="max-w-7xl mx-auto space-y-8">
 
-          <div className="flex items-center gap-2">
-            <Link
-              href="/"
-              className="px-4 py-2 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
-            >
-              🏠 Ver página principal
-            </Link>
-
-            {editingId && (
-              <button
-                type="button"
-                onClick={resetForm}
-                className="text-xs font-bold text-[#1E67AD] hover:bg-[#E2D8C7] bg-[#F2ECE1] px-3 py-2 rounded-xl transition cursor-pointer"
-              >
-                Cancelar Edición
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* FORMULARIO */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 shadow-sm border border-[#E2D8C7] space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
-            {/* TÍTULO */}
-            <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#1E67AD] uppercase">Título de la publicación</label>
-              <input
-                type="text"
-                required
-                placeholder="Ej. Casa en Reparto Simoni, 3 cuartos"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full text-xs p-3 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/50 focus:outline-none focus:ring-2 focus:ring-[#1E67AD]"
+        {/* LOGO DE LA MARCA PARA MANTENER LA IDENTIDAD DE TU CASITA EN EL PANEL */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative w-10 h-10 shrink-0 flex items-center justify-center bg-[#F2ECE1] rounded-2xl border border-[#E2D8C7] overflow-hidden">
+              <img
+                src="/logo.png"
+                alt="TuCasita Logo"
+                className="w-full h-full object-contain"
               />
             </div>
-
-            {/* PRECIO Y MONEDA */}
-            <div className="grid grid-cols-3 gap-2">
-              <div className="col-span-2 space-y-1">
-                <label className="block text-xs font-bold text-[#1E67AD] uppercase">Precio</label>
-                <input
-                  type="number"
-                  required
-                  placeholder="Ej. 15000"
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  className="w-full text-xs p-3 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/50 focus:outline-none focus:ring-2 focus:ring-[#1E67AD]"
-                />
+            <div className="flex flex-col">
+              <div className="flex items-baseline text-xl font-extrabold tracking-tight leading-none">
+                <span className="text-[#1E67AD]">Tu</span>
+                <span className="text-[#C8976C] relative">
+                  Casita
+                  <span className="absolute -top-1.5 right-4.5 text-[8px] text-[#1E67AD]">♥</span>
+                </span>
               </div>
-              <div className="space-y-1">
-                <label className="block text-xs font-bold text-[#1E67AD] uppercase">Moneda</label>
-                <select
-                  value={formData.currency}
-                  onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                  className="w-full text-xs p-3 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#1E67AD] font-bold focus:outline-none focus:ring-2 focus:ring-[#1E67AD]"
-                >
-                  <option value="USD">USD</option>
-                  <option value="CUP">CUP</option>
-                  <option value="EUR">EUR</option>
-                </select>
-              </div>
-            </div>
-
-            {/* DIRECCIÓN */}
-            <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#1E67AD] uppercase">Dirección / Zona</label>
-              <input
-                type="text"
-                required
-                placeholder="Ej. Calle Avellaneda #123, Camagüey"
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="w-full text-xs p-3 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/50 focus:outline-none focus:ring-2 focus:ring-[#1E67AD]"
-              />
-            </div>
-
-            {/* CONTACTO */}
-            <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#1E67AD] uppercase">Teléfono de contacto / WhatsApp</label>
-              <input
-                type="text"
-                required
-                placeholder="Ej. +5351234567"
-                value={formData.contact}
-                onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                className="w-full text-xs p-3 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/50 focus:outline-none focus:ring-2 focus:ring-[#1E67AD]"
-              />
-            </div>
-
-            {/* LATITUD Y LONGITUD */}
-            <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#1E67AD] uppercase">Latitud (Opcional)</label>
-              <input
-                type="text"
-                placeholder="Ej. 21.3833"
-                value={formData.latitude}
-                onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
-                className="w-full text-xs p-3 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/50 focus:outline-none focus:ring-2 focus:ring-[#1E67AD]"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="block text-xs font-bold text-[#1E67AD] uppercase">Longitud (Opcional)</label>
-              <input
-                type="text"
-                placeholder="Ej. -77.9167"
-                value={formData.longitude}
-                onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
-                className="w-full text-xs p-3 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/50 focus:outline-none focus:ring-2 focus:ring-[#1E67AD]"
-              />
+              <span className="text-[8px] font-black text-[#1E67AD] tracking-[0.2em] uppercase mt-0.5">
+                Panel Administrativo
+              </span>
             </div>
           </div>
 
-          {/* DESCRIPCIÓN */}
-          <div className="space-y-1">
-            <label className="block text-xs font-bold text-[#1E67AD] uppercase">Descripción detallada</label>
-            <textarea
-              rows={4}
-              required
-              placeholder="Describe las características de la propiedad (habitaciones, baño, patio, agua 24h, etc.)..."
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full text-xs p-3 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/50 focus:outline-none focus:ring-2 focus:ring-[#1E67AD]"
-            />
-          </div>
-
-          {/* CLASIFICACIONES */}
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#1E67AD] uppercase">
-              Clasificaciones (Puedes seleccionar varias)
-            </label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {STATUS_OPTIONS.map((opt) => {
-                const isSelected = selectedStatuses.includes(opt.value);
-                return (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => toggleStatus(opt.value)}
-                    className={`p-2.5 rounded-xl border text-xs font-bold transition text-left flex items-center justify-between cursor-pointer ${
-                      isSelected
-                        ? 'border-[#1E67AD] bg-[#F2ECE1] text-[#1E67AD]'
-                        : 'border-[#E2D8C7] bg-white text-[#5A5245] hover:bg-[#FBF9F5]'
-                    }`}
-                  >
-                    <span>{opt.label}</span>
-                    <span className={`w-4 h-4 rounded-md border flex items-center justify-center text-[10px] ${
-                      isSelected ? 'bg-[#1E67AD] border-[#1E67AD] text-white' : 'border-[#E2D8C7] bg-white'
-                    }`}>
-                      {isSelected ? '✓' : ''}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* SELECTOR DE PRIORIDAD */}
-          <div className="p-4 bg-[#F2ECE1]/60 border border-[#C8976C]/40 rounded-2xl space-y-2">
-            <label className="block text-xs font-bold text-[#C8976C] uppercase">
-              👑 Prioridad de Publicación
-            </label>
-            <select
-              value={formData.priority}
-              onChange={(e) => setFormData({ ...formData, priority: Number(e.target.value) })}
-              className="w-full text-xs font-semibold p-3 bg-white border border-[#C8976C]/50 rounded-xl text-[#5A5245] focus:outline-none focus:ring-2 focus:ring-[#C8976C] cursor-pointer"
-            >
-              {PRIORITY_OPTIONS.map((p) => (
-                <option key={p.value} value={p.value}>
-                  {p.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* ESTADO VENDIDA / PERMUTADA */}
-          {editingId && (
-            <div className="p-4 bg-red-50/80 border border-red-200 rounded-2xl flex items-center justify-between">
-              <div>
-                <span className="block text-xs font-bold text-red-900 uppercase">Marcar como Vendida / Permutada</span>
-                <span className="text-[11px] text-red-700 font-medium">Muestra un sello visual en la tarjeta sin borrar los datos</span>
-              </div>
-              <input
-                type="checkbox"
-                checked={isSold}
-                onChange={(e) => setIsSold(e.target.checked)}
-                className="w-5 h-5 rounded text-red-600 focus:ring-red-500 cursor-pointer"
-              />
-            </div>
-          )}
-
-          {/* GESTIÓN DE FOTOS */}
-          <div className="p-4 bg-[#FBF9F5] border border-[#E2D8C7] rounded-2xl space-y-3">
-            <label className="block text-xs font-bold text-[#1E67AD] uppercase">Fotos de la casa</label>
-            
-            {/* Guardadas */}
-            {existingImages.length > 0 && (
-              <div className="space-y-1">
-                <p className="text-xs text-[#5A5245] font-semibold">Fotos guardadas previamente:</p>
-                <div className="flex flex-wrap gap-2">
-                  {existingImages.map((imgUrl, idx) => (
-                    <div key={idx} className="relative group w-16 h-16 rounded-lg overflow-hidden border border-[#E2D8C7]">
-                      <img src={imgUrl} alt="" className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => setExistingImages(existingImages.filter((_, i) => i !== idx))}
-                        className="absolute inset-0 bg-red-600/80 text-white font-bold text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Nuevas */}
-            {selectedFiles.length > 0 && (
-              <div className="space-y-1">
-                <p className="text-xs text-[#1E67AD] font-semibold">Fotos nuevas listas a subir ({selectedFiles.length}):</p>
-                <div className="flex flex-wrap gap-2">
-                  {selectedFiles.map((file, idx) => (
-                    <div key={idx} className="relative group w-16 h-16 rounded-lg overflow-hidden border border-[#1E67AD]">
-                      <img src={URL.createObjectURL(file)} alt="" className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => setSelectedFiles(selectedFiles.filter((_, i) => i !== idx))}
-                        className="absolute inset-0 bg-red-600/80 text-white font-bold text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleFileChange}
-              className="w-full text-xs text-[#5A5245] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-semibold file:bg-[#F2ECE1] file:text-[#1E67AD] hover:file:bg-[#E2D8C7] cursor-pointer"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={isProcessing}
-            className="w-full py-3.5 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white font-bold text-sm rounded-xl transition shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
+          <Link
+            href="/"
+            className="px-4 py-2 bg-[#F2ECE1] hover:bg-[#E2D8C7] text-[#1E67AD] border border-[#E2D8C7] text-xs font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
           >
-            {isProcessing ? 'Procesando e imágenes...' : editingId ? '💾 Guardar Cambios' : '🚀 Publicar Propiedad'}
-          </button>
-        </form>
+            🏠 Ver página principal
+          </Link>
+        </div>
 
-        {/* LISTA Y PESTAÑAS DE CLASIFICACIONES EN EL PANEL ADMIN */}
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#E2D8C7] space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E8E2D8] pb-3">
-            <h2 className="text-lg font-bold text-[#1E67AD]">
-              Propiedades Registradas ({filteredProperties.length})
-            </h2>
-            
-            {/* PESTAÑAS / BOTONES DE FILTRADO EN EL ADMIN */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-              <button
-                onClick={() => setAdminFilter('all')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer shrink-0 ${
-                  adminFilter === 'all'
-                    ? 'bg-[#1E67AD] text-white'
-                    : 'bg-[#F2ECE1] text-[#5A5245] hover:bg-[#E2D8C7]'
-                }`}
-              >
-                Todas ({properties.length})
-              </button>
-              {STATUS_OPTIONS.map((opt) => {
-                const count = properties.filter((p) => {
-                  const st = Array.isArray(p.status) ? p.status : [p.status];
-                  return st.includes(opt.value);
-                }).length;
+        {/* CABECERA CON BOTONES ACCIONES */}
+        <PropertyHeader
+          editingId={editingId}
+          isProcessing={isProcessing}
+          onCancel={resetForm}
+          onSaveDraft={handleSaveDraft}
+          onSubmitForm={triggerSubmit}
+        />
 
-                return (
-                  <button
-                    key={opt.value}
-                    onClick={() => setAdminFilter(opt.value)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer shrink-0 ${
-                      adminFilter === opt.value
-                        ? 'bg-[#1E67AD] text-white'
-                        : 'bg-[#F2ECE1] text-[#5A5245] hover:bg-[#E2D8C7]'
-                    }`}
-                  >
-                    {opt.label} ({count})
-                  </button>
-                );
-              })}
-            </div>
+        {/* INDICADOR DE PROGRESO */}
+        <PropertyProgressSteps currentStep={calculateStep()} />
+
+        {/* FORMULARIO Y VISTA PREVIA RESPONSIVE GRID */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+          {/* COLUMNA FORMULARIO (8 columnas de 12 en escritorio) */}
+          <form
+            ref={formRef}
+            onSubmit={handleSubmit}
+            className="lg:col-span-8 space-y-8"
+          >
+            {/* SECCIÓN 1: INFORMACIÓN BÁSICA Y CATEGORÍAS */}
+            <PropertyBasicInfoCard
+              title={formData.title}
+              price={formData.price}
+              currency={formData.currency}
+              address={formData.address}
+              contact={formData.contact}
+              selectedStatuses={selectedStatuses}
+              onFormChange={handleFormChange}
+              onToggleStatus={toggleStatus}
+            />
+
+            {/* SECCIÓN 2: UBICACIÓN DE LA PROPIEDAD */}
+            <PropertyLocationCard
+              latitude={formData.latitude}
+              longitude={formData.longitude}
+              onFormChange={handleFormChange}
+            />
+
+            {/* SECCIÓN 3: DESCRIPCIÓN DETALLADA */}
+            <PropertyDescriptionCard
+              description={formData.description}
+              onFormChange={handleFormChange}
+            />
+
+            {/* SECCIÓN 4: GALERÍA DE IMÁGENES */}
+            <PropertyGalleryCard
+              existingImages={existingImages}
+              selectedFiles={selectedFiles}
+              onFileChange={handleFileChange}
+              onRemoveExistingImage={removeExistingImage}
+              onRemoveSelectedFile={removeSelectedFile}
+            />
+
+            {/* SECCIÓN 5: CONFIGURACIÓN DE LA PUBLICACIÓN */}
+            <PropertySettingsCard
+              editingId={editingId}
+              priority={formData.priority}
+              isSold={isSold}
+              onFormChange={handleFormChange}
+              onToggleSold={setIsSold}
+            />
+
+            {/* BOTONES FINALES DE ACCIÓN */}
+            <PropertyActionsBar
+              editingId={editingId}
+              isProcessing={isProcessing}
+              onCancel={resetForm}
+              onSaveDraft={handleSaveDraft}
+            />
+          </form>
+
+          {/* COLUMNA VISTA PREVIA (4 columnas de 12 en escritorio - Sticky) */}
+          <div className="lg:col-span-4 lg:sticky lg:top-8 space-y-6">
+            <PropertyPreviewCard
+              formData={formData}
+              selectedStatuses={selectedStatuses}
+              existingImages={existingImages}
+              selectedFiles={selectedFiles}
+              isSold={isSold}
+            />
           </div>
 
-          {loading ? (
-            <p className="text-xs text-[#5A5245] font-medium">Cargando propiedades...</p>
-          ) : filteredProperties.length === 0 ? (
-            <p className="text-xs text-[#5A5245] py-4 text-center font-medium">
-              No hay propiedades en la clasificación seleccionada.
-            </p>
-          ) : (
-            <div className="divide-y divide-[#E8E2D8]">
-              {filteredProperties.map((prop) => (
-                <div key={prop.id} className="py-3 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    {prop.images && prop.images.length > 0 ? (
-                      <img src={prop.images[0]} alt="" className="w-12 h-12 rounded-xl object-cover border border-[#E2D8C7]" />
-                    ) : (
-                      <div className="w-12 h-12 rounded-xl bg-[#F2ECE1] flex items-center justify-center text-xs">🏠</div>
-                    )}
-                    <div>
-                      <h3 className="text-xs font-bold text-[#1E67AD] line-clamp-1">{prop.title}</h3>
-                      <p className="text-[11px] text-[#5A5245] font-semibold">
-                        {prop.price} {prop.currency} • Prioridad {prop.priority || 3} {prop.is_sold ? '• 🔴 VENDIDA' : ''}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handleEdit(prop)}
-                      className="px-3 py-1.5 bg-[#F2ECE1] hover:bg-[#E2D8C7] text-[#1E67AD] text-xs font-bold rounded-lg transition cursor-pointer"
-                    >
-                      ✏️ Editar
-                    </button>
-                    <button
-                      onClick={() => handleDelete(prop.id)}
-                      className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-lg transition cursor-pointer"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
+
+        {/* LISTADO DE PROPIEDADES REGISTRADAS DE SUPABASE */}
+        <RegisteredPropertiesList
+          properties={properties}
+          loading={loading}
+          adminFilter={adminFilter}
+          onFilterChange={setAdminFilter}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
 
       </div>
+
+      {/* TOASTS DE NOTIFICACIÓN */}
+      {toastMessage && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setToastMessage(null)}
+        />
+      )}
     </div>
   );
 }
