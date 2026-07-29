@@ -92,3 +92,32 @@ export const PRIORITY_OPTIONS = [
   { value: 3, label: '🏠 Prioridad 3: Estándar Destacada (Buena Calidad)' },
   { value: 4, label: '📄 Prioridad 4: Estándar Básica' },
 ];
+
+export const CAMAGUEY_MUNICIPALITIES = [
+  'Camagüey',
+  'Carlos Manuel de Céspedes',
+  'Esmeralda',
+  'Florida',
+  'Guáimaro',
+  'Jimaguayú',
+  'Minas',
+  'Najasa',
+  'Nuevitas',
+  'Santa Cruz del Sur',
+  'Sibanicú',
+  'Sierra de Cubitas',
+  'Vertientes',
+];
+
+export const PROPERTY_TYPE_OPTIONS = [
+  'Casa',
+  'Apartamento',
+  'Finca',
+  'Terreno',
+  'Local Comercial',
+  'Hostal',
+  'Habitación',
+  'Edificio',
+  'Solar',
+  'Otro',
+];

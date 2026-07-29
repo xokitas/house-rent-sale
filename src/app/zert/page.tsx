@@ -5,11 +5,16 @@ import { supabase } from '@/lib/supabase';
 import { Property, PropertyStatus } from '@/lib/types';
 import Link from 'next/link';
 
-// NUEVOS SUBCOMPONENTES SEPARADOS
+// SUBCOMPONENTES
 import PropertyHeader from './components/PropertyHeader';
 import PropertyProgressSteps from './components/PropertyProgressSteps';
 import PropertyBasicInfoCard from './components/PropertyBasicInfoCard';
 import PropertyLocationCard from './components/PropertyLocationCard';
+import PropertyStructuralCard from './components/PropertyStructuralCard';
+import PropertyAmenitiesCard from './components/PropertyAmenitiesCard';
+import PropertyHostelFieldsCard from './components/PropertyHostelFieldsCard';
+import PropertyDayPassFieldsCard from './components/PropertyDayPassFieldsCard';
+import PropertyCommercialFieldsCard from './components/PropertyCommercialFieldsCard';
 import PropertyDescriptionCard from './components/PropertyDescriptionCard';
 import PropertyGalleryCard from './components/PropertyGalleryCard';
 import PropertySettingsCard from './components/PropertySettingsCard';
@@ -23,6 +28,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null);
 
   // FILTRO RÁPIDO PARA LA LISTA DEL ADMIN
   const [adminFilter, setAdminFilter] = useState<string>('all');
@@ -47,6 +53,54 @@ export default function AdminPage() {
     latitude: '',
     longitude: '',
     priority: 3, // Prioridad por defecto
+
+    // UBICACIÓN
+    province: 'Camagüey', // Inicializado con Camagüey
+    municipality: '',
+    neighborhood: '',
+
+    // CARACTERÍSTICAS ESTRUCTURALES
+    property_type: '',
+    bedrooms: '',
+    bathrooms: '',
+    living_rooms: '',
+    dining_rooms: '',
+    kitchens: '',
+    indoor_patios: '',
+    outdoor_patios: '',
+    garages: '',
+    terraces: '',
+    balconies: '',
+    portals: '',
+    floors: '',
+    construction_area: '',
+    land_area: '',
+
+    // AMENIDADES
+    amenities: [] as string[],
+
+    // CAMPOS HOSTAL / INTERNACIONAL
+    rooms_available: '',
+    private_bathroom: false,
+    shared_bathroom: false,
+    breakfast: false,
+    lunch: false,
+    dinner: false,
+    airport_pickup: false,
+    check_in: '',
+    check_out: '',
+    languages: [] as string[],
+
+    // CAMPOS PASADÍA / EVENTOS
+    capacity: '',
+    event_schedule: '',
+    music_allowed: false,
+
+    // CAMPOS LOCAL COMERCIAL
+    commercial_front: false,
+    warehouse: false,
+    office: false,
+    industrial_power: false,
   });
 
   const [selectedStatuses, setSelectedStatuses] = useState<PropertyStatus[]>([]);
@@ -201,6 +255,57 @@ export default function AdminPage() {
         longitude: formData.longitude ? Number(formData.longitude) : null,
         is_sold: isSold,
         priority: Number(formData.priority),
+
+        // UBICACIÓN
+        province: formData.province,
+        municipality: formData.municipality || null,
+        neighborhood: formData.neighborhood || null,
+
+        // CARACTERÍSTICAS ESTRUCTURALES
+        property_type: formData.property_type || null,
+        bedrooms: formData.bedrooms ? Number(formData.bedrooms) : 0,
+        bathrooms: formData.bathrooms ? Number(formData.bathrooms) : 0,
+        living_rooms: formData.living_rooms ? Number(formData.living_rooms) : 0,
+        dining_rooms: formData.dining_rooms ? Number(formData.dining_rooms) : 0,
+        kitchens: formData.kitchens ? Number(formData.kitchens) : 0,
+        indoor_patios: formData.indoor_patios ? Number(formData.indoor_patios) : 0,
+        outdoor_patios: formData.outdoor_patios ? Number(formData.outdoor_patios) : 0,
+        garages: formData.garages ? Number(formData.garages) : 0,
+        terraces: formData.terraces ? Number(formData.terraces) : 0,
+        balconies: formData.balconies ? Number(formData.balconies) : 0,
+        portals: formData.portals ? Number(formData.portals) : 0,
+        floors: formData.floors ? Number(formData.floors) : 0,
+        construction_area: formData.construction_area ? Number(formData.construction_area) : null,
+        land_area: formData.land_area ? Number(formData.land_area) : null,
+
+        // AMENIDADES
+        amenities: formData.amenities,
+
+        // HOSTAL / INTERNACIONAL
+        rooms_available: formData.rooms_available ? Number(formData.rooms_available) : null,
+        private_bathroom: formData.private_bathroom,
+        shared_bathroom: formData.shared_bathroom,
+        breakfast: formData.breakfast,
+        lunch: formData.lunch,
+        dinner: formData.dinner,
+        airport_pickup: formData.airport_pickup,
+        check_in: formData.check_in || null,
+        check_out: formData.check_out || null,
+        languages: formData.languages,
+
+        // PASADÍA / EVENTOS
+        capacity: formData.capacity ? Number(formData.capacity) : null,
+        event_schedule: formData.event_schedule || null,
+        music_allowed: formData.music_allowed,
+
+        // LOCAL COMERCIAL
+        commercial_front: formData.commercial_front,
+        warehouse: formData.warehouse,
+        office: formData.office,
+        industrial_power: formData.industrial_power,
+
+        // CONTROL DE ESTADO
+        is_published: editingId ? (editingProperty?.is_published ?? false) : false,
       };
 
       if (editingId) {
@@ -224,7 +329,6 @@ export default function AdminPage() {
       fetchProperties();
     } catch (err: unknown) {
       console.error('Error al guardar:', err);
-      const errorObject = err as { message?: string; details?: string } | null;
       const errorMessage =
         err instanceof Error ? err.message : String(err);
       showToast(`Error al guardar: ${errorMessage}`, 'error');
@@ -236,6 +340,7 @@ export default function AdminPage() {
   // EDICIÓN DE PROPIEDAD
   const handleEdit = (property: Property) => {
     setEditingId(property.id);
+    setEditingProperty(property);
     setFormData({
       title: property.title || '',
       description: property.description || '',
@@ -246,6 +351,54 @@ export default function AdminPage() {
       latitude: property.latitude ? String(property.latitude) : '',
       longitude: property.longitude ? String(property.longitude) : '',
       priority: property.priority || 3,
+
+      // UBICACIÓN
+      province: property.province || 'Camagüey',
+      municipality: property.municipality || '',
+      neighborhood: property.neighborhood || '',
+
+      // CARACTERÍSTICAS ESTRUCTURALES
+      property_type: property.property_type || '',
+      bedrooms: property.bedrooms !== undefined ? String(property.bedrooms) : '',
+      bathrooms: property.bathrooms !== undefined ? String(property.bathrooms) : '',
+      living_rooms: property.living_rooms !== undefined ? String(property.living_rooms) : '',
+      dining_rooms: property.dining_rooms !== undefined ? String(property.dining_rooms) : '',
+      kitchens: property.kitchens !== undefined ? String(property.kitchens) : '',
+      indoor_patios: property.indoor_patios !== undefined ? String(property.indoor_patios) : '',
+      outdoor_patios: property.outdoor_patios !== undefined ? String(property.outdoor_patios) : '',
+      garages: property.garages !== undefined ? String(property.garages) : '',
+      terraces: property.terraces !== undefined ? String(property.terraces) : '',
+      balconies: property.balconies !== undefined ? String(property.balconies) : '',
+      portals: property.portals !== undefined ? String(property.portals) : '',
+      floors: property.floors !== undefined ? String(property.floors) : '',
+      construction_area: property.construction_area !== null && property.construction_area !== undefined ? String(property.construction_area) : '',
+      land_area: property.land_area !== null && property.land_area !== undefined ? String(property.land_area) : '',
+
+      // AMENIDADES
+      amenities: Array.isArray(property.amenities) ? property.amenities : [],
+
+      // CAMPOS HOSTAL / INTERNACIONAL
+      rooms_available: property.rooms_available !== null && property.rooms_available !== undefined ? String(property.rooms_available) : '',
+      private_bathroom: !!property.private_bathroom,
+      shared_bathroom: !!property.shared_bathroom,
+      breakfast: !!property.breakfast,
+      lunch: !!property.lunch,
+      dinner: !!property.dinner,
+      airport_pickup: !!property.airport_pickup,
+      check_in: property.check_in || '',
+      check_out: property.check_out || '',
+      languages: Array.isArray(property.languages) ? property.languages : [],
+
+      // CAMPOS PASADÍA / EVENTOS
+      capacity: property.capacity !== null && property.capacity !== undefined ? String(property.capacity) : '',
+      event_schedule: property.event_schedule || '',
+      music_allowed: !!property.music_allowed,
+
+      // CAMPOS LOCAL COMERCIAL
+      commercial_front: !!property.commercial_front,
+      warehouse: !!property.warehouse,
+      office: !!property.office,
+      industrial_power: !!property.industrial_power,
     });
 
     const statuses = Array.isArray(property.status)
@@ -275,9 +428,10 @@ export default function AdminPage() {
     }
   };
 
-  // RESETEAR FORMULARIO (CUMPLE CON LA REGLA DE LOGIC ANTERIOR DE CANCELAR)
+  // RESETEAR FORMULARIO
   const resetForm = () => {
     setEditingId(null);
+    setEditingProperty(null);
     setFormData({
       title: '',
       description: '',
@@ -288,6 +442,54 @@ export default function AdminPage() {
       latitude: '',
       longitude: '',
       priority: 3,
+
+      // UBICACIÓN
+      province: 'Camagüey',
+      municipality: '',
+      neighborhood: '',
+
+      // CARACTERÍSTICAS ESTRUCTURALES
+      property_type: '',
+      bedrooms: '',
+      bathrooms: '',
+      living_rooms: '',
+      dining_rooms: '',
+      kitchens: '',
+      indoor_patios: '',
+      outdoor_patios: '',
+      garages: '',
+      terraces: '',
+      balconies: '',
+      portals: '',
+      floors: '',
+      construction_area: '',
+      land_area: '',
+
+      // AMENIDADES
+      amenities: [],
+
+      // CAMPOS HOSTAL / INTERNACIONAL
+      rooms_available: '',
+      private_bathroom: false,
+      shared_bathroom: false,
+      breakfast: false,
+      lunch: false,
+      dinner: false,
+      airport_pickup: false,
+      check_in: '',
+      check_out: '',
+      languages: [],
+
+      // CAMPOS PASADÍA / EVENTOS
+      capacity: '',
+      event_schedule: '',
+      music_allowed: false,
+
+      // CAMPOS LOCAL COMERCIAL
+      commercial_front: false,
+      warehouse: false,
+      office: false,
+      industrial_power: false,
     });
     setSelectedStatuses([]);
     setExistingImages([]);
@@ -301,7 +503,7 @@ export default function AdminPage() {
   };
 
   // MANEJAR FORMULARIO CAMBIOS
-  const handleFormChange = (field: string, value: string | number | boolean) => {
+  const handleFormChange = (field: string, value: string | number | boolean | string[]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -406,10 +608,76 @@ export default function AdminPage() {
 
             {/* SECCIÓN 2: UBICACIÓN DE LA PROPIEDAD */}
             <PropertyLocationCard
+              province={formData.province}
+              municipality={formData.municipality}
+              neighborhood={formData.neighborhood}
               latitude={formData.latitude}
               longitude={formData.longitude}
               onFormChange={handleFormChange}
             />
+
+            {/* SECCIÓN 2.5: CARACTERÍSTICAS ESTRUCTURALES */}
+            <PropertyStructuralCard
+              propertyType={formData.property_type}
+              bedrooms={formData.bedrooms}
+              bathrooms={formData.bathrooms}
+              livingRooms={formData.living_rooms}
+              diningRooms={formData.dining_rooms}
+              kitchens={formData.kitchens}
+              indoorPatios={formData.indoor_patios}
+              outdoorPatios={formData.outdoor_patios}
+              garages={formData.garages}
+              terraces={formData.terraces}
+              balconies={formData.balconies}
+              portals={formData.portals}
+              floors={formData.floors}
+              constructionArea={formData.construction_area}
+              landArea={formData.land_area}
+              onFormChange={handleFormChange}
+            />
+
+            {/* SECCIÓN 2.6: AMENIDADES */}
+            <PropertyAmenitiesCard
+              amenities={formData.amenities}
+              onChange={(newAmenities) => handleFormChange('amenities', newAmenities)}
+            />
+
+            {/* CAMPOS CONDICIONALES POR CATEGORÍA */}
+            {selectedStatuses.includes('international_hostel') && (
+              <PropertyHostelFieldsCard
+                roomsAvailable={formData.rooms_available}
+                privateBathroom={formData.private_bathroom}
+                sharedBathroom={formData.shared_bathroom}
+                breakfast={formData.breakfast}
+                lunch={formData.lunch}
+                dinner={formData.dinner}
+                airportPickup={formData.airport_pickup}
+                checkIn={formData.check_in}
+                checkOut={formData.check_out}
+                languages={formData.languages}
+                onFormChange={handleFormChange}
+                onLanguagesChange={(langs) => handleFormChange('languages', langs)}
+              />
+            )}
+
+            {selectedStatuses.includes('day_pass') && (
+              <PropertyDayPassFieldsCard
+                capacity={formData.capacity}
+                eventSchedule={formData.event_schedule}
+                musicAllowed={formData.music_allowed}
+                onFormChange={handleFormChange}
+              />
+            )}
+
+            {selectedStatuses.includes('commercial_space') && (
+              <PropertyCommercialFieldsCard
+                commercialFront={formData.commercial_front}
+                warehouse={formData.warehouse}
+                office={formData.office}
+                industrialPower={formData.industrial_power}
+                onFormChange={handleFormChange}
+              />
+            )}
 
             {/* SECCIÓN 3: DESCRIPCIÓN DETALLADA */}
             <PropertyDescriptionCard
