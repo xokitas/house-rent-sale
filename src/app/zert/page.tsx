@@ -135,7 +135,7 @@ export default function AdminPage() {
         const compressedBlob = await compressImage(file);
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.webp`;
 
-        const { data, error } = await supabase.storage
+        const { error } = await supabase.storage
           .from('property-images')
           .upload(fileName, compressedBlob, {
             contentType: 'image/webp',
@@ -224,6 +224,7 @@ export default function AdminPage() {
       fetchProperties();
     } catch (err: unknown) {
       console.error('Error al guardar:', err);
+      const errorObject = err as { message?: string; details?: string } | null;
       const errorMessage =
         err instanceof Error ? err.message : String(err);
       showToast(`Error al guardar: ${errorMessage}`, 'error');
