@@ -357,6 +357,32 @@ export default function PublicWizardPage() {
     }
   };
 
+  const triggerPropertyNotification = async (
+    propertyId: number,
+  ) => {
+    const { data, error } =
+      await supabase.functions.invoke(
+        'clever-task',
+        {
+          body: {
+            propertyId,
+          },
+        },
+      );
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data?.success) {
+      throw new Error(
+        data?.error || 'Notification failed',
+      );
+    }
+
+    return data;
+  };
+
   // SUBMIT HANDLER
   const handleSubmit = async () => {
     setIsProcessing(true);
@@ -446,7 +472,14 @@ export default function PublicWizardPage() {
 
       // Triggers Telegram notification layer (loosely coupled)
       if (data && data.length > 0) {
-        triggerTelegramNotification(data[0]);
+        try {
+          await triggerPropertyNotification(data[0].id);
+        } catch (notificationError) {
+          console.error(
+            'La propiedad fue guardada, pero falló la notificación:',
+            notificationError,
+          );
+        }
       }
 
       // Success! Clear drafts
@@ -518,7 +551,7 @@ export default function PublicWizardPage() {
               <button
                 type="button"
                 onClick={handleRecoverDraft}
-                className="px-4 py-3 bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] text-white text-xs font-black rounded-xl uppercase tracking-wider shadow-md transition hover:opacity-95 active:scale-95 cursor-pointer"
+                className="px-4 py-3 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] text-white text-xs font-black rounded-xl uppercase tracking-wider shadow-md transition hover:opacity-95 active:scale-95 cursor-pointer"
               >
                 Continuar Borrador
               </button>
@@ -613,7 +646,7 @@ export default function PublicWizardPage() {
                     industrial_power: false,
                   });
                 }}
-                className="px-6 py-3 bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] text-white text-xs font-black uppercase rounded-xl hover:opacity-95 shadow-md transition tracking-widest active:scale-95 cursor-pointer"
+                className="px-6 py-3 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] text-white text-xs font-black uppercase rounded-xl hover:opacity-95 shadow-md transition tracking-widest active:scale-95 cursor-pointer"
               >
                 Publicar otra propiedad
               </button>

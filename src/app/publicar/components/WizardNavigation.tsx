@@ -41,7 +41,7 @@ export default function WizardNavigation({
         type="button"
         onClick={onNext}
         disabled={isProcessing}
-        className="px-6 py-3.5 bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white text-xs font-black uppercase tracking-widest rounded-2xl shadow-md transition-all active:scale-95 disabled:opacity-55 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
+        className="px-6 py-3.5 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white text-xs font-black uppercase tracking-widest rounded-2xl shadow-md transition-all active:scale-95 disabled:opacity-55 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
       >
         {isProcessing ? (
           <>
