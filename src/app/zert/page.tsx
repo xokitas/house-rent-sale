@@ -32,7 +32,7 @@ export default function AdminPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
 
-  // FILTRO RÁPIDO PARA LA LISTA DEL ADMIN
+  // FILTRO RÁPIDO PARA LA LISTA DEL ADMIN ('all', 'published', 'pending')
   const [adminFilter, setAdminFilter] = useState<string>('all');
 
   // ESTADO DE TOAST (MENSAJES INTERACTIVOS)
@@ -54,10 +54,10 @@ export default function AdminPage() {
     contact: '',
     latitude: '',
     longitude: '',
-    priority: 3, // Prioridad por defecto
+    priority: 3,
 
     // UBICACIÓN
-    province: 'Camagüey', // Inicializado con Camagüey
+    province: 'Camagüey',
     municipality: '',
     neighborhood: '',
 
@@ -109,8 +109,8 @@ export default function AdminPage() {
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isSold, setIsSold] = useState<boolean>(false);
+  const [isPublishedState, setIsPublishedState] = useState<boolean>(true); // Por defecto el admin publica directo
 
-  // REFERENCIA AL FORMULARIO PARA REALIZAR SUBMIT PROGRAMÁTICO DESDE EL HEADER
   const formRef = useRef<HTMLFormElement>(null);
 
   // CARGAR PROPIEDADES AL INICIAR
@@ -132,11 +132,26 @@ export default function AdminPage() {
   }, [showToast]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProperties();
   }, [fetchProperties]);
 
-  // MANEJO DE ARCHIVOS SELECCIONADOS
+  // DETECTAR PARÁMETRO EN LA URL (?pending=ID O ?edit=ID) VIENEN DE TELEGRAM
+  useEffect(() => {
+    if (typeof window !== 'undefined' && properties.length > 0) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const pendingId = urlParams.get('pending') || urlParams.get('edit');
+      
+      if (pendingId) {
+        const foundProp = properties.find((p) => String(p.id) === String(pendingId));
+        if (foundProp) {
+          handleEdit(foundProp);
+          showToast(`Cargando solicitud pendiente ID: ${pendingId}`, 'info');
+        }
+      }
+    }
+  }, [properties]);
+
+  // SUBIDA Y COMPRESIÓN DE IMÁGENES
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
@@ -145,7 +160,6 @@ export default function AdminPage() {
     }
   };
 
-  // COMPRESIÓN DE IMÁGENES A WEBP
   const compressImage = (file: File): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -182,7 +196,6 @@ export default function AdminPage() {
     });
   };
 
-  // SUBIDA DE IMÁGENES A SUPABASE BUCKET
   const uploadImages = async (): Promise<string[]> => {
     const uploadedUrls: string[] = [];
 
@@ -217,7 +230,6 @@ export default function AdminPage() {
     return uploadedUrls;
   };
 
-  // SELECCIONAR / DESSELECCIONAR CLASIFICACIONES
   const toggleStatus = (status: PropertyStatus) => {
     if (selectedStatuses.includes(status)) {
       setSelectedStatuses(selectedStatuses.filter((s) => s !== status));
@@ -226,11 +238,31 @@ export default function AdminPage() {
     }
   };
 
+  // FUNCIONALIDAD: APROBAR PUBLICACIÓN DIRECTA
+  const handleApproveProperty = async (propertyId: string) => {
+    try {
+      setIsProcessing(true);
+      const { error } = await supabase
+        .from('properties')
+        .update({ is_published: true })
+        .eq('id', propertyId);
+
+      if (error) throw error;
+
+      showToast('🎉 ¡Propiedad aprobada y publicada exitosamente!', 'success');
+      resetForm();
+      fetchProperties();
+    } catch (err) {
+      console.error('Error aprobando propiedad:', err);
+      showToast('Error al aprobar la propiedad', 'error');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   // GUARDAR / ACTUALIZAR PROPIEDAD
   const handleSubmit = async (e?: React.FormEvent) => {
-    if (e) {
-      e.preventDefault();
-    }
+    if (e) e.preventDefault();
 
     if (selectedStatuses.length === 0) {
       showToast('Por favor, selecciona al menos una clasificación', 'warning');
@@ -238,7 +270,7 @@ export default function AdminPage() {
     }
 
     setIsProcessing(true);
-    showToast('Subiendo y optimizando imágenes...', 'info');
+    showToast('Procesando solicitud e imágenes...', 'info');
 
     try {
       const newImageUrls = await uploadImages();
@@ -263,7 +295,7 @@ export default function AdminPage() {
         municipality: formData.municipality || null,
         neighborhood: formData.neighborhood || null,
 
-        // CARACTERÍSTICAS ESTRUCTURALES
+        // ESTRUCTURALES
         property_type: formData.property_type || null,
         bedrooms: formData.bedrooms ? Number(formData.bedrooms) : 0,
         bathrooms: formData.bathrooms ? Number(formData.bathrooms) : 0,
@@ -283,7 +315,7 @@ export default function AdminPage() {
         // AMENIDADES
         amenities: formData.amenities,
 
-        // HOSTAL / INTERNACIONAL
+        // HOSTAL
         rooms_available: formData.rooms_available ? Number(formData.rooms_available) : null,
         private_bathroom: formData.private_bathroom,
         shared_bathroom: formData.shared_bathroom,
@@ -295,7 +327,7 @@ export default function AdminPage() {
         check_out: formData.check_out || null,
         languages: formData.languages,
 
-        // PASADÍA / EVENTOS
+        // PASADÍA
         capacity: formData.capacity ? Number(formData.capacity) : null,
         event_schedule: formData.event_schedule || null,
         music_allowed: formData.music_allowed,
@@ -306,8 +338,8 @@ export default function AdminPage() {
         office: formData.office,
         industrial_power: formData.industrial_power,
 
-        // CONTROL DE ESTADO
-        is_published: editingId ? (editingProperty?.is_published ?? false) : false,
+        // SI SE GUARDA DESDE EL ADMIN, QUEDA PUBLICADA POR DEFECTO
+        is_published: true,
       };
 
       if (editingId) {
@@ -317,22 +349,21 @@ export default function AdminPage() {
           .eq('id', editingId);
 
         if (error) throw error;
-        showToast('✅ Propiedad actualizada con éxito', 'success');
+        showToast('✅ Propiedad actualizada y aprobada', 'success');
       } else {
         const { error } = await supabase
           .from('properties')
           .insert([propertyData]);
 
         if (error) throw error;
-        showToast('✅ Propiedad publicada con éxito', 'success');
+        showToast('✅ Propiedad guardada y publicada', 'success');
       }
 
       resetForm();
       fetchProperties();
     } catch (err: unknown) {
       console.error('Error al guardar:', err);
-      const errorMessage =
-        err instanceof Error ? err.message : String(err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
       showToast(`Error al guardar: ${errorMessage}`, 'error');
     } finally {
       setIsProcessing(false);
@@ -343,6 +374,7 @@ export default function AdminPage() {
   const handleEdit = (property: Property) => {
     setEditingId(property.id);
     setEditingProperty(property);
+    setIsPublishedState(!!property.is_published);
     setFormData({
       title: property.title || '',
       description: property.description || '',
@@ -354,12 +386,10 @@ export default function AdminPage() {
       longitude: property.longitude ? String(property.longitude) : '',
       priority: property.priority || 3,
 
-      // UBICACIÓN
       province: property.province || 'Camagüey',
       municipality: property.municipality || '',
       neighborhood: property.neighborhood || '',
 
-      // CARACTERÍSTICAS ESTRUCTURALES
       property_type: property.property_type || '',
       bedrooms: property.bedrooms !== undefined ? String(property.bedrooms) : '',
       bathrooms: property.bathrooms !== undefined ? String(property.bathrooms) : '',
@@ -376,10 +406,8 @@ export default function AdminPage() {
       construction_area: property.construction_area !== null && property.construction_area !== undefined ? String(property.construction_area) : '',
       land_area: property.land_area !== null && property.land_area !== undefined ? String(property.land_area) : '',
 
-      // AMENIDADES
       amenities: Array.isArray(property.amenities) ? property.amenities : [],
 
-      // CAMPOS HOSTAL / INTERNACIONAL
       rooms_available: property.rooms_available !== null && property.rooms_available !== undefined ? String(property.rooms_available) : '',
       private_bathroom: !!property.private_bathroom,
       shared_bathroom: !!property.shared_bathroom,
@@ -391,21 +419,17 @@ export default function AdminPage() {
       check_out: property.check_out || '',
       languages: Array.isArray(property.languages) ? property.languages : [],
 
-      // CAMPOS PASADÍA / EVENTOS
       capacity: property.capacity !== null && property.capacity !== undefined ? String(property.capacity) : '',
       event_schedule: property.event_schedule || '',
       music_allowed: !!property.music_allowed,
 
-      // CAMPOS LOCAL COMERCIAL
       commercial_front: !!property.commercial_front,
       warehouse: !!property.warehouse,
       office: !!property.office,
       industrial_power: !!property.industrial_power,
     });
 
-    const statuses = Array.isArray(property.status)
-      ? property.status
-      : [property.status];
+    const statuses = Array.isArray(property.status) ? property.status : [property.status];
 
     setSelectedStatuses(statuses);
     setExistingImages(property.images || []);
@@ -415,7 +439,6 @@ export default function AdminPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // ELIMINAR PROPIEDAD
   const handleDelete = async (id: string) => {
     if (!confirm('¿Estás seguro de que deseas eliminar esta propiedad?')) return;
 
@@ -430,10 +453,10 @@ export default function AdminPage() {
     }
   };
 
-  // RESETEAR FORMULARIO
   const resetForm = () => {
     setEditingId(null);
     setEditingProperty(null);
+    setIsPublishedState(true);
     setFormData({
       title: '',
       description: '',
@@ -445,12 +468,10 @@ export default function AdminPage() {
       longitude: '',
       priority: 3,
 
-      // UBICACIÓN
       province: 'Camagüey',
       municipality: '',
       neighborhood: '',
 
-      // CARACTERÍSTICAS ESTRUCTURALES
       property_type: '',
       bedrooms: '',
       bathrooms: '',
@@ -467,10 +488,8 @@ export default function AdminPage() {
       construction_area: '',
       land_area: '',
 
-      // AMENIDADES
       amenities: [],
 
-      // CAMPOS HOSTAL / INTERNACIONAL
       rooms_available: '',
       private_bathroom: false,
       shared_bathroom: false,
@@ -482,12 +501,10 @@ export default function AdminPage() {
       check_out: '',
       languages: [],
 
-      // CAMPOS PASADÍA / EVENTOS
       capacity: '',
       event_schedule: '',
       music_allowed: false,
 
-      // CAMPOS LOCAL COMERCIAL
       commercial_front: false,
       warehouse: false,
       office: false,
@@ -499,59 +516,49 @@ export default function AdminPage() {
     setIsSold(false);
   };
 
-  // MANEJAR EL BOTÓN DRAFT (TOAST ÚNICAMENTE VISUAL)
   const handleSaveDraft = () => {
     showToast('Esta funcionalidad estará disponible próximamente.', 'info');
   };
 
-  // MANEJAR FORMULARIO CAMBIOS
   const handleFormChange = (field: string, value: string | number | boolean | string[]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // ELIMINAR IMAGEN EXISTENTE
   const removeExistingImage = (idx: number) => {
     setExistingImages(existingImages.filter((_, i) => i !== idx));
     showToast('Imagen eliminada de la lista guardada', 'warning');
   };
 
-  // ELIMINAR ARCHIVO SELECCIONADO
   const removeSelectedFile = (idx: number) => {
     setSelectedFiles(selectedFiles.filter((_, i) => i !== idx));
     showToast('Imagen temporal descartada', 'warning');
   };
 
-  // PROGRAMATIC SUBMIT DESDE EL HEADER
   const triggerSubmit = () => {
     if (formRef.current) {
-      // Usar HTML5 validation
       const isValid = formRef.current.reportValidity();
-      if (isValid) {
-        handleSubmit();
-      }
+      if (isValid) handleSubmit();
     }
   };
 
-  // Calcular paso del progreso (solo visual)
   const calculateStep = () => {
     if (selectedFiles.length > 0 || existingImages.length > 0) return 3;
     if (formData.latitude || formData.longitude) return 2;
     return 1;
   };
 
+  // FILTRAR SOLICITUDES PENDIENTES
+  const pendingProperties = properties.filter((p) => !p.is_published);
+
   return (
     <div className="min-h-screen bg-[#FBF9F5] p-4 md:p-8 space-y-8 select-none">
       <div className="max-w-7xl mx-auto space-y-8">
 
-        {/* LOGO DE LA MARCA PARA MANTENER LA IDENTIDAD DE TU CASITA EN EL PANEL */}
+        {/* LOGO DE LA MARCA DE TU CASITA */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="relative w-10 h-10 shrink-0 flex items-center justify-center bg-[#F2ECE1] rounded-2xl border border-[#E2D8C7] overflow-hidden">
-              <img
-                src="/logo.png"
-                alt="TuCasita Logo"
-                className="w-full h-full object-contain"
-              />
+              <img src="/logo.png" alt="TuCasita Logo" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col">
               <div className="flex items-baseline text-xl font-extrabold tracking-tight leading-none">
@@ -575,7 +582,63 @@ export default function AdminPage() {
           </Link>
         </div>
 
-        {/* CABECERA CON BOTONES ACCIONES */}
+        {/* 🚨 CAJETILLA DESTACADA: PUBLICACIONES PENDIENTES DE APROBACIÓN */}
+        {pendingProperties.length > 0 && (
+          <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-5 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="flex h-3 w-3 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                </span>
+                <h2 className="text-amber-900 text-lg font-black tracking-tight">
+                  ⏳ {pendingProperties.length} Solicitud{pendingProperties.length > 1 ? 'es' : ''} Pendiente{pendingProperties.length > 1 ? 's' : ''} de Aprobación
+                </h2>
+              </div>
+              <span className="text-xs font-bold text-amber-800 bg-amber-200/70 px-3 py-1 rounded-lg">
+                Nuevas desde la Web
+              </span>
+            </div>
+
+            <p className="text-xs text-amber-800">
+              Las siguientes publicaciones fueron enviadas por los usuarios desde el formulario público y requieren revisión antes de aparecer en la página principal:
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
+              {pendingProperties.map((prop) => (
+                <div
+                  key={prop.id}
+                  className="bg-white border border-amber-200 rounded-xl p-3 shadow-xs hover:border-amber-400 transition flex flex-col justify-between gap-3"
+                >
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-sm line-clamp-1">{prop.title}</h3>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      📍 {prop.neighborhood || prop.municipality || 'Camagüey'} • {prop.price} {prop.currency}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleEdit(prop)}
+                      className="flex-1 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold rounded-lg transition"
+                    >
+                      ✏️ Revisar / Editar
+                    </button>
+                    <button
+                      onClick={() => handleApproveProperty(prop.id)}
+                      disabled={isProcessing}
+                      className="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition shadow-xs"
+                    >
+                      ✅ Aprobar Directo
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* CABECERA Y ACCIONES DE EDICIÓN */}
         <PropertyHeader
           editingId={editingId}
           isProcessing={isProcessing}
@@ -584,19 +647,19 @@ export default function AdminPage() {
           onSubmitForm={triggerSubmit}
         />
 
+        {/* AVISO SI SE ESTÁ REVISANDO UNA PROPIEDAD PENDIENTE */}
+        {editingId && !isPublishedState && (
+          <div className="bg-blue-50 border border-blue-200 text-blue-900 text-xs font-semibold p-4 rounded-xl flex items-center justify-between">
+            <span>ℹ️ Estás revisando una solicitud pendiente. Al hacer clic en <strong>Guardar Cambios</strong>, la propiedad quedará aprobada y publicada automáticamente.</span>
+          </div>
+        )}
+
         {/* INDICADOR DE PROGRESO */}
         <PropertyProgressSteps currentStep={calculateStep()} />
 
-        {/* FORMULARIO Y VISTA PREVIA RESPONSIVE GRID */}
+        {/* GRID PRINCIPAL DEL FORMULARIO Y PREVIEW */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-
-          {/* COLUMNA FORMULARIO (8 columnas de 12 en escritorio) */}
-          <form
-            ref={formRef}
-            onSubmit={handleSubmit}
-            className="lg:col-span-8 space-y-8"
-          >
-            {/* SECCIÓN 1: INFORMACIÓN BÁSICA Y CATEGORÍAS */}
+          <form ref={formRef} onSubmit={handleSubmit} className="lg:col-span-8 space-y-8">
             <PropertyBasicInfoCard
               title={formData.title}
               price={formData.price}
@@ -608,7 +671,6 @@ export default function AdminPage() {
               onToggleStatus={toggleStatus}
             />
 
-            {/* SECCIÓN 2: UBICACIÓN DE LA PROPIEDAD */}
             <PropertyLocationCard
               province={formData.province}
               municipality={formData.municipality}
@@ -618,7 +680,6 @@ export default function AdminPage() {
               onFormChange={handleFormChange}
             />
 
-            {/* SECCIÓN 2.5: CARACTERÍSTICAS ESTRUCTURALES */}
             <PropertyStructuralCard
               propertyType={formData.property_type}
               bedrooms={formData.bedrooms}
@@ -638,13 +699,11 @@ export default function AdminPage() {
               onFormChange={handleFormChange}
             />
 
-            {/* SECCIÓN 2.6: AMENIDADES */}
             <PropertyAmenitiesCard
               amenities={formData.amenities}
               onChange={(newAmenities) => handleFormChange('amenities', newAmenities)}
             />
 
-            {/* CAMPOS CONDICIONALES POR CATEGORÍA */}
             {selectedStatuses.includes('international_hostel') && (
               <PropertyHostelFieldsCard
                 roomsAvailable={formData.rooms_available}
@@ -681,13 +740,11 @@ export default function AdminPage() {
               />
             )}
 
-            {/* SECCIÓN 3: DESCRIPCIÓN DETALLADA */}
             <PropertyDescriptionCard
               description={formData.description}
               onFormChange={handleFormChange}
             />
 
-            {/* SECCIÓN 4: GALERÍA DE IMÁGENES */}
             <PropertyGalleryCard
               existingImages={existingImages}
               selectedFiles={selectedFiles}
@@ -696,7 +753,6 @@ export default function AdminPage() {
               onRemoveSelectedFile={removeSelectedFile}
             />
 
-            {/* SECCIÓN 5: CONFIGURACIÓN DE LA PUBLICACIÓN */}
             <PropertySettingsCard
               editingId={editingId}
               priority={formData.priority}
@@ -705,7 +761,6 @@ export default function AdminPage() {
               onToggleSold={setIsSold}
             />
 
-            {/* BOTONES FINALES DE ACCIÓN */}
             <PropertyActionsBar
               editingId={editingId}
               isProcessing={isProcessing}
@@ -714,7 +769,6 @@ export default function AdminPage() {
             />
           </form>
 
-          {/* COLUMNA VISTA PREVIA (4 columnas de 12 en escritorio - Sticky) */}
           <div className="lg:col-span-4 lg:sticky lg:top-8 space-y-6">
             <PropertyPreviewCard
               formData={formData}
@@ -724,10 +778,9 @@ export default function AdminPage() {
               isSold={isSold}
             />
           </div>
-
         </div>
 
-        {/* LISTADO DE PROPIEDADES REGISTRADAS DE SUPABASE */}
+        {/* TABLA O LISTADO DE PROPIEDADES COMPLETO */}
         <RegisteredPropertiesList
           properties={properties}
           loading={loading}
@@ -736,16 +789,10 @@ export default function AdminPage() {
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
-
       </div>
 
-      {/* TOASTS DE NOTIFICACIÓN */}
       {toastMessage && (
-        <Toast
-          message={toastMessage}
-          type={toastType}
-          onClose={() => setToastMessage(null)}
-        />
+        <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
       )}
     </div>
   );
