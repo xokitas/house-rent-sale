@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Property, PropertyStatus, STATUS_OPTIONS, PRIORITY_OPTIONS } from '@/lib/types';
+import Link from 'next/link';
 
 export default function AdminPage() {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -36,7 +37,7 @@ export default function AdminPage() {
     fetchProperties();
   }, []);
 
-  const fetchProperties = async () => {
+  async function fetchProperties() {
     setLoading(true);
     const { data, error } = await supabase
       .from('properties')
@@ -50,7 +51,7 @@ export default function AdminPage() {
       setProperties(data || []);
     }
     setLoading(false);
-  };
+  }
 
   // MANEJO DE ARCHIVOS SELECCIONADOS
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +107,7 @@ export default function AdminPage() {
         const compressedBlob = await compressImage(file);
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.webp`;
 
-        const { data, error } = await supabase.storage
+        const { error } = await supabase.storage
           .from('property-images')
           .upload(fileName, compressedBlob, {
             contentType: 'image/webp',
@@ -190,12 +191,13 @@ export default function AdminPage() {
 
       resetForm();
       fetchProperties();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error al guardar:', err);
+      const errorObject = err as { message?: string; details?: string } | null;
       const errorMessage =
-        err?.message ||
-        err?.details ||
-        (typeof err === 'object' ? JSON.stringify(err) : String(err));
+        errorObject?.message ||
+        errorObject?.details ||
+        (typeof err === 'object' && err !== null ? JSON.stringify(err) : String(err));
       alert(`Error al guardar: ${errorMessage}`);
     } finally {
       setIsProcessing(false);
@@ -237,8 +239,9 @@ export default function AdminPage() {
       if (error) throw error;
       alert('🗑️ Propiedad eliminada');
       fetchProperties();
-    } catch (err: any) {
-      alert(`Error al eliminar: ${err?.message || 'Ocurrió un problema'}`);
+    } catch (err: unknown) {
+      const errorObject = err as { message?: string } | null;
+      alert(`Error al eliminar: ${errorObject?.message || 'Ocurrió un problema'}`);
     }
   };
 
@@ -285,12 +288,12 @@ export default function AdminPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <a
+            <Link
               href="/"
               className="px-4 py-2 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
             >
               🏠 Ver página principal
-            </a>
+            </Link>
 
             {editingId && (
               <button
