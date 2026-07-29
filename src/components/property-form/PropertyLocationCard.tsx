@@ -10,6 +10,7 @@ interface PropertyLocationCardProps {
   latitude: string;
   longitude: string;
   onFormChange: (field: string, value: string) => void;
+  isPublicWizard?: boolean; // Optional prop to lock province or style slightly differently
 }
 
 export default function PropertyLocationCard({
@@ -19,6 +20,7 @@ export default function PropertyLocationCard({
   latitude,
   longitude,
   onFormChange,
+  isPublicWizard = false,
 }: PropertyLocationCardProps) {
   return (
     <div className="bg-white rounded-3xl p-6 border border-[#E2D8C7] shadow-sm space-y-6 animate-in fade-in duration-300">
@@ -29,7 +31,9 @@ export default function PropertyLocationCard({
           <span>📍</span> Ubicación de la Propiedad
         </h3>
         <p className="text-[11px] text-[#5A5245] font-semibold mt-1">
-          Define la provincia, municipio, barrio o reparto, así como las coordenadas geográficas aproximadas.
+          {isPublicWizard
+            ? 'Indica el municipio, reparto o barrio donde se encuentra tu propiedad en Camagüey.'
+            : 'Define la provincia, municipio, barrio o reparto, así como las coordenadas geográficas aproximadas.'}
         </p>
       </div>
 
@@ -43,7 +47,7 @@ export default function PropertyLocationCard({
           <input
             type="text"
             disabled
-            value={province}
+            value={province || 'Camagüey'}
             className="w-full text-xs p-3.5 bg-[#E8E2D8]/40 border border-[#E2D8C7] rounded-xl text-[#5A5245]/70 font-bold select-none focus:outline-none cursor-not-allowed"
           />
         </div>
@@ -51,10 +55,11 @@ export default function PropertyLocationCard({
         {/* MUNICIPIO (SELECT) */}
         <div className="space-y-1.5">
           <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
-            Municipio
+            Municipio <span className="text-[#1E67AD]">*</span>
           </label>
           <select
             value={municipality}
+            required
             onChange={(e) => onFormChange('municipality', e.target.value)}
             className="w-full text-xs p-[13.5px] bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200 cursor-pointer"
           >
@@ -70,10 +75,11 @@ export default function PropertyLocationCard({
         {/* REPARTO / BARRIO (TEXT LIBRE) */}
         <div className="space-y-1.5">
           <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
-            Reparto / Barrio
+            Reparto / Barrio <span className="text-[#1E67AD]">*</span>
           </label>
           <input
             type="text"
+            required
             placeholder="Ej. Reparto Simoni"
             value={neighborhood}
             onChange={(e) => onFormChange('neighborhood', e.target.value)}

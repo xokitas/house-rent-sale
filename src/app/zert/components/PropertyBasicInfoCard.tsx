@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { PropertyStatus, STATUS_OPTIONS } from '@/lib/types';
-import PropertyCategoryCard from './PropertyCategoryCard';
+import PropertyCategoryCard from '@/components/property-form/PropertyCategoryCard';
 
 interface PropertyBasicInfoCardProps {
   title: string;

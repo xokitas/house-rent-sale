@@ -5,9 +5,7 @@
 ▲ Next.js 16.2.10 (Turbopack)
 - Local:         http://localhost:3000
 - Network:       http://192.168.0.2:3000
-- Environments: .env.local
-✓ Ready in 613ms
+✓ Ready in 586ms
 
-○ Compiling /zert ...
- GET /zert 200 in 6.6s (next.js: 5.8s, application-code: 768ms)
- GET /zert 200 in 104ms (next.js: 6ms, application-code: 98ms)
+ GET /publicar 200 in 2.0s (next.js: 1428ms, application-code: 599ms)
+ GET /publicar 200 in 87ms (next.js: 6ms, application-code: 80ms)
