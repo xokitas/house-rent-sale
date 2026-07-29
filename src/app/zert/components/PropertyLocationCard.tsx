@@ -1,14 +1,21 @@
 'use client';
 
 import React from 'react';
+import { CAMAGUEY_MUNICIPALITIES } from '@/lib/types';
 
 interface PropertyLocationCardProps {
+  province: string;
+  municipality: string;
+  neighborhood: string;
   latitude: string;
   longitude: string;
   onFormChange: (field: string, value: string) => void;
 }
 
 export default function PropertyLocationCard({
+  province,
+  municipality,
+  neighborhood,
   latitude,
   longitude,
   onFormChange,
@@ -22,12 +29,61 @@ export default function PropertyLocationCard({
           <span>📍</span> Ubicación de la Propiedad
         </h3>
         <p className="text-[11px] text-[#5A5245] font-semibold mt-1">
-          Introduce las coordenadas geográficas aproximadas para que los compradores puedan ver la zona en el mapa.
+          Define la provincia, municipio, barrio o reparto, así como las coordenadas geográficas aproximadas.
         </p>
       </div>
 
-      {/* COORDENADAS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* CAMPOS DE DIRECCIÓN GEOGRÁFICA */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* PROVINCIA (DESHABILITADA) */}
+        <div className="space-y-1.5">
+          <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
+            Provincia
+          </label>
+          <input
+            type="text"
+            disabled
+            value={province}
+            className="w-full text-xs p-3.5 bg-[#E8E2D8]/40 border border-[#E2D8C7] rounded-xl text-[#5A5245]/70 font-bold select-none focus:outline-none cursor-not-allowed"
+          />
+        </div>
+
+        {/* MUNICIPIO (SELECT) */}
+        <div className="space-y-1.5">
+          <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
+            Municipio
+          </label>
+          <select
+            value={municipality}
+            onChange={(e) => onFormChange('municipality', e.target.value)}
+            className="w-full text-xs p-[13.5px] bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200 cursor-pointer"
+          >
+            <option value="">Seleccione un municipio</option>
+            {CAMAGUEY_MUNICIPALITIES.map((mun) => (
+              <option key={mun} value={mun}>
+                {mun}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* REPARTO / BARRIO (TEXT LIBRE) */}
+        <div className="space-y-1.5">
+          <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
+            Reparto / Barrio
+          </label>
+          <input
+            type="text"
+            placeholder="Ej. Reparto Simoni"
+            value={neighborhood}
+            onChange={(e) => onFormChange('neighborhood', e.target.value)}
+            className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200"
+          />
+        </div>
+      </div>
+
+      {/* COORDENADAS (LATITUD Y LONGITUD) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#E8E2D8]/60">
         <div className="space-y-1.5">
           <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
             Latitud (Opcional)
