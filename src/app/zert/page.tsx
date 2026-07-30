@@ -6,7 +6,6 @@ import { Property, PropertyStatus } from '@/lib/types';
 import Link from 'next/link';
 
 // SUBCOMPONENTES (EXCLUSIVOS DEL ADMIN)
-import PropertyHeader from './components/PropertyHeader';
 import PropertyProgressSteps from './components/PropertyProgressSteps';
 import PropertyBasicInfoCard from './components/PropertyBasicInfoCard';
 import PropertySettingsCard from './components/PropertySettingsCard';
@@ -35,6 +34,15 @@ export default function AdminPage() {
   // FILTRO RÁPIDO PARA LA LISTA DEL ADMIN ('all', 'published', 'pending')
   const [adminFilter, setAdminFilter] = useState<string>('all');
 
+  // NAVEGACIÓN ACTIVA DEL SIDEBAR
+  const [activeView, setActiveView] = useState<'dashboard' | 'new_property' | 'all_properties' | 'pending' | 'featured' | 'sold' | 'extras'>('dashboard');
+
+  // ESTADO DE MENÚ MÓVIL
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // ESTADO DE SCROLL PARA SOMBRA EN HEADER
+  const [isScrolled, setIsScrolled] = useState(false);
+
   // ESTADO DE TOAST (MENSAJES INTERACTIVOS)
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<'success' | 'info' | 'error' | 'warning'>('info');
@@ -42,6 +50,19 @@ export default function AdminPage() {
   const showToast = useCallback((message: string, type: 'success' | 'info' | 'error' | 'warning' = 'info') => {
     setToastMessage(message);
     setToastType(type);
+  }, []);
+
+  // DETECTAR DESPLAZAMIENTO PARA LA SOMBRA DEL HEADER
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // ESTADOS DEL FORMULARIO
@@ -113,6 +134,76 @@ export default function AdminPage() {
 
   const formRef = useRef<HTMLFormElement>(null);
 
+  // EDICIÓN DE PROPIEDAD
+  const handleEdit = (property: Property) => {
+    setActiveView('new_property'); // Cambia a la vista del formulario
+    setEditingId(property.id);
+    setEditingProperty(property);
+    setIsPublishedState(!!property.is_published);
+    setFormData({
+      title: property.title || '',
+      description: property.description || '',
+      price: property.price ? String(property.price) : '',
+      currency: property.currency || 'USD',
+      address: property.address || '',
+      contact: property.contact || '',
+      latitude: property.latitude ? String(property.latitude) : '',
+      longitude: property.longitude ? String(property.longitude) : '',
+      priority: property.priority || 3,
+
+      province: property.province || 'Camagüey',
+      municipality: property.municipality || '',
+      neighborhood: property.neighborhood || '',
+
+      property_type: property.property_type || '',
+      bedrooms: property.bedrooms !== undefined ? String(property.bedrooms) : '',
+      bathrooms: property.bathrooms !== undefined ? String(property.bathrooms) : '',
+      living_rooms: property.living_rooms !== undefined ? String(property.living_rooms) : '',
+      dining_rooms: property.dining_rooms !== undefined ? String(property.dining_rooms) : '',
+      kitchens: property.kitchens !== undefined ? String(property.kitchens) : '',
+      indoor_patios: property.indoor_patios !== undefined ? String(property.indoor_patios) : '',
+      outdoor_patios: property.outdoor_patios !== undefined ? String(property.outdoor_patios) : '',
+      garages: property.garages !== undefined ? String(property.garages) : '',
+      terraces: property.terraces !== undefined ? String(property.terraces) : '',
+      balconies: property.balconies !== undefined ? String(property.balconies) : '',
+      portals: property.portals !== undefined ? String(property.portals) : '',
+      floors: property.floors !== undefined ? String(property.floors) : '',
+      construction_area: property.construction_area !== null && property.construction_area !== undefined ? String(property.construction_area) : '',
+      land_area: property.land_area !== null && property.land_area !== undefined ? String(property.land_area) : '',
+
+      amenities: Array.isArray(property.amenities) ? property.amenities : [],
+
+      rooms_available: property.rooms_available !== null && property.rooms_available !== undefined ? String(property.rooms_available) : '',
+      private_bathroom: !!property.private_bathroom,
+      shared_bathroom: !!property.shared_bathroom,
+      breakfast: !!property.breakfast,
+      lunch: !!property.lunch,
+      dinner: !!property.dinner,
+      airport_pickup: !!property.airport_pickup,
+      check_in: property.check_in || '',
+      check_out: property.check_out || '',
+      languages: Array.isArray(property.languages) ? property.languages : [],
+
+      capacity: property.capacity !== null && property.capacity !== undefined ? String(property.capacity) : '',
+      event_schedule: property.event_schedule || '',
+      music_allowed: !!property.music_allowed,
+
+      commercial_front: !!property.commercial_front,
+      warehouse: !!property.warehouse,
+      office: !!property.office,
+      industrial_power: !!property.industrial_power,
+    });
+
+    const statuses = Array.isArray(property.status) ? property.status : [property.status];
+
+    setSelectedStatuses(statuses);
+    setExistingImages(property.images || []);
+    setSelectedFiles([]);
+    setIsSold(!!property.is_sold);
+    showToast(`Editando: ${property.title}`, 'info');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   // CARGAR PROPIEDADES AL INICIAR
   const fetchProperties = useCallback(async () => {
     setLoading(true);
@@ -132,24 +223,32 @@ export default function AdminPage() {
   }, [showToast]);
 
   useEffect(() => {
-    fetchProperties();
+    const timer = setTimeout(() => {
+      fetchProperties();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [fetchProperties]);
 
   // DETECTAR PARÁMETRO EN LA URL (?pending=ID O ?edit=ID) VIENEN DE TELEGRAM
+  const urlProcessedRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (typeof window !== 'undefined' && properties.length > 0) {
       const urlParams = new URLSearchParams(window.location.search);
       const pendingId = urlParams.get('pending') || urlParams.get('edit');
       
-      if (pendingId) {
+      if (pendingId && urlProcessedRef.current !== pendingId) {
         const foundProp = properties.find((p) => String(p.id) === String(pendingId));
         if (foundProp) {
-          handleEdit(foundProp);
-          showToast(`Cargando solicitud pendiente ID: ${pendingId}`, 'info');
+          urlProcessedRef.current = pendingId;
+          setTimeout(() => {
+            handleEdit(foundProp);
+            showToast(`Cargando solicitud pendiente ID: ${pendingId}`, 'info');
+          }, 0);
         }
       }
     }
-  }, [properties]);
+  }, [properties, showToast]);
 
   // SUBIDA Y COMPRESIÓN DE IMÁGENES
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -370,75 +469,6 @@ export default function AdminPage() {
     }
   };
 
-  // EDICIÓN DE PROPIEDAD
-  const handleEdit = (property: Property) => {
-    setEditingId(property.id);
-    setEditingProperty(property);
-    setIsPublishedState(!!property.is_published);
-    setFormData({
-      title: property.title || '',
-      description: property.description || '',
-      price: property.price ? String(property.price) : '',
-      currency: property.currency || 'USD',
-      address: property.address || '',
-      contact: property.contact || '',
-      latitude: property.latitude ? String(property.latitude) : '',
-      longitude: property.longitude ? String(property.longitude) : '',
-      priority: property.priority || 3,
-
-      province: property.province || 'Camagüey',
-      municipality: property.municipality || '',
-      neighborhood: property.neighborhood || '',
-
-      property_type: property.property_type || '',
-      bedrooms: property.bedrooms !== undefined ? String(property.bedrooms) : '',
-      bathrooms: property.bathrooms !== undefined ? String(property.bathrooms) : '',
-      living_rooms: property.living_rooms !== undefined ? String(property.living_rooms) : '',
-      dining_rooms: property.dining_rooms !== undefined ? String(property.dining_rooms) : '',
-      kitchens: property.kitchens !== undefined ? String(property.kitchens) : '',
-      indoor_patios: property.indoor_patios !== undefined ? String(property.indoor_patios) : '',
-      outdoor_patios: property.outdoor_patios !== undefined ? String(property.outdoor_patios) : '',
-      garages: property.garages !== undefined ? String(property.garages) : '',
-      terraces: property.terraces !== undefined ? String(property.terraces) : '',
-      balconies: property.balconies !== undefined ? String(property.balconies) : '',
-      portals: property.portals !== undefined ? String(property.portals) : '',
-      floors: property.floors !== undefined ? String(property.floors) : '',
-      construction_area: property.construction_area !== null && property.construction_area !== undefined ? String(property.construction_area) : '',
-      land_area: property.land_area !== null && property.land_area !== undefined ? String(property.land_area) : '',
-
-      amenities: Array.isArray(property.amenities) ? property.amenities : [],
-
-      rooms_available: property.rooms_available !== null && property.rooms_available !== undefined ? String(property.rooms_available) : '',
-      private_bathroom: !!property.private_bathroom,
-      shared_bathroom: !!property.shared_bathroom,
-      breakfast: !!property.breakfast,
-      lunch: !!property.lunch,
-      dinner: !!property.dinner,
-      airport_pickup: !!property.airport_pickup,
-      check_in: property.check_in || '',
-      check_out: property.check_out || '',
-      languages: Array.isArray(property.languages) ? property.languages : [],
-
-      capacity: property.capacity !== null && property.capacity !== undefined ? String(property.capacity) : '',
-      event_schedule: property.event_schedule || '',
-      music_allowed: !!property.music_allowed,
-
-      commercial_front: !!property.commercial_front,
-      warehouse: !!property.warehouse,
-      office: !!property.office,
-      industrial_power: !!property.industrial_power,
-    });
-
-    const statuses = Array.isArray(property.status) ? property.status : [property.status];
-
-    setSelectedStatuses(statuses);
-    setExistingImages(property.images || []);
-    setSelectedFiles([]);
-    setIsSold(!!property.is_sold);
-    showToast(`Editando: ${property.title}`, 'info');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   const handleDelete = async (id: string) => {
     if (!confirm('¿Estás seguro de que deseas eliminar esta propiedad?')) return;
 
@@ -514,6 +544,7 @@ export default function AdminPage() {
     setExistingImages([]);
     setSelectedFiles([]);
     setIsSold(false);
+    setActiveView('dashboard'); // Vuelve al dashboard al cancelar
   };
 
   const handleSaveDraft = () => {
@@ -550,16 +581,85 @@ export default function AdminPage() {
   // FILTRAR SOLICITUDES PENDIENTES
   const pendingProperties = properties.filter((p) => !p.is_published);
 
-  return (
-    <div className="min-h-screen bg-[#FBF9F5] p-4 md:p-8 space-y-8 select-none">
-      <div className="max-w-7xl mx-auto space-y-8">
+  // CONFIGURACIÓN DE ITEMS DE NAVEGACIÓN
+  interface NavigationItem {
+    id: 'dashboard' | 'new_property' | 'all_properties' | 'pending' | 'featured' | 'sold' | 'extras';
+    label: string;
+    icon: string;
+    showBadge?: boolean;
+  }
 
-        {/* LOGO DE LA MARCA DE TU CASITA */}
-        <div className="flex items-center justify-between">
+  const navigationItems: NavigationItem[] = [
+    { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
+    { id: 'new_property', label: 'Nueva publicación', icon: '➕' },
+    { id: 'all_properties', label: 'Todas las propiedades', icon: '📋' },
+    { id: 'pending', label: 'Publicaciones pendientes', icon: '⏳', showBadge: true },
+    { id: 'featured', label: 'Destacadas', icon: '⭐' },
+    { id: 'sold', label: 'Vendidas', icon: '🏷️' },
+    { id: 'extras', label: 'Extras', icon: '🚧' },
+  ];
+
+  // RENDERIZADOR CONTENIDO DEL SIDEBAR (REUTILIZABLE)
+  const renderSidebarContent = () => (
+    <nav className="space-y-1.5">
+      {navigationItems.map((item) => {
+        const isActive = activeView === item.id;
+        return (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => {
+              setActiveView(item.id);
+              setIsMobileMenuOpen(false);
+            }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+              isActive
+                ? 'bg-[#1E67AD] text-white shadow-md shadow-[#1E67AD]/10 font-extrabold'
+                : 'text-[#5A5245] hover:text-[#1E67AD] hover:bg-[#F2ECE1]/50 bg-transparent'
+            }`}
+          >
+            <span className="text-sm shrink-0">{item.icon}</span>
+            <span>{item.label}</span>
+
+            {item.showBadge && pendingProperties.length > 0 && (
+              <span className={`ml-auto px-2 py-0.5 text-[9px] font-black rounded-lg leading-none ${
+                isActive
+                  ? 'bg-white text-[#1E67AD]'
+                  : 'bg-amber-100 text-amber-800 border border-amber-200'
+              }`}>
+                {pendingProperties.length}
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </nav>
+  );
+
+  return (
+    <div className="min-h-screen bg-[#FBF9F5] select-none flex flex-col">
+
+      {/* 1. HEADER COHESIVO Y UNIFICADO SAAS */}
+      <header className={`sticky top-0 z-40 bg-white transition-all duration-200 ${
+        isScrolled ? 'shadow-md border-b border-[#E2D8C7]/80' : 'shadow-xs border-b border-[#E2D8C7]'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+
+          {/* LOGO DE LA MARCA DE TU CASITA Y MENÚ MÓVIL */}
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 hover:bg-[#F2ECE1] rounded-xl text-[#1E67AD] transition active:scale-95 text-base cursor-pointer"
+              title="Abrir menú"
+            >
+              ☰
+            </button>
+
             <div className="relative w-10 h-10 shrink-0 flex items-center justify-center bg-[#F2ECE1] rounded-2xl border border-[#E2D8C7] overflow-hidden">
               <img src="/logo.png" alt="TuCasita Logo" className="w-full h-full object-contain" />
             </div>
+
             <div className="flex flex-col">
               <div className="flex items-baseline text-xl font-extrabold tracking-tight leading-none">
                 <span className="text-[#1E67AD]">Tu</span>
@@ -574,221 +674,481 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <Link
-            href="/"
-            className="px-4 py-2 bg-[#F2ECE1] hover:bg-[#E2D8C7] text-[#1E67AD] border border-[#E2D8C7] text-xs font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
-          >
-            🏠 Ver página principal
-          </Link>
-        </div>
-
-        {/* 🚨 CAJETILLA DESTACADA: PUBLICACIONES PENDIENTES DE APROBACIÓN */}
-        {pendingProperties.length > 0 && (
-          <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-5 shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="flex h-3 w-3 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
-                </span>
-                <h2 className="text-amber-900 text-lg font-black tracking-tight">
-                  ⏳ {pendingProperties.length} Solicitud{pendingProperties.length > 1 ? 'es' : ''} Pendiente{pendingProperties.length > 1 ? 's' : ''} de Aprobación
-                </h2>
-              </div>
-              <span className="text-xs font-bold text-amber-800 bg-amber-200/70 px-3 py-1 rounded-lg">
-                Nuevas desde la Web
-              </span>
-            </div>
-
-            <p className="text-xs text-amber-800">
-              Las siguientes publicaciones fueron enviadas por los usuarios desde el formulario público y requieren revisión antes de aparecer en la página principal:
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
-              {pendingProperties.map((prop) => (
-                <div
-                  key={prop.id}
-                  className="bg-white border border-amber-200 rounded-xl p-3 shadow-xs hover:border-amber-400 transition flex flex-col justify-between gap-3"
+          {/* BOTONES PRINCIPALES DE ACCIÓN DENTRO DEL HEADER */}
+          <div className="flex items-center gap-2">
+            {activeView === 'new_property' ? (
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="px-3.5 py-2 text-xs font-bold text-[#5A5245] hover:text-[#1E67AD] hover:bg-[#F2ECE1] rounded-xl transition border border-[#E2D8C7] bg-white cursor-pointer"
                 >
-                  <div>
-                    <h3 className="font-bold text-gray-900 text-sm line-clamp-1">{prop.title}</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      📍 {prop.neighborhood || prop.municipality || 'Camagüey'} • {prop.price} {prop.currency}
+                  Cancelar
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSaveDraft}
+                  className="hidden sm:inline-block px-3.5 py-2 text-xs font-bold text-[#1E67AD] hover:opacity-90 bg-[#F2ECE1] rounded-xl transition border border-[#E2D8C7] cursor-pointer"
+                >
+                  Guardar borrador
+                </button>
+
+                <button
+                  type="button"
+                  onClick={triggerSubmit}
+                  disabled={isProcessing}
+                  className="px-4 py-2 text-xs font-extrabold text-white bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 rounded-xl shadow-md transition active:scale-95 disabled:opacity-50 cursor-pointer"
+                >
+                  {isProcessing
+                    ? 'Procesando...'
+                    : editingId
+                    ? 'Guardar'
+                    : 'Publicar'}
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setActiveView('new_property')}
+                className="px-4 py-2 bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] text-white text-xs font-bold rounded-xl shadow-md hover:opacity-95 transition flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+              >
+                ➕ Nueva publicación
+              </button>
+            )}
+
+            <Link
+              href="/"
+              className="hidden sm:inline-flex px-4 py-2 bg-[#F2ECE1] hover:bg-[#E2D8C7] text-[#1E67AD] border border-[#E2D8C7] text-xs font-bold rounded-xl transition items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 shrink-0"
+            >
+              🏠 Ver principal
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* MOBILE DRAWER OVERLAY */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <div className="relative flex flex-col w-64 max-w-xs bg-white h-full p-6 shadow-xl border-r border-[#E2D8C7] animate-in slide-in-from-left duration-200">
+            <div className="flex items-center justify-between pb-6 border-b border-[#E8E2D8]">
+              <span className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Menú Panel</span>
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-[#5A5245] hover:text-[#1E67AD] font-bold text-lg cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="flex-1 py-6 overflow-y-auto">
+              {renderSidebarContent()}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. DISEÑO PRINCIPAL DE DOS COLUMNAS */}
+      <div className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 flex flex-col md:flex-row gap-8">
+
+        {/* SIDEBAR COLUMNA IZQUIERDA (ESCRITORIO) */}
+        <aside className="hidden md:block w-64 shrink-0 space-y-6">
+          <div className="bg-white border border-[#E2D8C7] rounded-3xl p-5 shadow-sm space-y-4">
+            <div className="border-b border-[#E8E2D8] pb-3">
+              <h3 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Navegación</h3>
+              <p className="text-[10px] text-slate-400 font-semibold mt-0.5">Gestión de la plataforma</p>
+            </div>
+            {renderSidebarContent()}
+          </div>
+        </aside>
+
+        {/* CONTENIDO PRINCIPAL COLUMNA DERECHA */}
+        <main className="flex-1 min-w-0 space-y-8">
+
+          {/* VISTA 1: DASHBOARD */}
+          {activeView === 'dashboard' && (
+            <div className="space-y-8 animate-in fade-in duration-300">
+
+              {/* INDICADOR DE PENDIENTES */}
+              {pendingProperties.length > 0 ? (
+                <div className="bg-amber-50 border-2 border-amber-300 rounded-3xl p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-amber-900 font-black text-base tracking-tight">
+                      <span>🔔</span>
+                      <span>Publicaciones pendientes</span>
+                    </div>
+                    <p className="text-xs text-amber-800 font-semibold">
+                      Hay {pendingProperties.length} publicación{pendingProperties.length > 1 ? 'es que esperan' : 'a que espera'} revisión antes de publicarse en la web.
                     </p>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveView('pending')}
+                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl transition shadow-xs active:scale-95 cursor-pointer shrink-0"
+                  >
+                    🔍 Revisar ahora
+                  </button>
+                </div>
+              ) : (
+                <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-5 shadow-xs flex items-center gap-3">
+                  <span className="text-lg">✅</span>
+                  <span className="text-xs font-black text-emerald-800 tracking-tight">
+                    No hay publicaciones pendientes de aprobación. ¡Todo está al día!
+                  </span>
+                </div>
+              )}
 
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handleEdit(prop)}
-                      className="flex-1 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold rounded-lg transition"
-                    >
-                      ✏️ Revisar / Editar
-                    </button>
-                    <button
-                      onClick={() => handleApproveProperty(prop.id)}
-                      disabled={isProcessing}
-                      className="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition shadow-xs"
-                    >
-                      ✅ Aprobar Directo
-                    </button>
+              {/* TARJETAS DE MÉTRICAS */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white border border-[#E2D8C7] rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all duration-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-[#5A5245]/60 font-black uppercase tracking-wider">Total</span>
+                    <span className="text-lg">🏠</span>
+                  </div>
+                  <p className="text-3xl font-black text-[#1E67AD] mt-2">{properties.length}</p>
+                  <p className="text-[10px] text-slate-400 font-semibold mt-1">Propiedades registradas</p>
+                </div>
+
+                <div className="bg-white border border-[#E2D8C7] rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all duration-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-[#5A5245]/60 font-black uppercase tracking-wider">Pendientes</span>
+                    <span className="text-lg">⏳</span>
+                  </div>
+                  <p className="text-3xl font-black text-amber-600 mt-2">{pendingProperties.length}</p>
+                  <p className="text-[10px] text-slate-400 font-semibold mt-1">Por revisar y publicar</p>
+                </div>
+
+                <div className="bg-white border border-[#E2D8C7] rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all duration-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-[#5A5245]/60 font-black uppercase tracking-wider">Destacadas</span>
+                    <span className="text-lg">⭐</span>
+                  </div>
+                  <p className="text-3xl font-black text-emerald-600 mt-2">
+                    {properties.filter(p => [1, 2, 3].includes(p.priority)).length}
+                  </p>
+                  <p className="text-[10px] text-slate-400 font-semibold mt-1">Prioridad 1, 2, 3</p>
+                </div>
+
+                <div className="bg-white border border-[#E2D8C7] rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all duration-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-[#5A5245]/60 font-black uppercase tracking-wider">Vendidas</span>
+                    <span className="text-lg">🔴</span>
+                  </div>
+                  <p className="text-3xl font-black text-rose-600 mt-2">
+                    {properties.filter(p => p.is_sold).length}
+                  </p>
+                  <p className="text-[10px] text-slate-400 font-semibold mt-1">Fuera de catálogo</p>
+                </div>
+              </div>
+
+              {/* ACCIONES RÁPIDAS EN PANEL */}
+              <div className="space-y-4">
+                <h3 className="text-xs font-black text-[#5A5245]/60 uppercase tracking-widest">Accesos Rápidos</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setActiveView('new_property')}
+                    className="bg-white hover:bg-[#F2ECE1]/10 border border-[#E2D8C7] hover:border-[#1E67AD] p-5 rounded-3xl text-left transition-all duration-300 group cursor-pointer"
+                  >
+                    <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform duration-200">➕</span>
+                    <h4 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Nueva publicación</h4>
+                    <p className="text-[10px] text-[#5A5245]/70 font-semibold mt-1">Abre el formulario para registrar una nueva propiedad en venta o renta.</p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveView('all_properties')}
+                    className="bg-white hover:bg-[#F2ECE1]/10 border border-[#E2D8C7] hover:border-[#1E67AD] p-5 rounded-3xl text-left transition-all duration-300 group cursor-pointer"
+                  >
+                    <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform duration-200">📋</span>
+                    <h4 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Todas las propiedades</h4>
+                    <p className="text-[10px] text-[#5A5245]/70 font-semibold mt-1">Inspecciona y edita el catálogo general de viviendas sin filtros preestablecidos.</p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveView('pending')}
+                    className="bg-white hover:bg-[#F2ECE1]/10 border border-[#E2D8C7] hover:border-[#1E67AD] p-5 rounded-3xl text-left transition-all duration-300 group cursor-pointer"
+                  >
+                    <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform duration-200">⏳</span>
+                    <h4 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Publicaciones pendientes</h4>
+                    <p className="text-[10px] text-[#5A5245]/70 font-semibold mt-1">Revisa el listado de propiedades no aprobadas enviadas por la comunidad.</p>
+                  </button>
+                </div>
+              </div>
+
+              {/* LISTADO DE PENDIENTES SI EXISTEN */}
+              {pendingProperties.length > 0 && (
+                <div className="bg-amber-50/50 border border-amber-200 rounded-3xl p-5 shadow-sm space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-amber-900 text-sm font-black tracking-tight">
+                      📝 Solicitudes Pendientes para Aprobación Directa
+                    </h2>
+                    <span className="text-[10px] font-bold text-amber-800 bg-amber-200/50 px-2 py-0.5 rounded-lg">
+                      Acciones rápidas
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {pendingProperties.map((prop) => (
+                      <div
+                        key={prop.id}
+                        className="bg-white border border-amber-200 rounded-2xl p-4 shadow-xs hover:border-amber-400 transition flex flex-col justify-between gap-4"
+                      >
+                        <div>
+                          <h3 className="font-bold text-gray-900 text-xs line-clamp-1">{prop.title}</h3>
+                          <p className="text-[10px] text-gray-500 mt-1">
+                            📍 {prop.neighborhood || prop.municipality || 'Camagüey'} • {prop.price} {prop.currency}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleEdit(prop)}
+                            className="flex-1 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold rounded-xl transition cursor-pointer"
+                          >
+                            ✏️ Editar
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleApproveProperty(prop.id)}
+                            disabled={isProcessing}
+                            className="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition shadow-xs cursor-pointer"
+                          >
+                            ✅ Aprobar
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
+              )}
             </div>
-          </div>
-        )}
+          )}
 
-        {/* CABECERA Y ACCIONES DE EDICIÓN */}
-        <PropertyHeader
-          editingId={editingId}
-          isProcessing={isProcessing}
-          onCancel={resetForm}
-          onSaveDraft={handleSaveDraft}
-          onSubmitForm={triggerSubmit}
-        />
+          {/* VISTA 2: FORMULARIO NUEVA PUBLICACIÓN / EDICIÓN */}
+          {activeView === 'new_property' && (
+            <div className="space-y-8 animate-in fade-in duration-300">
 
-        {/* AVISO SI SE ESTÁ REVISANDO UNA PROPIEDAD PENDIENTE */}
-        {editingId && !isPublishedState && (
-          <div className="bg-blue-50 border border-blue-200 text-blue-900 text-xs font-semibold p-4 rounded-xl flex items-center justify-between">
-            <span>ℹ️ Estás revisando una solicitud pendiente. Al hacer clic en <strong>Guardar Cambios</strong>, la propiedad quedará aprobada y publicada automáticamente.</span>
-          </div>
-        )}
+              {/* AVISO SI SE ESTÁ REVISANDO UNA PROPIEDAD PENDIENTE */}
+              {editingId && !isPublishedState && (
+                <div className="bg-blue-50 border border-blue-200 text-blue-900 text-xs font-semibold p-4 rounded-xl flex items-center justify-between">
+                  <span>ℹ️ Estás revisando una solicitud pendiente. Al hacer clic en <strong>Guardar Cambios</strong>, la propiedad quedará aprobada y publicada automáticamente.</span>
+                </div>
+              )}
 
-        {/* INDICADOR DE PROGRESO */}
-        <PropertyProgressSteps currentStep={calculateStep()} />
+              {/* INDICADOR DE PROGRESO */}
+              <PropertyProgressSteps currentStep={calculateStep()} />
 
-        {/* GRID PRINCIPAL DEL FORMULARIO Y PREVIEW */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <form ref={formRef} onSubmit={handleSubmit} className="lg:col-span-8 space-y-8">
-            <PropertyBasicInfoCard
-              title={formData.title}
-              price={formData.price}
-              currency={formData.currency}
-              address={formData.address}
-              contact={formData.contact}
-              selectedStatuses={selectedStatuses}
-              onFormChange={handleFormChange}
-              onToggleStatus={toggleStatus}
+              {/* GRID PRINCIPAL DEL FORMULARIO Y PREVIEW */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <form ref={formRef} onSubmit={handleSubmit} className="lg:col-span-8 space-y-8">
+                  <PropertyBasicInfoCard
+                    title={formData.title}
+                    price={formData.price}
+                    currency={formData.currency}
+                    address={formData.address}
+                    contact={formData.contact}
+                    selectedStatuses={selectedStatuses}
+                    onFormChange={handleFormChange}
+                    onToggleStatus={toggleStatus}
+                  />
+
+                  <PropertyLocationCard
+                    province={formData.province}
+                    municipality={formData.municipality}
+                    neighborhood={formData.neighborhood}
+                    latitude={formData.latitude}
+                    longitude={formData.longitude}
+                    onFormChange={handleFormChange}
+                  />
+
+                  <PropertyStructuralCard
+                    propertyType={formData.property_type}
+                    bedrooms={formData.bedrooms}
+                    bathrooms={formData.bathrooms}
+                    livingRooms={formData.living_rooms}
+                    diningRooms={formData.dining_rooms}
+                    kitchens={formData.kitchens}
+                    indoorPatios={formData.indoor_patios}
+                    outdoorPatios={formData.outdoor_patios}
+                    garages={formData.garages}
+                    terraces={formData.terraces}
+                    balconies={formData.balconies}
+                    portals={formData.portals}
+                    floors={formData.floors}
+                    constructionArea={formData.construction_area}
+                    landArea={formData.land_area}
+                    onFormChange={handleFormChange}
+                  />
+
+                  <PropertyAmenitiesCard
+                    amenities={formData.amenities}
+                    onChange={(newAmenities) => handleFormChange('amenities', newAmenities)}
+                  />
+
+                  {selectedStatuses.includes('international_hostel') && (
+                    <PropertyHostelFieldsCard
+                      roomsAvailable={formData.rooms_available}
+                      privateBathroom={formData.private_bathroom}
+                      sharedBathroom={formData.shared_bathroom}
+                      breakfast={formData.breakfast}
+                      lunch={formData.lunch}
+                      dinner={formData.dinner}
+                      airportPickup={formData.airport_pickup}
+                      checkIn={formData.check_in}
+                      checkOut={formData.check_out}
+                      languages={formData.languages}
+                      onFormChange={handleFormChange}
+                      onLanguagesChange={(langs) => handleFormChange('languages', langs)}
+                    />
+                  )}
+
+                  {selectedStatuses.includes('day_pass') && (
+                    <PropertyDayPassFieldsCard
+                      capacity={formData.capacity}
+                      eventSchedule={formData.event_schedule}
+                      musicAllowed={formData.music_allowed}
+                      onFormChange={handleFormChange}
+                    />
+                  )}
+
+                  {selectedStatuses.includes('commercial_space') && (
+                    <PropertyCommercialFieldsCard
+                      commercialFront={formData.commercial_front}
+                      warehouse={formData.warehouse}
+                      office={formData.office}
+                      industrialPower={formData.industrial_power}
+                      onFormChange={handleFormChange}
+                    />
+                  )}
+
+                  <PropertyDescriptionCard
+                    description={formData.description}
+                    onFormChange={handleFormChange}
+                  />
+
+                  <PropertyGalleryCard
+                    existingImages={existingImages}
+                    selectedFiles={selectedFiles}
+                    onFileChange={handleFileChange}
+                    onRemoveExistingImage={removeExistingImage}
+                    onRemoveSelectedFile={removeSelectedFile}
+                  />
+
+                  <PropertySettingsCard
+                    editingId={editingId}
+                    priority={formData.priority}
+                    isSold={isSold}
+                    onFormChange={handleFormChange}
+                    onToggleSold={setIsSold}
+                  />
+
+                  <PropertyActionsBar
+                    editingId={editingId}
+                    isProcessing={isProcessing}
+                    onCancel={resetForm}
+                    onSaveDraft={handleSaveDraft}
+                  />
+                </form>
+
+                <div className="lg:col-span-4 lg:sticky lg:top-28 space-y-6">
+                  <PropertyPreviewCard
+                    formData={formData}
+                    selectedStatuses={selectedStatuses}
+                    existingImages={existingImages}
+                    selectedFiles={selectedFiles}
+                    isSold={isSold}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* VISTAS DE TABLA FILTRADAS (REUTILIZACIÓN TOTAL) */}
+          {(activeView === 'all_properties' || activeView === 'pending' || activeView === 'featured' || activeView === 'sold') && (
+            <RegisteredPropertiesList
+              properties={properties}
+              loading={loading}
+              adminFilter={adminFilter}
+              onFilterChange={setAdminFilter}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              view={
+                activeView === 'all_properties' ? 'all' :
+                activeView === 'pending' ? 'pending' :
+                activeView === 'featured' ? 'featured' : 'sold'
+              }
             />
+          )}
 
-            <PropertyLocationCard
-              province={formData.province}
-              municipality={formData.municipality}
-              neighborhood={formData.neighborhood}
-              latitude={formData.latitude}
-              longitude={formData.longitude}
-              onFormChange={handleFormChange}
-            />
+          {/* VISTA 7: EXTRAS - COMING SOON */}
+          {activeView === 'extras' && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div className="bg-white rounded-3xl p-6 border border-[#E2D8C7] shadow-sm">
+                <span className="text-3xl block mb-2">🚧</span>
+                <h2 className="text-lg font-black text-[#1E67AD] tracking-tight">Próximamente</h2>
+                <p className="text-xs text-[#5A5245] font-semibold mt-0.5">
+                  Estamos trabajando en nuevas herramientas avanzadas para optimizar la gestión de Tu Casita.
+                </p>
+              </div>
 
-            <PropertyStructuralCard
-              propertyType={formData.property_type}
-              bedrooms={formData.bedrooms}
-              bathrooms={formData.bathrooms}
-              livingRooms={formData.living_rooms}
-              diningRooms={formData.dining_rooms}
-              kitchens={formData.kitchens}
-              indoorPatios={formData.indoor_patios}
-              outdoorPatios={formData.outdoor_patios}
-              garages={formData.garages}
-              terraces={formData.terraces}
-              balconies={formData.balconies}
-              portals={formData.portals}
-              floors={formData.floors}
-              constructionArea={formData.construction_area}
-              landArea={formData.land_area}
-              onFormChange={handleFormChange}
-            />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-            <PropertyAmenitiesCard
-              amenities={formData.amenities}
-              onChange={(newAmenities) => handleFormChange('amenities', newAmenities)}
-            />
+                {/* ESTADÍSTICAS */}
+                <div className="bg-white border border-[#E2D8C7]/80 rounded-3xl p-5 shadow-xs relative overflow-hidden group">
+                  <div className="absolute top-4 right-4 bg-amber-50 border border-amber-200 text-amber-800 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
+                    Próximamente
+                  </div>
+                  <span className="text-2xl block mb-2">📊</span>
+                  <h3 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Estadísticas</h3>
+                  <p className="text-[10px] text-[#5A5245]/70 font-semibold mt-1.5 leading-relaxed">
+                    Gráficos detallados sobre visitas a tus propiedades, interacciones de clientes por WhatsApp, y clics en las clasificaciones más populares.
+                  </p>
+                </div>
 
-            {selectedStatuses.includes('international_hostel') && (
-              <PropertyHostelFieldsCard
-                roomsAvailable={formData.rooms_available}
-                privateBathroom={formData.private_bathroom}
-                sharedBathroom={formData.shared_bathroom}
-                breakfast={formData.breakfast}
-                lunch={formData.lunch}
-                dinner={formData.dinner}
-                airportPickup={formData.airport_pickup}
-                checkIn={formData.check_in}
-                checkOut={formData.check_out}
-                languages={formData.languages}
-                onFormChange={handleFormChange}
-                onLanguagesChange={(langs) => handleFormChange('languages', langs)}
-              />
-            )}
+                {/* REPORTES */}
+                <div className="bg-white border border-[#E2D8C7]/80 rounded-3xl p-5 shadow-xs relative overflow-hidden group">
+                  <div className="absolute top-4 right-4 bg-amber-50 border border-amber-200 text-amber-800 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
+                    Próximamente
+                  </div>
+                  <span className="text-2xl block mb-2">📋</span>
+                  <h3 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Reportes</h3>
+                  <p className="text-[10px] text-[#5A5245]/70 font-semibold mt-1.5 leading-relaxed">
+                    Generación y exportación de informes automatizados en formato PDF, Excel o CSV para analizar el rendimiento del catálogo de bienes raíces.
+                  </p>
+                </div>
 
-            {selectedStatuses.includes('day_pass') && (
-              <PropertyDayPassFieldsCard
-                capacity={formData.capacity}
-                eventSchedule={formData.event_schedule}
-                musicAllowed={formData.music_allowed}
-                onFormChange={handleFormChange}
-              />
-            )}
+                {/* USUARIOS */}
+                <div className="bg-white border border-[#E2D8C7]/80 rounded-3xl p-5 shadow-xs relative overflow-hidden group">
+                  <div className="absolute top-4 right-4 bg-amber-50 border border-amber-200 text-amber-800 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
+                    Próximamente
+                  </div>
+                  <span className="text-2xl block mb-2">👥</span>
+                  <h3 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Usuarios</h3>
+                  <p className="text-[10px] text-[#5A5245]/70 font-semibold mt-1.5 leading-relaxed">
+                    Administración de agentes inmobiliarios, asignación de roles de visualización y permisos de edición para colaboradores de la plataforma.
+                  </p>
+                </div>
 
-            {selectedStatuses.includes('commercial_space') && (
-              <PropertyCommercialFieldsCard
-                commercialFront={formData.commercial_front}
-                warehouse={formData.warehouse}
-                office={formData.office}
-                industrialPower={formData.industrial_power}
-                onFormChange={handleFormChange}
-              />
-            )}
-
-            <PropertyDescriptionCard
-              description={formData.description}
-              onFormChange={handleFormChange}
-            />
-
-            <PropertyGalleryCard
-              existingImages={existingImages}
-              selectedFiles={selectedFiles}
-              onFileChange={handleFileChange}
-              onRemoveExistingImage={removeExistingImage}
-              onRemoveSelectedFile={removeSelectedFile}
-            />
-
-            <PropertySettingsCard
-              editingId={editingId}
-              priority={formData.priority}
-              isSold={isSold}
-              onFormChange={handleFormChange}
-              onToggleSold={setIsSold}
-            />
-
-            <PropertyActionsBar
-              editingId={editingId}
-              isProcessing={isProcessing}
-              onCancel={resetForm}
-              onSaveDraft={handleSaveDraft}
-            />
-          </form>
-
-          <div className="lg:col-span-4 lg:sticky lg:top-8 space-y-6">
-            <PropertyPreviewCard
-              formData={formData}
-              selectedStatuses={selectedStatuses}
-              existingImages={existingImages}
-              selectedFiles={selectedFiles}
-              isSold={isSold}
-            />
-          </div>
-        </div>
-
-        {/* TABLA O LISTADO DE PROPIEDADES COMPLETO */}
-        <RegisteredPropertiesList
-          properties={properties}
-          loading={loading}
-          adminFilter={adminFilter}
-          onFilterChange={setAdminFilter}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+                {/* MESSAGING */}
+                <div className="bg-white border border-[#E2D8C7]/80 rounded-3xl p-5 shadow-xs relative overflow-hidden group">
+                  <div className="absolute top-4 right-4 bg-amber-50 border border-amber-200 text-amber-800 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
+                    Próximamente
+                  </div>
+                  <span className="text-2xl block mb-2">💬</span>
+                  <h3 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Mensajería</h3>
+                  <p className="text-[10px] text-[#5A5245]/70 font-semibold mt-1.5 leading-relaxed">
+                    Centralización de consultas recibidas, historial de contactos y notificaciones directas para coordinar visitas físicas o virtuales a las viviendas.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </main>
       </div>
 
       {toastMessage && (
