@@ -1,46 +1,96 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { ChevronDown, Home, Lightbulb, AlertTriangle } from 'lucide-react';
 
 export default function ActionMenu() {
-  return (
-    <div className="group relative inline-flex items-center">
-      <div className="flex items-center bg-white border border-[#E2D8C7] shadow-sm rounded-2xl p-1 transition-all duration-300 hover:border-[#1E67AD]">
-        
-        {/* Icono del Logo de la Empresa */}
-        <div className="w-9 h-9 rounded-xl bg-[#F2ECE1] border border-[#E2D8C7] flex items-center justify-center shrink-0 overflow-hidden cursor-pointer">
-          <img src="/logoe.png" alt="Empresa" className="w-6 h-6 object-contain" />
-        </div>
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-        {/* Contenedor que se despliega suavemente a la derecha en Hover */}
-        <div className="max-w-0 opacity-0 group-hover:max-w-md group-hover:opacity-100 group-hover:ml-2 overflow-hidden transition-all duration-500 ease-in-out flex items-center gap-1.5 whitespace-nowrap pr-1">
-          
+  // Cerrar el menú al hacer click fuera
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
+
+  return (
+    <div ref={menuRef} className="relative inline-flex items-center">
+      {/* Botón disparador (icono de casa + chevron) */}
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        className="inline-flex items-center gap-2 bg-white border border-[#E2D8C7] shadow-xs rounded-2xl pl-2 pr-3 py-1.5 transition-all hover:border-[#1E67AD] active:scale-95 cursor-pointer"
+      >
+        <span className="w-8 h-8 rounded-xl bg-[#F2ECE1] border border-[#E2D8C7] flex items-center justify-center shrink-0 overflow-hidden text-[#1E67AD]">
+          <Home className="w-4 h-4" />
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 text-[#5A5245] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+        />
+      </button>
+
+      {/* Panel desplegable */}
+      {isOpen && (
+        <div
+          role="menu"
+          className="absolute right-0 top-full mt-2 w-60 bg-white border border-[#E2D8C7] rounded-2xl shadow-xl p-2 z-50 origin-top-right animate-in fade-in zoom-in-95 duration-150"
+        >
           {/* 1. Publicar una casa */}
           <Link
             href="/publicar"
-            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
+            role="menuitem"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-[#5A5245] hover:bg-[#F5EFE6] transition-colors cursor-pointer"
           >
-            <span>🏠</span> Publicar una casa
+            <span className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0">
+              <Home className="w-4 h-4" />
+            </span>
+            Publicar una casa
           </Link>
 
           {/* 2. Sugerir una idea */}
-          <button 
-            onClick={() => alert('Acción provisional: Sugerir una idea')}
-            className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setIsOpen(false);
+              alert('Acción provisional: Sugerir una idea');
+            }}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-[#5A5245] hover:bg-[#F5EFE6] transition-colors cursor-pointer text-left"
           >
-            <span>💡</span> Sugerir idea
+            <span className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
+              <Lightbulb className="w-4 h-4" />
+            </span>
+            Sugerir idea
           </button>
 
           {/* 3. Reportar un error */}
-          <button 
-            onClick={() => alert('Acción provisional: Reportar un error')}
-            className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setIsOpen(false);
+              alert('Acción provisional: Reportar un error');
+            }}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-[#5A5245] hover:bg-[#F5EFE6] transition-colors cursor-pointer text-left"
           >
-            <span>⚠️</span> Reportar error
+            <span className="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-600 shrink-0">
+              <AlertTriangle className="w-4 h-4" />
+            </span>
+            Reportar error
           </button>
-
         </div>
-      </div>
+      )}
     </div>
   );
 }

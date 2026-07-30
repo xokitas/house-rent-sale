@@ -15,7 +15,12 @@ import {
   Search,
   Home,
   ChevronDown,
-  Check
+  MapPin,
+  MessageCircle,
+  Users,
+  FlaskConical,
+  ImageIcon,
+  ArrowRight,
 } from 'lucide-react';
 
 export const revalidate = 0;
@@ -52,7 +57,10 @@ export default async function HomePage({ searchParams }: PageProps) {
     query = query.lte('price', maxPrice);
   }
 
-  const { data: properties, error } = await query as { data: Property[] | null, error: { message: string } | null };
+  const { data: properties, error } = (await query) as {
+    data: Property[] | null;
+    error: { message: string } | null;
+  };
   const propertyList = properties || [];
 
   // GENERAR URL PARA MULTISELECCIÓN
@@ -75,186 +83,211 @@ export default async function HomePage({ searchParams }: PageProps) {
 
   // CATEGORÍAS CON SUS ICONOS Y COLORES (Lucide React)
   const categories = [
-    { value: 'sale', label: 'Venta', icon: Tag, textColor: 'text-[#1E67AD]', bgColor: 'bg-[#1E67AD]/10', description: 'Compra la casa de tus sueños en las mejores zonas de la ciudad.' },
-    { value: 'long_term', label: 'Alquiler de larga estadía', icon: Calendar, textColor: 'text-emerald-600', bgColor: 'bg-emerald-500/10', description: 'Hogares listos para habitar de manera estable y prolongada.' },
-    { value: 'commercial_space', label: 'Alquiler comercial', icon: Building2, textColor: 'text-purple-600', bgColor: 'bg-purple-500/10', description: 'Locales y oficinas ideales para posicionar tu negocio.' },
-    { value: 'international_hostel', label: 'Hostal internacional', icon: Globe, textColor: 'text-indigo-600', bgColor: 'bg-indigo-500/10', description: 'Hospedajes vacacionales confortables en USD o EUR.' },
-    { value: 'local_rent', label: 'Renta nacional', icon: Coins, textColor: 'text-amber-600', bgColor: 'bg-amber-500/10', description: 'Alquileres temporales en moneda nacional (CUP).' },
-    { value: 'swap', label: 'Permuta', icon: ArrowLeftRight, textColor: 'text-rose-600', bgColor: 'bg-rose-500/10', description: 'Intercambios y permutas directas entre propietarios.' },
-    { value: 'day_pass', label: 'Pasadías o eventos', icon: Sparkles, textColor: 'text-pink-600', bgColor: 'bg-pink-500/10', description: 'Espacios ideales con piscina o áreas para festejos.' },
+    { value: 'sale', label: 'Venta', icon: Tag, textColor: 'text-[#1E67AD]', bgColor: 'bg-[#1E67AD]/10', description: 'Venta de propiedades. Encuentra tu hogar ideal ajustado a tu presupuesto.' },
+    { value: 'long_term', label: 'Alquiler de larga estadía', icon: Calendar, textColor: 'text-emerald-600', bgColor: 'bg-emerald-500/10', description: 'Propiedades y casas con esquemas de pagos mensuales para residir a largo plazo.' },
+    { value: 'commercial_space', label: 'Alquiler comercial', icon: Building2, textColor: 'text-purple-600', bgColor: 'bg-purple-500/10', description: 'Espacios, locales o partes de casas destinados a la implementación de negocios y emprendimientos.' },
+    { value: 'international_hostel', label: 'Hostal internacional', icon: Globe, textColor: 'text-orange-500', bgColor: 'bg-orange-500/10', description: 'Alojamientos pensados para estadías medianas con todas las comodidades, dirigidos principalmente a turismo extranjero (USD/EUR).' },
+    { value: 'local_rent', label: 'Renta nacional', icon: Coins, textColor: 'text-amber-600', bgColor: 'bg-amber-500/10', description: 'Pensado para estadías cortas (una noche, un día o hasta una semana), ideal para personas que viajan entre provincias.' },
+    { value: 'swap', label: 'Permuta', icon: ArrowLeftRight, textColor: 'text-teal-600', bgColor: 'bg-teal-500/10', description: 'Casas y propiedades disponibles para intercambio directo con otros propietarios.' },
+    { value: 'day_pass', label: 'Pasadías o eventos', icon: Sparkles, textColor: 'text-pink-600', bgColor: 'bg-pink-500/10', description: 'Negocios, fincas o locales que ofrecen días de piscina o espacios para celebrar bodas, quinceañeros, cumpleaños y reuniones.' },
   ];
 
   return (
     <main className="min-h-screen bg-[#FBF9F5] text-slate-800 antialiased selection:bg-[#1E67AD]/10 selection:text-[#1E67AD]">
-      {/* ENCABEZADO PRINCIPAL (STICKY & CONSERVADO) */}
-      <header className="bg-white/90 backdrop-blur-md border-b border-[#E8E2D8] sticky top-0 z-30 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          
-          {/* LOGO DE LA MARCA (ISOTIPO + TIPOGRAFÍA) */}
-          <Link href="/" className="flex items-center gap-3 group">
+      {/* ENCABEZADO PRINCIPAL (STICKY) */}
+      <header className="bg-white/95 backdrop-blur-md border-b border-[#E8E2D8] sticky top-0 z-30 shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+          {/* LOGO DE LA MARCA */}
+          <Link href="/" className="flex items-center gap-3 group shrink-0">
             <div className="relative w-11 h-11 shrink-0 flex items-center justify-center bg-[#F2ECE1] rounded-2xl border border-[#E2D8C7] overflow-hidden">
-              <img 
-                src="/logo.png" 
-                alt="TuCasita Logo" 
-                className="w-full h-full object-contain"
-              />
+              <img src="/logo.png" alt="TuCasita Logo" className="w-full h-full object-contain" />
             </div>
 
-            <div className="flex flex-col">
-              <div className="flex items-baseline text-2xl sm:text-3xl font-extrabold tracking-tight leading-none">
+            <div className="flex flex-col leading-none">
+              <div className="flex items-baseline text-xl sm:text-2xl font-black tracking-tight">
                 <span className="text-[#1E67AD]">Tu</span>
-                <span className="text-[#C8976C] relative">
-                  Casita
-                  {/* Corazón sobre la i */}
-                  <span className="absolute -top-1.5 right-4.5 text-[10px] text-[#1E67AD]">♥</span>
-                </span>
+                <span className="text-[#C8976C]">Casita</span>
               </div>
-              <span className="text-[9px] sm:text-[10px] font-black text-[#1E67AD] tracking-[0.2em] uppercase mt-0.5">
-                TU HOGAR, TU FUTURO.
+              <span className="text-[10px] sm:text-xs font-semibold text-slate-500 mt-0.5">
+                Encuentra tu lugar en Camagüey
               </span>
             </div>
           </Link>
 
-          {/* ETIQUETA LOCALIDAD */}
-          <div className="hidden sm:flex items-center gap-2 bg-[#F2ECE1] px-3.5 py-1.5 rounded-full border border-[#E2D8C7]">
-            <span className="w-2 h-2 rounded-full bg-[#1E67AD] animate-pulse"></span>
-            <span className="text-xs font-bold text-[#1E67AD] uppercase tracking-wide">Camagüey</span>
+          {/* NAVEGACIÓN CENTRAL (DESKTOP) */}
+          <nav className="hidden lg:flex items-center gap-8">
+            <Link href="/" className="text-sm font-bold text-[#5A5245] hover:text-[#1E67AD] transition-colors">
+              Inicio
+            </Link>
+            <Link href="#properties" className="text-sm font-bold text-[#5A5245] hover:text-[#1E67AD] transition-colors">
+              Propiedades
+            </Link>
+            <Link href="#categorias" className="text-sm font-bold text-[#5A5245] hover:text-[#1E67AD] transition-colors">
+              Quiénes somos
+            </Link>
+            <Link href="#buscador" className="text-sm font-bold text-[#5A5245] hover:text-[#1E67AD] transition-colors">
+              Contacto
+            </Link>
+          </nav>
+
+          {/* ACCIONES DERECHA: FILTRO + BUSCAR + MENÚ */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Filtro Drawer de la Lógica Real */}
+            <FilterDrawer filterType={rawTypes} maxPrice={params?.maxPrice || ''} />
+
+            {/* Acceso rápido al buscador */}
+            <a
+              href="#buscador"
+              aria-label="Ir al buscador"
+              className="inline-flex items-center justify-center w-11 h-11 rounded-2xl bg-white border border-[#E2D8C7] text-[#5A5245] hover:text-[#1E67AD] hover:border-[#1E67AD] transition-all shadow-xs active:scale-95"
+            >
+              <Search className="w-5 h-5" />
+            </a>
+
+            {/* Botón de Acciones de Empresa */}
+            <ActionMenu />
           </div>
         </div>
       </header>
 
-      {/* NUEVA HERO SECTION MODERNA (70vh aprox en desktop, formas blur de fondo, sin imágenes externas) */}
-      <section className="relative overflow-hidden py-12 lg:py-20 bg-linear-to-b from-white to-[#FBF9F5] border-b border-[#E8E2D8]/40">
-        {/* Formas difuminadas suaves usando divs con blur */}
-        <div className="absolute top-10 left-10 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl -z-10 pointer-events-none" />
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl -z-10 pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center lg:min-h-[60vh]">
-
+      {/* HERO SECTION */}
+      <section className="relative overflow-hidden bg-white border-b border-[#E8E2D8]/60">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
             {/* COLUMNA IZQUIERDA */}
-            <div className="lg:col-span-7 space-y-6 md:space-y-8 text-left">
-              {/* Badge Beta */}
-              <div className="space-y-3">
-                <div className="inline-flex items-center gap-2 bg-linear-to-rrom-[#1E67AD]/10 to-[#2A93A6]/10 border border-[#1E67AD]/20 px-3 py-1 rounded-full">
-                  <span className="text-xs sm:text-sm">🧪</span>
-                  <span className="text-xs font-black bg-linear-to-r from-[#1E67AD] to-[#2A93A6] bg-clip-text text-transparent uppercase tracking-wider">
-                    Beta gratuita
-                  </span>
-                </div>
-                <p className="text-xs sm:text-sm font-bold text-slate-500 max-w-lg leading-relaxed">
-                  Estamos construyendo nuevas funcionalidades. Poco a poco iremos incorporando nuevas herramientas para propietarios y clientes.
+            <div className="space-y-6 text-left">
+              {/* Badge Beta + Aviso prototipo */}
+              <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                <span className="inline-flex items-center gap-2 bg-[#1E67AD] text-white px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wide shrink-0 shadow-sm">
+                  <FlaskConical className="w-3.5 h-3.5" />
+                  Beta gratuita
+                </span>
+                <p className="text-xs font-semibold text-slate-500 leading-relaxed bg-[#F2ECE1]/60 border border-[#E2D8C7] rounded-xl px-3 py-2 max-w-sm">
+                  Esta es una versión de prototipo. Poco a poco implementaremos más funcionalidades.
                 </p>
               </div>
 
-              {/* H1 Muy Grande */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#5A5245] tracking-tight leading-tight">
-                Encuentra la <br className="hidden sm:inline" />
-                propiedad ideal <br className="hidden lg:inline" />
-                en <span className="bg-linear-to-rrom-[#1E67AD] to-[#2A93A6] bg-clip-text text-transparent">Camagüey</span>
-              </h1>
+              {/* H1 */}
+              <div className="space-y-1">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-none">
+                  <span className="block text-[#153B6B]">Bienvenido a</span>
+                  <span className="block text-[#1E67AD]">Tu Casita</span>
+                </h1>
+                <p className="text-lg sm:text-xl font-bold text-[#C8976C] leading-snug max-w-md pt-3 text-pretty">
+                  La forma más sencilla de encontrar propiedades y alojamientos en Camagüey.
+                </p>
+              </div>
 
-              {/* Beneficios Rápidos (Sin párrafos redundantes) */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600">
-                    <Check className="w-4 h-4 stroke-3" />
-                  </div>
-                  <span className="text-sm sm:text-base font-bold text-[#5A5245]">Filtra por presupuesto</span>
+              {/* Beneficios rápidos (chips) */}
+              <div className="flex flex-wrap gap-4 pt-1">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-9 h-9 rounded-xl bg-[#1E67AD]/10 flex items-center justify-center text-[#1E67AD]">
+                    <Coins className="w-4.5 h-4.5" />
+                  </span>
+                  <span className="text-sm font-bold text-[#5A5245] leading-tight">
+                    Filtra por
+                    <br />
+                    presupuesto
+                  </span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600">
-                    <Check className="w-4 h-4 stroke-3" />
-                  </div>
-                  <span className="text-sm sm:text-base font-bold text-[#5A5245]">Contacta por WhatsApp</span>
+                <div className="flex items-center gap-2.5">
+                  <span className="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+                    <MessageCircle className="w-4.5 h-4.5" />
+                  </span>
+                  <span className="text-sm font-bold text-[#5A5245] leading-tight">
+                    Contacta por
+                    <br />
+                    WhatsApp
+                  </span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600">
-                    <Check className="w-4 h-4 stroke-3" />
-                  </div>
-                  <span className="text-sm sm:text-base font-bold text-[#5A5245]">Sin intermediarios</span>
+                <div className="flex items-center gap-2.5">
+                  <span className="w-9 h-9 rounded-xl bg-[#1E67AD]/10 flex items-center justify-center text-[#1E67AD]">
+                    <Users className="w-4.5 h-4.5" />
+                  </span>
+                  <span className="text-sm font-bold text-[#5A5245] leading-tight">
+                    Sin
+                    <br />
+                    intermediarios
+                  </span>
                 </div>
               </div>
 
               {/* Botones */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-2">
                 <a
                   href="#properties"
-                  className="inline-flex items-center justify-center px-8 py-4 text-sm font-black text-white bg-linear-to-r from-[#1E67AD] to-[#2A93A6] rounded-2xl shadow-lg shadow-[#1E67AD]/25 hover:opacity-95 hover:scale-[1.02] transition-all duration-200 text-center active:scale-95"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-4 text-sm font-black text-white bg-[#1E67AD] rounded-2xl shadow-lg shadow-[#1E67AD]/25 hover:bg-[#175691] hover:scale-[1.02] transition-all duration-200 active:scale-95"
                 >
+                  <Search className="w-4 h-4" />
                   Explorar propiedades
                 </a>
-                <div className="flex flex-col">
-                  <Link
-                    href="/publicar"
-                    className="inline-flex items-center justify-center px-8 py-4 text-sm font-black text-[#1E67AD] border-2 border-[#1E67AD]/30 hover:border-[#1E67AD] rounded-2xl bg-white hover:bg-[#F2ECE1]/40 transition-all duration-200 text-center shadow-xs active:scale-95 cursor-pointer"
-                  >
+                <Link
+                  href="/publicar"
+                  className="inline-flex flex-col items-center justify-center px-7 py-3 text-sm font-black text-[#1E67AD] border-2 border-[#E2D8C7] hover:border-[#1E67AD] rounded-2xl bg-white transition-all duration-200 shadow-xs active:scale-95"
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <Home className="w-4 h-4" />
                     Publicar una propiedad
-                  </Link>
-                </div>
+                  </span>
+                </Link>
               </div>
             </div>
 
-            {/* COLUMNA DERECHA - PLACEHOLDER CON GRADIENTE DE MARCA (PREPARADO PARA FUTURA IMAGEN LOCAL) */}
-            <div className="lg:col-span-5 flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-md aspect-square overflow-hidden rounded-[2.5rem] border-8 border-white shadow-xl group bg-linear-to-br from-[#1E67AD] to-[#2A93A6] flex flex-col items-center justify-center p-8 text-white select-none transition-transform duration-500 hover:scale-[1.01]">
-                {/* Patrón de cuadrícula suave decorativo */}
-                <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] bg-size-[16px_16px] opacity-15 pointer-events-none rounded-4xl" />
-
-                {/* Círculo decorativo difuminado interno */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-
-                <div className="relative z-10 flex flex-col items-center text-center space-y-4">
-                  <div className="w-20 h-20 rounded-3xl bg-white/15 backdrop-blur-md flex items-center justify-center shadow-inner transition-transform duration-300 group-hover:scale-110">
-                    <Home className="w-10 h-10 text-white" />
-                  </div>
-
-                  <div className="space-y-1">
-                    <h3 className="text-xl font-extrabold tracking-tight">Tu Casita Camagüey</h3>
-                    <p className="text-xs font-medium text-white/80 max-w-60">
-                      Encuentra, publica y gestiona propiedades de manera ágil y directa.
-                    </p>
-                  </div>
+            {/* COLUMNA DERECHA - PLACEHOLDER DE IMAGEN (LISTO PARA TU FOTO) */}
+            {/*
+              Para usar tu propia foto de Camagüey, reemplaza este bloque por:
+              <img src="/hero-camaguey.jpg" alt="Camagüey" className="w-full h-full object-cover" />
+              (coloca la imagen en la carpeta /public)
+            */}
+            <div className="relative">
+              <div className="relative w-full aspect-[4/3] overflow-hidden rounded-[2rem] lg:rounded-[2.5rem] border border-[#E2D8C7] bg-gradient-to-br from-[#EAF2FA] to-[#F2ECE1] shadow-xl flex flex-col items-center justify-center text-center p-8 select-none">
+                <div className="w-16 h-16 rounded-2xl bg-white/70 border border-[#E2D8C7] flex items-center justify-center text-[#1E67AD] shadow-sm mb-4">
+                  <ImageIcon className="w-8 h-8" />
                 </div>
+                <p className="text-sm font-black text-[#1E67AD]">Añade tu foto de Camagüey</p>
+                <p className="text-xs font-semibold text-slate-500 mt-1 max-w-xs">
+                  Sustituye este espacio por una imagen guardada en <span className="font-bold">/public</span>.
+                </p>
 
-                {/* Sello o etiqueta flotante de la app */}
-                <div className="absolute bottom-6 right-6 z-10 bg-white/15 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 text-[10px] font-bold tracking-widest uppercase">
-                  📍 Camagüey
-                </div>
-
-                <div className="absolute inset-0 ring-1 ring-black/5 rounded-4xl pointer-events-none" />
+                <span className="absolute bottom-5 right-5 inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#E2D8C7] text-[10px] font-black tracking-widest uppercase text-[#1E67AD] shadow-sm">
+                  <MapPin className="w-3 h-3" />
+                  Camagüey
+                </span>
               </div>
             </div>
-
           </div>
         </div>
       </section>
 
       {/* SECCIÓN CATEGORÍAS */}
-      <section className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        <div className="text-center max-w-2xl mx-auto space-y-2">
-          <h2 className="text-3xl font-black text-[#5A5245] tracking-tight">
+      <section id="categorias" className="py-16 md:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="text-center max-w-2xl mx-auto space-y-4">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#153B6B] tracking-tight text-balance">
             ¿Qué puedes encontrar en Tu Casita?
           </h2>
-          <div className="w-16 h-1 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] mx-auto rounded-full" />
+          <div className="flex items-center justify-center gap-3">
+            <span className="h-px w-12 bg-[#E2D8C7]" />
+            <Home className="w-4 h-4 text-[#C8976C]" />
+            <span className="h-px w-12 bg-[#E2D8C7]" />
+          </div>
         </div>
 
         {/* Grid de 7 categorías (Responsivo: 4+3 en Desktop, 2 en Tablet, 1 en Mobile) */}
         {/* Vista Móvil / Tablet */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:hidden gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:hidden gap-5">
           {categories.map((cat) => (
             <CategoryCard key={cat.value} cat={cat} getCategoryUrl={getCategoryUrl} />
           ))}
         </div>
 
         {/* Vista Escritorio (4 + 3) */}
-        <div className="hidden lg:block space-y-6">
-          <div className="grid grid-cols-4 gap-6">
+        <div className="hidden lg:block space-y-5">
+          <div className="grid grid-cols-4 gap-5">
             {categories.slice(0, 4).map((cat) => (
               <CategoryCard key={cat.value} cat={cat} getCategoryUrl={getCategoryUrl} />
             ))}
           </div>
-          <div className="grid grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="grid grid-cols-3 gap-5 max-w-5xl mx-auto">
             {categories.slice(4, 7).map((cat) => (
               <CategoryCard key={cat.value} cat={cat} getCategoryUrl={getCategoryUrl} />
             ))}
@@ -262,66 +295,65 @@ export default async function HomePage({ searchParams }: PageProps) {
         </div>
       </section>
 
-      {/* SECCIÓN BUSCADOR UNIFICADO (BAJO EL GRID DE CATEGORÍAS) */}
-      <section className="py-8 bg-linear-to-b from-transparent to-[#FBF9F5] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="w-full max-w-5xl mx-auto bg-white rounded-3xl shadow-sm border border-[#E2D8C7]/60 p-4">
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-4">
+      {/* SECCIÓN BUSCADOR UNIFICADO */}
+      <section id="buscador" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
+        <div className="w-full bg-[#F5EFE6]/80 rounded-3xl border border-[#E2D8C7] p-6 sm:p-8 space-y-5">
+          <h3 className="text-lg font-black text-[#153B6B]">Encuentra lo que necesitas</h3>
+
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
             {/* Buscador Input */}
             <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1E67AD] w-5 h-5" />
               <input
                 type="text"
-                placeholder="Buscar por zona, reparto o Calle..."
-                className="w-full bg-slate-50 border border-slate-100 text-sm font-semibold text-[#5A5245] rounded-2xl py-3.5 pl-12 pr-4 placeholder:text-slate-400 focus:outline-none focus:border-[#1E67AD] focus:ring-1 focus:ring-[#1E67AD] transition-all"
+                placeholder="Ej: Apartamento en Centro, Casa con piscina..."
+                className="w-full bg-white border border-[#E2D8C7] text-sm font-semibold text-[#5A5245] rounded-2xl py-3.5 pl-4 pr-11 placeholder:text-slate-400 focus:outline-none focus:border-[#1E67AD] focus:ring-1 focus:ring-[#1E67AD] transition-all"
               />
+              <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none" />
             </div>
 
             {/* Selector Categorías (Visual, preparado para conectar) */}
-            <div className="relative w-full lg:w-52">
-              <Home className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <div className="relative w-full lg:w-56">
               <select
-                className="w-full bg-slate-50 border border-slate-100 text-sm font-bold text-[#5A5245] rounded-2xl py-3.5 pl-10 pr-8 focus:outline-none appearance-none cursor-pointer"
+                className="w-full bg-white border border-[#E2D8C7] text-sm font-bold text-[#5A5245] rounded-2xl py-3.5 pl-4 pr-9 focus:outline-none focus:border-[#1E67AD] appearance-none cursor-pointer"
                 defaultValue=""
               >
-                <option value="" disabled>Categoría</option>
+                <option value="">Todas las categorías</option>
                 {STATUS_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label.replace(/^[^\s]+\s/, '')}
                   </option>
                 ))}
               </select>
-              <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
-                <ChevronDown className="w-4 h-4" />
-              </div>
+              <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
             </div>
 
             {/* Selector Precio Máximo (Visual, preparado para conectar) */}
-            <div className="relative w-full lg:w-44">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">$</span>
-              <input
-                type="text"
-                placeholder="Precio máx."
-                className="w-full bg-slate-50 border border-slate-100 text-sm font-bold text-[#5A5245] rounded-2xl py-3.5 pl-10 pr-4 focus:outline-none"
-              />
-            </div>
-
-            {/* Botón Buscar / Acciones Integradas */}
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                className="flex-1 lg:flex-none bg-linear-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white font-black text-sm px-6 py-3.5 rounded-2xl transition shadow-md active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+            <div className="relative w-full lg:w-48">
+              <select
+                className="w-full bg-white border border-[#E2D8C7] text-sm font-bold text-[#5A5245] rounded-2xl py-3.5 pl-4 pr-9 focus:outline-none focus:border-[#1E67AD] appearance-none cursor-pointer"
+                defaultValue="100000"
               >
-                <Search className="w-4 h-4" />
-                <span>Buscar</span>
-              </button>
-
-              {/* Filtro Drawer de la Lógica Real */}
-              <FilterDrawer filterType={rawTypes} maxPrice={params?.maxPrice || ''} />
-
-              {/* Botón de Acciones de Empresa */}
-              <ActionMenu />
+                <option value="25000">Precio máximo · 25,000 USD</option>
+                <option value="50000">Precio máximo · 50,000 USD</option>
+                <option value="100000">Precio máximo · 100,000 USD</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
             </div>
+
+            {/* Botón Buscar */}
+            <button
+              type="button"
+              className="lg:w-auto w-full bg-[#1E67AD] hover:bg-[#175691] text-white font-black text-sm px-8 py-3.5 rounded-2xl transition shadow-md active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+            >
+              <Search className="w-4 h-4" />
+              <span>Buscar</span>
+            </button>
           </div>
+
+          <p className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+            <MapPin className="w-3.5 h-3.5 text-[#1E67AD]" />
+            Buscando en <span className="font-black text-[#1E67AD]">Camagüey</span>, Cuba
+          </p>
         </div>
 
         {/* Botón de Limpiar Filtros Reales Activos */}
@@ -338,30 +370,38 @@ export default async function HomePage({ searchParams }: PageProps) {
       </section>
 
       {/* SECCIÓN LISTADO */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-8">
-        
-        {/* Encabezado elegante para propiedades */}
-        <div id="properties" className="pt-4 pb-2 text-left space-y-1.5 scroll-mt-24">
-          <h2 className="text-3xl font-black text-[#5A5245] tracking-tight">
-            Propiedades destacadas
-          </h2>
-          <p className="text-sm font-semibold text-slate-500">
-            Explora las últimas propiedades publicadas en Camagüey.
-          </p>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
+        {/* Encabezado propiedades */}
+        <div id="properties" className="flex items-end justify-between gap-4 scroll-mt-24">
+          <div className="space-y-1.5">
+            <h2 className="text-2xl sm:text-3xl font-black text-[#153B6B] tracking-tight">
+              Propiedades destacadas
+            </h2>
+            <p className="text-sm font-semibold text-slate-500">
+              Explora las últimas propiedades publicadas en Tu Casita.
+            </p>
+          </div>
+          <Link
+            href="/"
+            className="hidden sm:inline-flex items-center gap-1.5 text-sm font-black text-[#1E67AD] hover:gap-2.5 transition-all shrink-0"
+          >
+            Ver todas
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
 
-        {/* PARRILLA / PESTAÑAS DE CLASIFICACIONES REALES (Accesibilidad extra, conservada y refinada) */}
-        <div className="flex flex-wrap gap-2 pb-4">
+        {/* PESTAÑAS DE CLASIFICACIONES REALES */}
+        <div className="flex flex-wrap gap-2 pb-2">
           {/* BOTÓN TODAS */}
           <Link
             href={getCategoryUrl('all')}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-xs ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
               selectedTypes.length === 0
-                ? 'bg-linear-to-r from-[#1E67AD] to-[#2A93A6] text-white shadow-md shadow-[#1E67AD]/20'
-                : 'bg-white border border-[#E2D8C7]/60 text-[#5A5245] hover:bg-[#F5EFE6] hover:text-[#1E67AD]'
+                ? 'bg-[#1E67AD] text-white shadow-md shadow-[#1E67AD]/20'
+                : 'bg-white border border-[#E2D8C7] text-[#5A5245] hover:border-[#1E67AD] hover:text-[#1E67AD]'
             }`}
           >
-            🏠 Todas
+            Todas
           </Link>
 
           {/* OPCIONES DE CLASIFICACIÓN REAL */}
@@ -371,13 +411,13 @@ export default async function HomePage({ searchParams }: PageProps) {
               <Link
                 key={opt.value}
                 href={getCategoryUrl(opt.value)}
-                className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-xs flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 ${
                   isSelected
-                    ? 'bg-linear-to-r from-[#1E67AD] to-[#2A93A6] text-white shadow-md shadow-[#1E67AD]/20 ring-2 ring-[#1E67AD]/50 ring-offset-1'
-                    : 'bg-white border border-[#E2D8C7]/60 text-[#5A5245] hover:bg-[#F5EFE6] hover:text-[#1E67AD]'
+                    ? 'bg-[#1E67AD] text-white shadow-md shadow-[#1E67AD]/20'
+                    : 'bg-white border border-[#E2D8C7] text-[#5A5245] hover:border-[#1E67AD] hover:text-[#1E67AD]'
                 }`}
               >
-                <span>{opt.label}</span>
+                <span>{opt.label.replace(/^[^\s]+\s/, '')}</span>
                 {isSelected && (
                   <span className="w-4 h-4 bg-white/20 rounded-full flex items-center justify-center text-[10px]">
                     ✓
@@ -413,24 +453,30 @@ interface CategoryItem {
   description: string;
 }
 
-function CategoryCard({ cat, getCategoryUrl }: { cat: CategoryItem; getCategoryUrl: (val: string) => string }) {
+function CategoryCard({
+  cat,
+  getCategoryUrl,
+}: {
+  cat: CategoryItem;
+  getCategoryUrl: (val: string) => string;
+}) {
   const Icon = cat.icon;
   return (
-    <div className="bg-white rounded-3xl p-6 border border-[#E2D8C7]/60 shadow-xs hover:shadow-md hover:scale-[1.02] transition-all duration-300 flex flex-col justify-between group">
+    <div className="bg-white rounded-2xl p-6 border border-[#E2D8C7]/70 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between group">
       <div>
         {/* Contenedor del icono con acento de color suave */}
-        <div className={`w-12 h-12 rounded-2xl ${cat.bgColor} flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110`}>
+        <div className={`w-12 h-12 rounded-2xl ${cat.bgColor} flex items-center justify-center mb-4`}>
           <Icon className={`w-6 h-6 ${cat.textColor}`} />
         </div>
-        <h3 className="text-base font-black text-slate-800 mb-2">{cat.label}</h3>
-        <p className="text-xs text-slate-500 font-bold leading-relaxed mb-4">{cat.description}</p>
+        <h3 className="text-lg font-black text-[#153B6B] mb-2 leading-tight text-balance">{cat.label}</h3>
+        <p className="text-xs text-slate-500 font-semibold leading-relaxed mb-5">{cat.description}</p>
       </div>
       <Link
         href={`${getCategoryUrl(cat.value)}#properties`}
-        className={`text-xs font-black ${cat.textColor} hover:underline inline-flex items-center gap-1.5`}
+        className="text-sm font-black text-[#1E67AD] inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all"
       >
         <span>Ver opciones</span>
-        <span className="transition-transform group-hover:translate-x-1">→</span>
+        <ArrowRight className="w-4 h-4" />
       </Link>
     </div>
   );
