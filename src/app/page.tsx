@@ -229,7 +229,6 @@ export default async function HomePage({ searchParams }: PageProps) {
                     <Home className="w-4 h-4" />
                     Publicar una propiedad
                   </span>
-                  <span className="text-[10px] font-bold text-slate-400 normal-case">(Próximamente)</span>
                 </Link>
               </div>
             </div>
