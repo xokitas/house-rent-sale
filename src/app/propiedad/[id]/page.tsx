@@ -15,11 +15,13 @@ interface PropertyPageProps {
 export default async function PropertyDetailPage({ params }: PropertyPageProps) {
   const { id } = await params;
 
-  // Consultamos la propiedad directamente en Supabase usando el ID de la ruta
+  // Consultamos únicamente propiedades públicas y visibles dentro del MVP
   const { data: property, error } = await supabase
     .from('properties')
     .select('*')
     .eq('id', id)
+    .eq('is_published', true)
+    .overlaps('status', MVP_STATUSES)
     .single();
 
   if (error || !property) {
