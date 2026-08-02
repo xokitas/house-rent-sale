@@ -21,7 +21,7 @@ export default function BottomNavigation() {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-slate-100 shadow-[0_-8px_24px_rgba(0,0,0,0.04)] pb-safe-bottom">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-bg-card/95 backdrop-blur-md border-t border-border-main shadow-[0_-8px_24px_rgba(0,0,0,0.04)] pb-safe-bottom transition-colors duration-200">
       <div className="max-w-md mx-auto px-6 h-16 flex items-center justify-between">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -32,13 +32,13 @@ export default function BottomNavigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="relative -top-4 flex flex-col items-center group"
+                className="relative -top-4 flex flex-col items-center group cursor-pointer"
                 aria-label={item.label}
               >
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1E67AD] to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-[#1E67AD]/30 transition-transform active:scale-90 duration-200 group-hover:scale-105">
-                  <Icon className="w-6 h-6 stroke-[2.5]" />
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-secondary to-[#c4603e] flex items-center justify-center text-white shadow-lg shadow-brand-secondary/30 transition-transform active:scale-90 duration-200 group-hover:scale-105">
+                  <Icon className="w-5.5 h-5.5 stroke-[2.5]" />
                 </div>
-                <span className="text-[10px] font-black text-[#1E67AD] mt-1 tracking-tight">
+                <span className="text-[10px] font-black text-brand-secondary mt-1 tracking-tight">
                   {item.label}
                 </span>
               </Link>
@@ -49,16 +49,16 @@ export default function BottomNavigation() {
             <Link
               key={item.href}
               href={item.href}
-              className="flex flex-col items-center justify-center flex-1 h-full py-1 text-slate-400 hover:text-[#1E67AD] transition-colors"
+              className="flex flex-col items-center justify-center flex-1 h-full py-1 transition-colors cursor-pointer"
             >
               <Icon
-                className={`w-5 h-5 transition-transform duration-200 active:scale-95 ${
-                  isActive ? 'text-[#1E67AD] stroke-[2.2]' : 'text-slate-400 stroke-[1.8]'
+                className={`w-5.5 h-5.5 transition-transform duration-200 active:scale-95 ${
+                  isActive ? 'text-brand-primary stroke-[2.2]' : 'text-text-muted stroke-[1.8]'
                 }`}
               />
               <span
                 className={`text-[10px] mt-1 font-bold transition-all ${
-                  isActive ? 'text-[#1E67AD] font-black' : 'text-slate-500 font-semibold'
+                  isActive ? 'text-brand-primary font-black' : 'text-text-muted font-semibold'
                 }`}
               >
                 {item.label}
