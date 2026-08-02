@@ -6,6 +6,18 @@ import { AlertCircle } from 'lucide-react';
 
 export const revalidate = 0;
 
+const PRIVACY_OFFSET_RANGE = 0.0012;
+
+function obfuscateCoordinate(value: number, seed: string, axis: 'lat' | 'lng') {
+  const hash = Array.from(`${seed}:${axis}`).reduce(
+    (accumulator, character) => ((accumulator * 31) + character.charCodeAt(0)) >>> 0,
+    0,
+  );
+
+  const offset = (((hash % 1000) / 999) - 0.5) * PRIVACY_OFFSET_RANGE * 2;
+  return Number((value + offset).toFixed(4));
+}
+
 export default async function MapaPage() {
   // Consultar propiedades reales publicadas del MVP de Tu Casita
   const { data: properties, error } = await supabase
