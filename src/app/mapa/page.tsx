@@ -37,7 +37,17 @@ export default async function MapaPage() {
     );
   }
 
-  const activeProperties = (properties || []) as Property[];
+  const activeProperties = ((properties || []) as Property[]).map((property) => {
+    if (property.latitude == null || property.longitude == null) {
+      return property;
+    }
+
+    return {
+      ...property,
+      latitude: obfuscateCoordinate(property.latitude, property.id, 'lat'),
+      longitude: obfuscateCoordinate(property.longitude, property.id, 'lng'),
+    };
+  });
 
   return (
     <div className="max-w-5xl mx-auto py-2 md:py-6 pb-24">
