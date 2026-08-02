@@ -678,11 +678,7 @@ export default function PublicWizardPage() {
                     {[
                       { value: 'sale', label: '🏷️ Venta', desc: 'Pon en venta tu inmueble con máxima visibilidad.' },
                       { value: 'swap', label: '🔄 Permuta', desc: 'Intercambio directo de propiedades.' },
-                      { value: 'long_term', label: '📅 Alquiler Larga Estadía', desc: 'Rentas estables mensuales.' },
-                      { value: 'local_rent', label: '💵 Renta Nacional (CUP)', desc: 'Alquiler temporal en moneda nacional.' },
-                      { value: 'international_hostel', label: '✈️ Hostal / Internacional', desc: 'Hospedaje vacacional en USD o EUR.' },
-                      { value: 'day_pass', label: '🎉 Pasadía / Eventos', desc: 'Fincas, piscinas y espacios festivos.' },
-                      { value: 'commercial_space', label: '🏢 Renta Comercial', desc: 'Locales, oficinas y almacenes para negocios.' },
+                      { value: 'long_term', label: '📅 Alquiler Larga Estadía', desc: 'Rentas estables mensuales o de larga estancia.' },
                     ].map((opt) => {
                       const isSelected = formData.status === opt.value;
                       return (

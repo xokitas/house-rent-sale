@@ -1,8 +1,12 @@
 
-> casas-alquiler@0.1.0 start /app
-> next start
+> casas-alquiler@0.1.0 dev /app
+> next dev
 
-▲ Next.js 16.2.10
+▲ Next.js 16.2.10 (Turbopack)
 - Local:         http://localhost:3000
 - Network:       http://192.168.0.2:3000
-✓ Ready in 185ms
+- Environments: .env.local
+✓ Ready in 531ms
+
+○ Compiling / ...
+ GET / 200 in 13.5s (next.js: 4.7s, application-code: 8.8s)
