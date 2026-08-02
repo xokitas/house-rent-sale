@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { Property } from '@/lib/types';
+import { MVP_STATUSES } from '@/lib/constants';
 import { notFound } from 'next/navigation';
 import PropertyDetailClient from './PropertyDetailClient';
 
