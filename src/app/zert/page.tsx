@@ -698,7 +698,7 @@ export default function AdminPage() {
                   type="button"
                   onClick={triggerSubmit}
                   disabled={isProcessing}
-                  className="px-4 py-2 text-xs font-extrabold text-white bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 rounded-xl shadow-md transition active:scale-95 disabled:opacity-50 cursor-pointer"
+                  className="px-4 py-2 text-xs font-extrabold text-white bg-linear-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 rounded-xl shadow-md transition active:scale-95 disabled:opacity-50 cursor-pointer"
                 >
                   {isProcessing
                     ? 'Procesando...'
@@ -711,7 +711,7 @@ export default function AdminPage() {
               <button
                 type="button"
                 onClick={() => setActiveView('new_property')}
-                className="px-4 py-2 bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] text-white text-xs font-bold rounded-xl shadow-md hover:opacity-95 transition flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                className="px-4 py-2 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] text-white text-xs font-bold rounded-xl shadow-md hover:opacity-95 transition flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
               >
                 ➕ Nueva publicación
               </button>

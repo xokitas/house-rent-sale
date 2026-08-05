@@ -85,7 +85,7 @@ export default function HomePage() {
       {/* 1. CABECERA (PIXEL PERFECT FIGMA) */}
       <div className="bg-bg-card border-b border-border-main px-4 py-4.5 sticky top-0 z-30 shadow-xs transition-colors duration-200">
         <div className="flex flex-row items-center justify-between gap-2 mb-3.5">
-          <div className="space-y-0.5 min-w-0 shrink-1">
+          <div className="space-y-0.5 min-w-0 shrink">
             <p className="text-[9px] sm:text-[10px] font-black tracking-[0.12em] text-brand-secondary uppercase truncate">
               Camagüey, Cuba
             </p>
@@ -159,7 +159,7 @@ export default function HomePage() {
               <button
                 key={t.id}
                 onClick={() => setActiveTab(t.id as any)}
-                className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border flex items-center gap-1.5 cursor-pointer ${
+                className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border flex items-center gap-1.5 cursor-pointer ${
                   isActive
                     ? 'bg-brand-primary text-bg-card border-transparent shadow-sm'
                     : 'bg-bg-main text-text-muted border-border-main hover:border-text-muted/30'
@@ -180,7 +180,7 @@ export default function HomePage() {
             <div className="h-4 w-32 bg-border-main rounded-md shimmer" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-64 bg-bg-card rounded-[2rem] border border-border-main shimmer" />
+                <div key={i} className="h-64 bg-bg-card rounded-4xl border border-border-main shimmer" />
               ))}
             </div>
           </div>
@@ -193,7 +193,7 @@ export default function HomePage() {
             <PropertyList properties={filteredProperties} />
 
             {filteredProperties.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-16 text-center gap-3 bg-bg-card rounded-[2rem] border border-border-main p-6 shadow-2xs">
+              <div className="flex flex-col items-center justify-center py-16 text-center gap-3 bg-bg-card rounded-4xl border border-border-main p-6 shadow-2xs">
                 <span className="text-4xl animate-bounce">🏚️</span>
                 <h3 className="text-sm font-black text-text-main leading-none">Sin resultados</h3>
                 <p className="text-xs font-semibold text-text-muted leading-relaxed">
