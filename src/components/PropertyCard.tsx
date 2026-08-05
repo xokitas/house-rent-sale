@@ -104,57 +104,58 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       </div>
 
       {/* CUERPO DE LA TARJETA */}
-      <Link href={`/propiedad/${property.id}`} className="p-5 flex-1 flex flex-col text-left">
-        {/* Título */}
-        <h3 className="text-base font-black text-text-main line-clamp-1 mb-1 group-hover:text-brand-primary transition-colors leading-snug">
-          {property.title}
-        </h3>
+      <div className="p-5 flex-1 flex flex-col text-left">
+        <Link href={`/propiedad/${property.id}`} className="flex-1 flex flex-col group/body">
+          {/* Título */}
+          <h3 className="text-base font-black text-text-main line-clamp-1 mb-1 group-hover:text-brand-primary transition-colors leading-snug">
+            {property.title}
+          </h3>
 
-        {/* Reparto y Dirección */}
-        <p className="flex items-center gap-1 text-xs font-semibold text-text-muted mb-3">
-          <MapPin className="w-3.5 h-3.5 text-brand-primary shrink-0" />
-          <span className="truncate">
-            {property.address || `${property.neighborhood || 'Zona general'}, Camagüey`}
-          </span>
-        </p>
+          {/* Reparto y Dirección */}
+          <p className="flex items-center gap-1 text-xs font-semibold text-text-muted mb-3">
+            <MapPin className="w-3.5 h-3.5 text-brand-primary shrink-0" />
+            <span className="truncate">
+              {property.address || `${property.neighborhood || 'Zona general'}, Camagüey`}
+            </span>
+          </p>
 
-        {/* Atributos / Características Rápidas */}
-        <div className="flex items-center gap-4 text-xs font-bold text-text-muted mb-4 bg-bg-main p-2.5 rounded-2xl border border-border-main transition-colors duration-200">
-          {property.bedrooms !== undefined && property.bedrooms > 0 && (
-            <span className="flex items-center gap-1.5">
-              🛏️ <strong className="text-text-main">{property.bedrooms}</strong> cuartos
-            </span>
-          )}
-          {property.bathrooms !== undefined && property.bathrooms > 0 && (
-            <span className="flex items-center gap-1.5">
-              🚿 <strong className="text-text-main">{property.bathrooms}</strong> baños
-            </span>
-          )}
-          {property.construction_area !== undefined && property.construction_area !== null && (
-            <span className="flex items-center gap-1.5">
-              📐 <strong className="text-text-main">{property.construction_area}</strong> m²
-            </span>
-          )}
-        </div>
-
-        {/* Características Adicionales destacadas */}
-        {property.amenities && property.amenities.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-5">
-            {property.amenities.slice(0, 3).map((amenity) => (
-              <span
-                key={amenity}
-                className="inline-flex items-center gap-1 bg-brand-primary/10 text-brand-primary text-[10px] font-bold px-2.5 py-1 rounded-full border border-brand-primary/5"
-              >
-                <span>•</span> {amenity}
+          {/* Atributos / Características Rápidas */}
+          <div className="flex items-center gap-4 text-xs font-bold text-text-muted mb-4 bg-bg-main p-2.5 rounded-2xl border border-border-main transition-colors duration-200">
+            {property.bedrooms !== undefined && property.bedrooms > 0 && (
+              <span className="flex items-center gap-1.5">
+                🛏️ <strong className="text-text-main">{property.bedrooms}</strong> cuartos
               </span>
-            ))}
+            )}
+            {property.bathrooms !== undefined && property.bathrooms > 0 && (
+              <span className="flex items-center gap-1.5">
+                🚿 <strong className="text-text-main">{property.bathrooms}</strong> baños
+              </span>
+            )}
+            {property.construction_area !== undefined && property.construction_area !== null && (
+              <span className="flex items-center gap-1.5">
+                📐 <strong className="text-text-main">{property.construction_area}</strong> m²
+              </span>
+            )}
           </div>
-        )}
 
-        {/* Acciones de contacto */}
+          {/* Características Adicionales destacadas */}
+          {property.amenities && property.amenities.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-5">
+              {property.amenities.slice(0, 3).map((amenity) => (
+                <span
+                  key={amenity}
+                  className="inline-flex items-center gap-1 bg-brand-primary/10 text-brand-primary text-[10px] font-bold px-2.5 py-1 rounded-full border border-brand-primary/5"
+                >
+                  <span>•</span> {amenity}
+                </span>
+              ))}
+            </div>
+          )}
+        </Link>
+
+        {/* Acciones de contacto (Fuera del Link para evitar anidación de <a>) */}
         <div
           className="mt-auto pt-4 border-t border-border-main flex items-center gap-2"
-          onClick={(e) => e.stopPropagation()}
         >
           <a
             href={`tel:${property.contact}`}
@@ -173,7 +174,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             WhatsApp
           </a>
         </div>
-      </Link>
+      </div>
     </div>
   );
 }
