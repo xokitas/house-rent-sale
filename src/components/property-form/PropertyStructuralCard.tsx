@@ -97,7 +97,7 @@ export default function PropertyStructuralCard({
     <div className="bg-white rounded-3xl p-6 border border-[#E2D8C7] shadow-sm space-y-6 animate-in fade-in duration-300">
       {/* SECCIÓN CABECERA */}
       <div className="border-b border-[#E8E2D8] pb-4">
-        <h3 className="text-sm font-black text-[#1E67AD] uppercase tracking-wider flex items-center gap-2">
+        <h3 className="text-sm font-black text-brand-primary uppercase tracking-wider flex items-center gap-2">
           <span>🏗️</span> Características Estructurales
         </h3>
         <p className="text-[11px] text-[#5A5245] font-semibold mt-1">
@@ -110,13 +110,13 @@ export default function PropertyStructuralCard({
       {/* TIPO DE PROPIEDAD */}
       <div className="space-y-1.5">
         <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
-          Tipo de Propiedad <span className="text-[#1E67AD]">*</span>
+          Tipo de Propiedad <span className="text-brand-primary">*</span>
         </label>
         <select
           value={propertyType}
           required
           onChange={(e) => onFormChange('property_type', e.target.value)}
-          className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200 cursor-pointer"
+          className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all duration-200 cursor-pointer"
         >
           <option value="">Seleccione tipo de propiedad</option>
           {PROPERTY_TYPE_OPTIONS.map((opt) => (
@@ -140,7 +140,7 @@ export default function PropertyStructuralCard({
                 placeholder="Ej. 120"
                 value={constructionArea}
                 onChange={(e) => onFormChange('construction_area', e.target.value)}
-                className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200"
+                className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all duration-200"
               />
             </div>
           )}
@@ -148,7 +148,7 @@ export default function PropertyStructuralCard({
           {showLandArea && (
             <div className="space-y-1.5">
               <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
-                Área de Terreno (m²) {isTerrenoOrSolar && <span className="text-[#1E67AD]">*</span>}
+                Área de Terreno (m²) {isTerrenoOrSolar && <span className="text-brand-primary">*</span>}
               </label>
               <input
                 type="number"
@@ -156,7 +156,7 @@ export default function PropertyStructuralCard({
                 placeholder="Ej. 300"
                 value={landArea}
                 onChange={(e) => onFormChange('land_area', e.target.value)}
-                className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200"
+                className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all duration-200"
               />
             </div>
           )}
@@ -166,7 +166,7 @@ export default function PropertyStructuralCard({
       {/* GRID DE CANTIDADES DE HABITACIONES Y ESPACIOS */}
       {visibleDistributionFields.length > 0 && (
         <div className="pt-4 border-t border-[#E8E2D8] space-y-4">
-          <h4 className="text-[11px] font-black text-[#1E67AD] uppercase tracking-wider">
+          <h4 className="text-[11px] font-black text-brand-primary uppercase tracking-wider">
             Distribución de Habitaciones y Espacios
           </h4>
 
@@ -182,7 +182,7 @@ export default function PropertyStructuralCard({
                   placeholder="0"
                   value={item.val}
                   onChange={(e) => onFormChange(item.field, e.target.value)}
-                  className="w-full text-xs p-3 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200 text-center"
+                  className="w-full text-xs p-3 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all duration-200 text-center"
                 />
               </div>
             ))}

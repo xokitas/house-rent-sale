@@ -52,7 +52,7 @@ export default function PropertyGalleryCard({
 
       {/* SECCIÓN CABECERA */}
       <div className="border-b border-[#E8E2D8] pb-4">
-        <h3 className="text-sm font-black text-[#1E67AD] uppercase tracking-wider flex items-center gap-2">
+        <h3 className="text-sm font-black text-brand-primary uppercase tracking-wider flex items-center gap-2">
           <span>📸</span> Galería de Imágenes
         </h3>
         <p className="text-[11px] text-[#5A5245] font-semibold mt-1">
@@ -68,8 +68,8 @@ export default function PropertyGalleryCard({
         onClick={triggerFileInput}
         className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 ${
           isDragOver
-            ? 'border-[#1E67AD] bg-[#F2ECE1]/40 scale-[0.99] shadow-inner'
-            : 'border-[#E2D8C7] bg-[#FBF9F5] hover:border-[#1E67AD] hover:bg-white'
+            ? 'border-brand-primary bg-[#F2ECE1]/40 scale-[0.99] shadow-inner'
+            : 'border-[#E2D8C7] bg-[#FBF9F5] hover:border-brand-primary hover:bg-white'
         }`}
       >
         <input
@@ -85,7 +85,7 @@ export default function PropertyGalleryCard({
           📁
         </div>
 
-        <p className="text-xs font-black text-[#1E67AD]">
+        <p className="text-xs font-black text-brand-primary">
           Arrastra imágenes aquí
         </p>
         <p className="text-[10px] text-[#5A5245]/60 font-semibold mt-1">
@@ -146,7 +146,7 @@ export default function PropertyGalleryCard({
                   </button>
                 </div>
                 {idx === 0 && (
-                  <span className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 bg-[#1E67AD] text-white text-[8px] font-black uppercase rounded-md tracking-wider">
+                  <span className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 bg-brand-primary text-white text-[8px] font-black uppercase rounded-md tracking-wider">
                     Principal
                   </span>
                 )}
@@ -159,7 +159,7 @@ export default function PropertyGalleryCard({
       {/* MINIATURAS NUEVAS FOTOS */}
       {selectedFiles.length > 0 && (
         <div className="space-y-2 pt-2 border-t border-[#E8E2D8]/55">
-          <h4 className="text-[11px] font-black text-[#1E67AD] uppercase tracking-wider">
+          <h4 className="text-[11px] font-black text-brand-primary uppercase tracking-wider">
             Nuevas imágenes a subir ({selectedFiles.length})
           </h4>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
@@ -168,7 +168,7 @@ export default function PropertyGalleryCard({
               return (
                 <div
                   key={idx}
-                  className="relative group aspect-square rounded-2xl overflow-hidden border border-[#1E67AD] bg-stone-100 shadow-xs"
+                  className="relative group aspect-square rounded-2xl overflow-hidden border border-brand-primary bg-stone-100 shadow-xs"
                 >
                   <img
                     src={url}
@@ -189,7 +189,7 @@ export default function PropertyGalleryCard({
                     </button>
                   </div>
                   {existingImages.length === 0 && idx === 0 && (
-                    <span className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 bg-[#1E67AD] text-white text-[8px] font-black uppercase rounded-md tracking-wider">
+                    <span className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 bg-brand-primary text-white text-[8px] font-black uppercase rounded-md tracking-wider">
                       Principal
                     </span>
                   )}

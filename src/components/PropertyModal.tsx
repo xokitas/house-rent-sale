@@ -82,7 +82,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
               );
             })}
             <span className="inline-flex items-center gap-1 text-xs text-slate-500 font-semibold truncate max-w-50 sm:max-w-xs">
-              <MapPin className="w-3.5 h-3.5 shrink-0 text-[#1E67AD]" />
+              <MapPin className="w-3.5 h-3.5 shrink-0 text-brand-primary" />
               {property.address}
             </span>
           </div>
@@ -90,7 +90,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
           <button
             onClick={onClose}
             aria-label="Cerrar"
-            className="w-9 h-9 rounded-full bg-[#F2ECE1] hover:bg-[#E2D8C7] text-[#1E67AD] flex items-center justify-center transition cursor-pointer shrink-0"
+            className="w-9 h-9 rounded-full bg-[#F2ECE1] hover:bg-[#E2D8C7] text-brand-primary flex items-center justify-center transition cursor-pointer shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
@@ -100,7 +100,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
         <div className="overflow-y-auto p-4 sm:p-6 space-y-6 flex-1">
           {/* Carrusel */}
           <div className="space-y-3">
-            <div className="relative h-64 sm:h-80 w-full bg-[#1E67AD]/10 rounded-2xl overflow-hidden border border-[#E2D8C7] shadow-inner">
+            <div className="relative h-64 sm:h-80 w-full bg-brand-primary/10 rounded-2xl overflow-hidden border border-[#E2D8C7] shadow-inner">
               <img
                 src={images[activeImageIndex] || '/placeholder.svg'}
                 alt={property.title}
@@ -140,7 +140,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
                     aria-label={`Ver imagen ${idx + 1}`}
                     className={`relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border-2 transition ${
                       activeImageIndex === idx
-                        ? 'border-[#1E67AD] scale-95 shadow-md'
+                        ? 'border-brand-primary scale-95 shadow-md'
                         : 'border-[#E2D8C7] opacity-60 hover:opacity-100'
                     }`}
                   >
@@ -156,14 +156,14 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
             <div>
               <h2 className="text-2xl font-black text-[#153B6B] tracking-tight text-balance">{property.title}</h2>
               <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 mt-1">
-                <MapPin className="w-4 h-4 text-[#1E67AD]" />
+                <MapPin className="w-4 h-4 text-brand-primary" />
                 {property.address}
               </p>
             </div>
 
             <div className="bg-white px-4 py-3 rounded-2xl border border-[#E2D8C7] text-right sm:text-left shrink-0 shadow-xs">
               <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider">Precio solicitado</p>
-              <div className="text-2xl font-black text-[#1E67AD] leading-tight">
+              <div className="text-2xl font-black text-brand-primary leading-tight">
                 {Number(property.price).toLocaleString('en-US')}{' '}
                 <span className="text-sm font-bold text-[#C8976C]">{property.currency}</span>
               </div>
@@ -172,7 +172,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
 
           {/* Descripción */}
           <div className="space-y-2">
-            <h3 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Descripción de la propiedad</h3>
+            <h3 className="text-xs font-black text-brand-primary uppercase tracking-wider">Descripción de la propiedad</h3>
             <div className="bg-white p-4 rounded-2xl border border-[#E2D8C7] text-[#5A5245] text-sm leading-relaxed whitespace-pre-line font-medium shadow-xs">
               {property.description || 'El propietario no dejó una descripción detallada.'}
             </div>
@@ -183,7 +183,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
             <button
               type="button"
               onClick={() => setShowMapAlert(true)}
-              className="inline-flex items-center gap-2 text-xs font-black text-[#1E67AD] bg-[#F2ECE1] hover:bg-[#E2D8C7] px-4 py-2.5 rounded-xl border border-[#E2D8C7] transition cursor-pointer"
+              className="inline-flex items-center gap-2 text-xs font-black text-brand-primary bg-[#F2ECE1] hover:bg-[#E2D8C7] px-4 py-2.5 rounded-xl border border-[#E2D8C7] transition cursor-pointer"
             >
               <MapPin className="w-4 h-4" />
               Ver ubicación en el mapa
@@ -200,7 +200,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <a
               href={`tel:${property.contact}`}
-              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#F2ECE1] hover:bg-[#E2D8C7] text-[#1E67AD] font-black text-xs rounded-xl border border-[#E2D8C7] transition text-center shadow-xs"
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#F2ECE1] hover:bg-[#E2D8C7] text-brand-primary font-black text-xs rounded-xl border border-[#E2D8C7] transition text-center shadow-xs"
             >
               <Phone className="w-4 h-4" />
               Llamar
@@ -223,7 +223,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
       {showMapAlert && (
         <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-[#E2D8C7] text-center space-y-4 animate-in zoom-in-95 duration-200">
-            <div className="w-12 h-12 bg-[#F2ECE1] text-[#1E67AD] rounded-2xl flex items-center justify-center mx-auto border border-[#E2D8C7]">
+            <div className="w-12 h-12 bg-[#F2ECE1] text-brand-primary rounded-2xl flex items-center justify-center mx-auto border border-[#E2D8C7]">
               <MapPin className="w-6 h-6" />
             </div>
 
@@ -246,7 +246,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
               <button
                 type="button"
                 onClick={() => setShowMapAlert(false)}
-                className="flex-1 px-4 py-2.5 bg-[#F2ECE1] hover:bg-[#E8E2D8] text-[#1E67AD] text-xs font-bold rounded-xl transition cursor-pointer"
+                className="flex-1 px-4 py-2.5 bg-[#F2ECE1] hover:bg-[#E8E2D8] text-brand-primary text-xs font-bold rounded-xl transition cursor-pointer"
               >
                 Cancelar
               </button>
@@ -254,7 +254,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
               <button
                 type="button"
                 onClick={confirmMapNavigation}
-                className="flex-1 px-4 py-2.5 bg-[#1E67AD] hover:bg-[#175691] text-white text-xs font-bold rounded-xl transition shadow-xs active:scale-95 cursor-pointer"
+                className="flex-1 px-4 py-2.5 bg-brand-primary hover:opacity-90 text-white text-xs font-bold rounded-xl transition shadow-xs active:scale-95 cursor-pointer"
               >
                 Abrir mapa ↗
               </button>

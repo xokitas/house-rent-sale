@@ -70,7 +70,7 @@ export default function ReviewStep({ formData, existingImages, selectedFiles, on
 
       {/* SECCIÓN CABECERA INTERNA */}
       <div className="border-b border-[#E8E2D8] pb-4">
-        <h3 className="text-sm font-black text-[#1E67AD] uppercase tracking-wider flex items-center gap-2">
+        <h3 className="text-sm font-black text-brand-primary uppercase tracking-wider flex items-center gap-2">
           <span>📋</span> Resumen de Publicación
         </h3>
         <p className="text-[11px] text-[#5A5245] font-semibold mt-1">
@@ -86,14 +86,14 @@ export default function ReviewStep({ formData, existingImages, selectedFiles, on
           <button
             type="button"
             onClick={() => onGoToStep(1)}
-            className="absolute top-4 right-4 text-[10px] font-black text-[#1E67AD] hover:underline cursor-pointer uppercase"
+            className="absolute top-4 right-4 text-[10px] font-black text-brand-primary hover:underline cursor-pointer uppercase"
           >
             ✏️ Editar Cat.
           </button>
           <h4 className="text-xs font-black text-[#5A5245] uppercase tracking-wider">
             1. Categoría y Clasificación
           </h4>
-          <p className="text-xs font-bold text-[#1E67AD] bg-blue-50/70 border border-blue-100 px-3 py-1.5 rounded-xl inline-block">
+          <p className="text-xs font-bold text-brand-primary bg-brand-primary/5 border border-brand-primary/10 px-3 py-1.5 rounded-xl inline-block">
             {categoryLabel}
           </p>
 
@@ -103,7 +103,7 @@ export default function ReviewStep({ formData, existingImages, selectedFiles, on
               <button
                 type="button"
                 onClick={() => onGoToStep(2)}
-                className="text-[10px] font-black text-[#1E67AD] hover:underline cursor-pointer uppercase"
+                className="text-[10px] font-black text-brand-primary hover:underline cursor-pointer uppercase"
               >
                 ✏️ Editar
               </button>
@@ -132,7 +132,7 @@ export default function ReviewStep({ formData, existingImages, selectedFiles, on
           <button
             type="button"
             onClick={() => onGoToStep(3)}
-            className="absolute top-4 right-4 text-[10px] font-black text-[#1E67AD] hover:underline cursor-pointer uppercase"
+            className="absolute top-4 right-4 text-[10px] font-black text-brand-primary hover:underline cursor-pointer uppercase"
           >
             ✏️ Editar
           </button>
@@ -168,7 +168,7 @@ export default function ReviewStep({ formData, existingImages, selectedFiles, on
           <button
             type="button"
             onClick={() => onGoToStep(4)}
-            className="absolute top-4 right-4 text-[10px] font-black text-[#1E67AD] hover:underline cursor-pointer uppercase"
+            className="absolute top-4 right-4 text-[10px] font-black text-brand-primary hover:underline cursor-pointer uppercase"
           >
             ✏️ Editar
           </button>
@@ -218,8 +218,8 @@ export default function ReviewStep({ formData, existingImages, selectedFiles, on
 
           {/* Características Específicas de Categoría */}
           {formData.status === 'international_hostel' && (
-            <div className="pt-3 border-t border-[#E8E2D8]/50 space-y-1 bg-blue-50/20 p-3 rounded-xl">
-              <span className="text-[9px] uppercase font-black text-[#1E67AD] block">Hostal / Internacional</span>
+            <div className="pt-3 border-t border-[#E8E2D8]/50 space-y-1 bg-emerald-50/20 p-3 rounded-xl">
+              <span className="text-[9px] uppercase font-black text-brand-primary block">Hostal / Internacional</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold text-[#5A5245]/80">
                 <div>🛏️ Disp: {formData.rooms_available || '0'} habitacion(es)</div>
                 <div>🕒 Entrada: {formData.check_in || '-'} | Salida: {formData.check_out || '-'}</div>
@@ -237,7 +237,7 @@ export default function ReviewStep({ formData, existingImages, selectedFiles, on
 
           {formData.status === 'day_pass' && (
             <div className="pt-3 border-t border-[#E8E2D8]/50 space-y-1 bg-emerald-50/20 p-3 rounded-xl">
-              <span className="text-[9px] uppercase font-black text-[#1E67AD] block">Pasadía / Evento</span>
+              <span className="text-[9px] uppercase font-black text-brand-primary block">Pasadía / Evento</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold text-[#5A5245]/80">
                 <div>👥 Capacidad: {formData.capacity || '-'} personas</div>
                 <div>🕒 Horario: {formData.event_schedule || '-'}</div>
@@ -250,7 +250,7 @@ export default function ReviewStep({ formData, existingImages, selectedFiles, on
 
           {formData.status === 'commercial_space' && (
             <div className="pt-3 border-t border-[#E8E2D8]/50 space-y-1 bg-purple-50/20 p-3 rounded-xl">
-              <span className="text-[9px] uppercase font-black text-[#1E67AD] block">Espacio Comercial</span>
+              <span className="text-[9px] uppercase font-black text-brand-primary block">Espacio Comercial</span>
               <div className="flex flex-wrap gap-2 text-xs font-semibold text-[#5A5245]/80">
                 {formData.commercial_front && <span className="bg-white px-2 py-0.5 rounded-lg border text-[10px]">🏪 Frente Comercial</span>}
                 {formData.warehouse && <span className="bg-white px-2 py-0.5 rounded-lg border text-[10px]">📦 Almacén</span>}
@@ -266,7 +266,7 @@ export default function ReviewStep({ formData, existingImages, selectedFiles, on
           <button
             type="button"
             onClick={() => onGoToStep(5)}
-            className="absolute top-4 right-4 text-[10px] font-black text-[#1E67AD] hover:underline cursor-pointer uppercase"
+            className="absolute top-4 right-4 text-[10px] font-black text-brand-primary hover:underline cursor-pointer uppercase"
           >
             ✏️ Editar
           </button>
@@ -291,7 +291,7 @@ export default function ReviewStep({ formData, existingImages, selectedFiles, on
           <button
             type="button"
             onClick={() => onGoToStep(6)}
-            className="absolute top-4 right-4 text-[10px] font-black text-[#1E67AD] hover:underline cursor-pointer uppercase"
+            className="absolute top-4 right-4 text-[10px] font-black text-brand-primary hover:underline cursor-pointer uppercase"
           >
             ✏️ Editar
           </button>
@@ -306,7 +306,7 @@ export default function ReviewStep({ formData, existingImages, selectedFiles, on
           </div>
           <div>
             <span className="text-[9px] uppercase font-black text-[#5A5245]/40 block">Imágenes cargadas</span>
-            <p className="text-xs font-bold text-[#1E67AD]">
+            <p className="text-xs font-bold text-brand-primary">
               📸 {totalPhotos} {totalPhotos === 1 ? 'imagen seleccionada' : 'imágenes seleccionadas'}
             </p>
           </div>
@@ -317,7 +317,7 @@ export default function ReviewStep({ formData, existingImages, selectedFiles, on
           <button
             type="button"
             onClick={() => onGoToStep(7)}
-            className="absolute top-4 right-4 text-[10px] font-black text-[#1E67AD] hover:underline cursor-pointer uppercase"
+            className="absolute top-4 right-4 text-[10px] font-black text-brand-primary hover:underline cursor-pointer uppercase"
           >
             ✏️ Editar
           </button>
@@ -331,7 +331,7 @@ export default function ReviewStep({ formData, existingImages, selectedFiles, on
             </div>
             <div>
               <span className="text-[9px] uppercase font-black text-[#5A5245]/40 block">Teléfono / WhatsApp</span>
-              <span className="text-xs font-extrabold text-[#1E67AD]">{formData.contact}</span>
+              <span className="text-xs font-extrabold text-brand-primary">{formData.contact}</span>
             </div>
             {formData.admin_comment && (
               <div className="sm:col-span-2">

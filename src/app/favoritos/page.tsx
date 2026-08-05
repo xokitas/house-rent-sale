@@ -18,7 +18,7 @@ export default function FavoritosPage() {
 
       <Link
         href="/"
-        className="inline-flex items-center gap-2 bg-[#1E67AD] hover:bg-[#175691] text-white text-sm font-black px-6 py-3 rounded-2xl transition shadow-md active:scale-95 cursor-pointer"
+        className="inline-flex items-center gap-2 bg-brand-primary hover:opacity-95 text-white text-sm font-black px-6 py-3 rounded-2xl transition shadow-md active:scale-95 cursor-pointer"
       >
         <Home className="w-4 h-4" />
         Explorar propiedades

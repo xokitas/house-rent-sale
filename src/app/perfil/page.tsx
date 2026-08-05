@@ -91,7 +91,7 @@ export default function PerfilPage() {
       {/* 2. PREFERENCIAS DEL USUARIO */}
       <section className="bg-white rounded-[2rem] border border-slate-100 p-5 space-y-4 shadow-2xs">
         <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-          <Settings className="w-4 h-4 text-[#1E67AD]" />
+          <Settings className="w-4 h-4 text-brand-primary" />
           Preferencias de visualización
         </h3>
 
@@ -110,7 +110,7 @@ export default function PerfilPage() {
                 onClick={() => changeCurrency(curr)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
                   currency === curr
-                    ? 'bg-[#1E67AD] text-white shadow-sm'
+                    ? 'bg-brand-primary text-white shadow-sm'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -131,7 +131,7 @@ export default function PerfilPage() {
             type="button"
             onClick={() => setDarkMode(!darkMode)}
             className={`w-11 h-6 rounded-full transition-colors relative flex items-center p-1 cursor-pointer ${
-              darkMode ? 'bg-[#1E67AD]' : 'bg-slate-300'
+              darkMode ? 'bg-brand-primary' : 'bg-slate-300'
             }`}
           >
             <div
@@ -140,7 +140,7 @@ export default function PerfilPage() {
               }`}
             >
               {darkMode ? (
-                <Moon className="w-2.5 h-2.5 text-[#1E67AD]" />
+                <Moon className="w-2.5 h-2.5 text-brand-primary" />
               ) : (
                 <Sun className="w-2.5 h-2.5 text-slate-500" />
               )}
@@ -164,7 +164,7 @@ export default function PerfilPage() {
               </div>
               <div className="flex items-center gap-2">
                 {item.badge && (
-                  <span className="bg-[#1E67AD]/10 text-[#1E67AD] text-[9px] font-black px-2 py-0.5 rounded-full leading-none">
+                  <span className="bg-brand-primary/10 text-brand-primary text-[9px] font-black px-2 py-0.5 rounded-full leading-none">
                     {item.badge}
                   </span>
                 )}
@@ -206,7 +206,7 @@ export default function PerfilPage() {
       <section className="pt-4 text-center">
         <Link
           href="/zert"
-          className="inline-flex items-center gap-2 text-xs font-black tracking-wider text-slate-400 hover:text-[#1E67AD] bg-slate-100/50 hover:bg-[#1E67AD]/5 border border-dashed border-slate-200 hover:border-slate-300 px-6 py-3 rounded-2xl transition"
+          className="inline-flex items-center gap-2 text-xs font-black tracking-wider text-slate-400 hover:text-brand-primary bg-slate-100/50 hover:bg-brand-primary/5 border border-dashed border-slate-200 hover:border-slate-300 px-6 py-3 rounded-2xl transition"
         >
           🔐 Ir al Panel Administrativo (/zert)
         </Link>

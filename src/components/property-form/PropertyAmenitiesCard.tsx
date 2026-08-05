@@ -44,7 +44,7 @@ export default function PropertyAmenitiesCard({
     <div className="bg-white rounded-3xl p-6 border border-[#E2D8C7] shadow-sm space-y-6 animate-in fade-in duration-300">
       {/* SECCIÓN CABECERA */}
       <div className="border-b border-[#E8E2D8] pb-4">
-        <h3 className="text-sm font-black text-[#1E67AD] uppercase tracking-wider flex items-center gap-2">
+        <h3 className="text-sm font-black text-brand-primary uppercase tracking-wider flex items-center gap-2">
           <span>✨</span> Amenidades de la Propiedad
         </h3>
         <p className="text-[11px] text-[#5A5245] font-semibold mt-1">
@@ -61,7 +61,7 @@ export default function PropertyAmenitiesCard({
               key={amenity}
               className={`p-3.5 rounded-2xl border text-left transition-all duration-300 flex items-center gap-3 cursor-pointer select-none ${
                 isChecked
-                  ? 'border-[#1E67AD] bg-blue-50/40 text-[#1E67AD] font-bold'
+                  ? 'border-brand-primary bg-blue-50/40 text-brand-primary font-bold'
                   : 'border-[#E2D8C7] text-[#5A5245] bg-[#FBF9F5] hover:bg-[#E2D8C7]/20 font-semibold text-xs'
               }`}
             >
@@ -74,7 +74,7 @@ export default function PropertyAmenitiesCard({
               <span
                 className={`w-4 h-4 rounded-md border flex items-center justify-center transition-all ${
                   isChecked
-                    ? 'bg-[#1E67AD] border-[#1E67AD] text-white'
+                    ? 'bg-brand-primary border-brand-primary text-white'
                     : 'border-[#E2D8C7] bg-white'
                 }`}
               >
