@@ -10,7 +10,7 @@ const RealMap = dynamic(() => import('@/components/RealMap'), {
   loading: () => (
     <div className="w-full h-[65vh] rounded-[2.5rem] bg-slate-100 flex items-center justify-center border border-slate-100 shadow-xs">
       <div className="flex flex-col items-center gap-2">
-        <div className="w-8 h-8 rounded-full border-4 border-slate-300 border-t-[#1E67AD] animate-spin" />
+        <div className="w-8 h-8 rounded-full border-4 border-slate-300 border-t-brand-primary animate-spin" />
         <span className="text-xs font-bold text-slate-500">Cargando mapa interactivo...</span>
       </div>
     </div>
@@ -26,7 +26,7 @@ export default function MapaClient({ properties }: MapaClientProps) {
     <div className="space-y-6 text-left max-w-5xl mx-auto">
       {/* 1. SECCIÓN INFORMATIVA DEL MAPA */}
       <section className="space-y-2">
-        <div className="inline-flex items-center gap-1.5 bg-[#1E67AD]/10 text-[#1E67AD] px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider">
+        <div className="inline-flex items-center gap-1.5 bg-brand-primary/10 text-brand-primary px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider">
           <Compass className="w-3.5 h-3.5 animate-pulse" />
           Mapa de propiedades
         </div>

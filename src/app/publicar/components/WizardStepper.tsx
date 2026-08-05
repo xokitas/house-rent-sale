@@ -27,14 +27,14 @@ export default function WizardStepper({ currentStep, totalSteps }: WizardStepper
       {/* ProgressBar */}
       <div className="relative w-full h-2.5 bg-[#F2ECE1] rounded-full overflow-hidden">
         <div
-          className="absolute left-0 top-0 h-full bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] transition-all duration-500 rounded-full"
+          className="absolute left-0 top-0 h-full bg-gradient-to-r from-brand-primary to-emerald-700 transition-all duration-500 rounded-full"
           style={{ width: `${percentage}%` }}
         />
       </div>
 
       {/* Stepper Header Info */}
       <div className="flex items-center justify-between">
-        <span className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">
+        <span className="text-xs font-black text-brand-primary uppercase tracking-wider">
           Paso {currentStep} de {totalSteps}
         </span>
         <span className="text-xs font-black text-[#C8976C] uppercase tracking-wider">
@@ -53,7 +53,7 @@ export default function WizardStepper({ currentStep, totalSteps }: WizardStepper
               <div
                 className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 ${
                   isActive
-                    ? 'bg-[#1E67AD] text-white ring-4 ring-[#1E67AD]/15 scale-105'
+                    ? 'bg-brand-primary text-white ring-4 ring-brand-primary/15 scale-105'
                     : isCompleted
                     ? 'bg-emerald-600 text-white'
                     : 'bg-[#F2ECE1] text-[#5A5245]/60'
@@ -64,7 +64,7 @@ export default function WizardStepper({ currentStep, totalSteps }: WizardStepper
               <span
                 className={`hidden md:block text-[9px] font-bold mt-1.5 truncate max-w-full transition-colors ${
                   isActive
-                    ? 'text-[#1E67AD] font-black'
+                    ? 'text-brand-primary font-black'
                     : isCompleted
                     ? 'text-emerald-700'
                     : 'text-[#5A5245]/50'

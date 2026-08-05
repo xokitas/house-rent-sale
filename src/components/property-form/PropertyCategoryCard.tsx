@@ -22,8 +22,8 @@ export default function PropertyCategoryCard({ opt, isSelected, onToggle }: Prop
       onClick={onToggle}
       className={`p-4 rounded-2xl border text-left flex flex-col justify-between h-32 transition-all duration-300 group cursor-pointer ${
         isSelected
-          ? 'border-[#1E67AD] bg-[#F2ECE1]/40 text-[#1E67AD] shadow-xs scale-[0.98]'
-          : 'border-[#E2D8C7] bg-white text-[#5A5245] hover:bg-[#FBF9F5] hover:border-[#1E67AD]/50 hover:shadow-xs hover:translate-y-[-1px]'
+          ? 'border-brand-primary bg-[#F2ECE1]/40 text-brand-primary shadow-xs scale-[0.98]'
+          : 'border-[#E2D8C7] bg-white text-[#5A5245] hover:bg-[#FBF9F5] hover:border-brand-primary/50 hover:shadow-xs hover:translate-y-[-1px]'
       }`}
     >
       <div className="flex items-center justify-between w-full">
@@ -34,8 +34,8 @@ export default function PropertyCategoryCard({ opt, isSelected, onToggle }: Prop
         </span>
         <span className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all ${
           isSelected
-            ? 'bg-[#1E67AD] border-[#1E67AD] text-white'
-            : 'border-[#E2D8C7] bg-white group-hover:border-[#1E67AD]'
+            ? 'bg-brand-primary border-brand-primary text-white'
+            : 'border-[#E2D8C7] bg-white group-hover:border-brand-primary'
         }`}>
           {isSelected && (
             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
@@ -50,7 +50,7 @@ export default function PropertyCategoryCard({ opt, isSelected, onToggle }: Prop
           Clasificación
         </p>
         <h4 className={`text-xs font-bold leading-tight line-clamp-2 transition-colors ${
-          isSelected ? 'text-[#1E67AD]' : 'text-[#5A5245]'
+          isSelected ? 'text-brand-primary' : 'text-[#5A5245]'
         }`}>
           {text}
         </h4>

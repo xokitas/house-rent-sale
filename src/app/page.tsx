@@ -83,20 +83,38 @@ export default function HomePage() {
   return (
     <div className="w-full flex flex-col min-h-screen bg-bg-main transition-colors duration-200 text-left">
       {/* 1. CABECERA (PIXEL PERFECT FIGMA) */}
-      <div className="bg-bg-card border-b border-border-main px-4 py-4.5 sticky top-0 z-30 shadow-xs transition-colors duration-200">
-        <div className="flex flex-row items-center justify-between gap-2 mb-3.5">
+      <div className="bg-bg-card border-b border-border-main px-4 py-4.5 sticky top-0 z-30 shadow-xs transition-colors duration-200 rounded-3xl md:rounded-[2rem] md:mt-2">
+        <div className="flex flex-row items-center justify-between gap-4 mb-3.5">
           <div className="space-y-0.5 min-w-0 shrink">
             <p className="text-[9px] sm:text-[10px] font-black tracking-[0.12em] text-brand-secondary uppercase truncate">
               Camagüey, Cuba
             </p>
-            <h1 className="text-base sm:text-xl font-black tracking-tight text-text-main leading-none truncate">
+            <h1 className="text-base sm:text-2xl font-black tracking-tight text-text-main leading-none truncate">
               Inmobiliaria <span className="text-brand-primary">Tu Casita</span>
             </h1>
           </div>
 
-          <div className="flex items-center gap-1.5 shrink-0">
-            {/* Selector de moneda capsule */}
-            <div className="flex rounded-xl overflow-hidden border border-border-main p-0.5 bg-bg-main/30">
+          <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-3 shrink-0">
+            {/* Fila 1: Notificaciones y Tema */}
+            <div className="flex items-center gap-1.5">
+              {/* Botón de tema claro/oscuro */}
+              <button
+                onClick={toggleTheme}
+                className="w-9 h-9 rounded-full bg-bg-main hover:bg-border-main flex items-center justify-center text-text-muted transition-colors cursor-pointer"
+                title="Cambiar Apariencia"
+              >
+                {theme === 'dark' ? <Sun className="w-4.5 h-4.5 text-amber-400" /> : <Moon className="w-4.5 h-4.5" />}
+              </button>
+
+              {/* Campana de notificaciones */}
+              <button className="relative w-9 h-9 rounded-full bg-bg-main hover:bg-border-main flex items-center justify-center text-text-muted transition-colors">
+                <Bell className="w-4.5 h-4.5" />
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-brand-secondary" />
+              </button>
+            </div>
+
+            {/* Fila 2: Selector de moneda capsule */}
+            <div className="flex rounded-xl overflow-hidden border border-border-main p-0.5 bg-bg-main/30 shrink-0">
               {(['USD', 'CUP', 'EUR'] as CurrencyType[]).map((c) => (
                 <button
                   key={c}
@@ -111,21 +129,6 @@ export default function HomePage() {
                 </button>
               ))}
             </div>
-
-            {/* Botón de tema claro/oscuro */}
-            <button
-              onClick={toggleTheme}
-              className="w-9 h-9 rounded-full bg-bg-main hover:bg-border-main flex items-center justify-center text-text-muted transition-colors cursor-pointer"
-              title="Cambiar Apariencia"
-            >
-              {theme === 'dark' ? <Sun className="w-4.5 h-4.5 text-amber-400" /> : <Moon className="w-4.5 h-4.5" />}
-            </button>
-
-            {/* Campana de notificaciones */}
-            <button className="relative w-9 h-9 rounded-full bg-bg-main hover:bg-border-main flex items-center justify-center text-text-muted transition-colors">
-              <Bell className="w-4.5 h-4.5" />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-brand-secondary" />
-            </button>
           </div>
         </div>
 
@@ -178,9 +181,9 @@ export default function HomePage() {
         {loading ? (
           <div className="space-y-4">
             <div className="h-4 w-32 bg-border-main rounded-md shimmer" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-64 bg-bg-card rounded-4xl border border-border-main shimmer" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="h-96 bg-bg-card rounded-4xl border border-border-main shimmer" />
               ))}
             </div>
           </div>

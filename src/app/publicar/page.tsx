@@ -497,7 +497,7 @@ export default function PublicWizardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF9F5] text-slate-800 antialiased selection:bg-[#1E67AD]/10 selection:text-[#1E67AD] pb-16">
+    <div className="min-h-screen bg-[#FBF9F5] text-slate-800 antialiased selection:bg-brand-primary/10 selection:text-brand-primary pb-16">
 
       {/* HEADER PRINCIPAL */}
       <header className="bg-white/95 backdrop-blur-md border-b border-[#E8E2D8] sticky top-0 z-30 shadow-xs">
@@ -508,13 +508,13 @@ export default function PublicWizardPage() {
             </div>
             <div className="flex flex-col">
               <div className="flex items-baseline text-xl font-extrabold tracking-tight leading-none">
-                <span className="text-[#1E67AD]">Tu</span>
+                <span className="text-brand-primary">Tu</span>
                 <span className="text-[#C8976C] relative">
                   Casita
-                  <span className="absolute -top-1 right-3.5 text-[8px] text-[#1E67AD]">♥</span>
+                  <span className="absolute -top-1 right-3.5 text-[8px] text-brand-primary">♥</span>
                 </span>
               </div>
-              <span className="text-[8px] font-black text-[#1E67AD] tracking-[0.2em] uppercase mt-0.5">
+              <span className="text-[8px] font-black text-brand-primary tracking-[0.2em] uppercase mt-0.5">
                 Publicar Propiedad
               </span>
             </div>
@@ -522,7 +522,7 @@ export default function PublicWizardPage() {
 
           <Link
             href="/"
-            className="px-4 py-2 bg-[#F2ECE1] hover:bg-[#E2D8C7] text-[#1E67AD] border border-[#E2D8C7] text-xs font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+            className="px-4 py-2 bg-[#F2ECE1] hover:bg-[#E2D8C7] text-brand-primary border border-[#E2D8C7] text-xs font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
           >
             🏠 Volver al Inicio
           </Link>
@@ -551,7 +551,7 @@ export default function PublicWizardPage() {
               <button
                 type="button"
                 onClick={handleRecoverDraft}
-                className="px-4 py-3 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] text-white text-xs font-black rounded-xl uppercase tracking-wider shadow-md transition hover:opacity-95 active:scale-95 cursor-pointer"
+                className="px-4 py-3 bg-gradient-to-r from-brand-primary to-emerald-700 text-white text-xs font-black rounded-xl uppercase tracking-wider shadow-md transition hover:opacity-95 active:scale-95 cursor-pointer"
               >
                 Continuar Borrador
               </button>
@@ -646,7 +646,7 @@ export default function PublicWizardPage() {
                     industrial_power: false,
                   });
                 }}
-                className="px-6 py-3 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] text-white text-xs font-black uppercase rounded-xl hover:opacity-95 shadow-md transition tracking-widest active:scale-95 cursor-pointer"
+                className="px-6 py-3 bg-gradient-to-r from-brand-primary to-emerald-700 text-white text-xs font-black uppercase rounded-xl hover:opacity-95 shadow-md transition tracking-widest active:scale-95 cursor-pointer"
               >
                 Publicar otra propiedad
               </button>
@@ -666,7 +666,7 @@ export default function PublicWizardPage() {
               {currentStep === 1 && (
                 <div className="space-y-6 animate-in fade-in duration-300">
                   <div className="border-b border-[#E8E2D8] pb-4">
-                    <h3 className="text-sm font-black text-[#1E67AD] uppercase tracking-wider flex items-center gap-2">
+                    <h3 className="text-sm font-black text-brand-primary uppercase tracking-wider flex items-center gap-2">
                       <span>🏷️</span> ¿Qué deseas publicar?
                     </h3>
                     <p className="text-[11px] text-[#5A5245] font-semibold mt-1">
@@ -688,20 +688,20 @@ export default function PublicWizardPage() {
                           onClick={() => handleFormChange('status', opt.value as PropertyStatus)}
                           className={`p-5 rounded-2xl border text-left flex flex-col justify-between h-36 transition-all duration-300 group cursor-pointer ${
                             isSelected
-                              ? 'border-[#1E67AD] bg-[#F2ECE1]/40 text-[#1E67AD] shadow-xs scale-[0.98]'
-                              : 'border-[#E2D8C7] bg-white text-[#5A5245] hover:bg-[#FBF9F5] hover:border-[#1E67AD]/50 hover:shadow-xs'
+                              ? 'border-brand-primary bg-[#F2ECE1]/40 text-brand-primary shadow-xs scale-[0.98]'
+                              : 'border-[#E2D8C7] bg-white text-[#5A5245] hover:bg-[#FBF9F5] hover:border-brand-primary/50 hover:shadow-xs'
                           }`}
                         >
                           <div className="flex items-center justify-between w-full">
                             <span className="text-2xl">{opt.label.split(' ')[0]}</span>
                             <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                              isSelected ? 'bg-[#1E67AD] border-[#1E67AD] text-white' : 'border-[#E2D8C7] bg-white'
+                              isSelected ? 'bg-brand-primary border-brand-primary text-white' : 'border-[#E2D8C7] bg-white'
                             }`}>
                               {isSelected && <span className="w-1.5 h-1.5 bg-white rounded-full" />}
                             </span>
                           </div>
                           <div>
-                            <h4 className={`text-xs font-black tracking-tight mt-2 ${isSelected ? 'text-[#1E67AD]' : 'text-[#5A5245]'}`}>
+                            <h4 className={`text-xs font-black tracking-tight mt-2 ${isSelected ? 'text-brand-primary' : 'text-[#5A5245]'}`}>
                               {opt.label.substring(opt.label.indexOf(' ') + 1)}
                             </h4>
                             <p className="text-[10px] text-[#5A5245]/60 font-semibold mt-1 leading-snug line-clamp-2">
@@ -719,7 +719,7 @@ export default function PublicWizardPage() {
               {currentStep === 2 && (
                 <div className="space-y-6 animate-in fade-in duration-300">
                   <div className="border-b border-[#E8E2D8] pb-4">
-                    <h3 className="text-sm font-black text-[#1E67AD] uppercase tracking-wider flex items-center gap-2">
+                    <h3 className="text-sm font-black text-brand-primary uppercase tracking-wider flex items-center gap-2">
                       <span>✨</span> Información de la Propiedad
                     </h3>
                     <p className="text-[11px] text-[#5A5245] font-semibold mt-1">
@@ -731,13 +731,13 @@ export default function PublicWizardPage() {
                     {/* TIPO DE PROPIEDAD */}
                     <div className="space-y-1.5 sm:col-span-2">
                       <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
-                        Tipo de Propiedad <span className="text-[#1E67AD]">*</span>
+                        Tipo de Propiedad <span className="text-brand-primary">*</span>
                       </label>
                       <select
                         value={formData.property_type}
                         required
                         onChange={(e) => handleFormChange('property_type', e.target.value)}
-                        className={`w-full text-xs p-3.5 bg-[#FBF9F5] border rounded-xl text-[#5A5245] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all cursor-pointer ${
+                        className={`w-full text-xs p-3.5 bg-[#FBF9F5] border rounded-xl text-[#5A5245] font-semibold focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all cursor-pointer ${
                           validationErrors.property_type ? 'border-rose-400' : 'border-[#E2D8C7]'
                         }`}
                       >
@@ -754,7 +754,7 @@ export default function PublicWizardPage() {
                     {/* TÍTULO DE PUBLICACIÓN */}
                     <div className="space-y-1.5 sm:col-span-2">
                       <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
-                        Título de la publicación <span className="text-[#1E67AD]">*</span>
+                        Título de la publicación <span className="text-brand-primary">*</span>
                       </label>
                       <input
                         type="text"
@@ -762,7 +762,7 @@ export default function PublicWizardPage() {
                         placeholder="Ej. Hermosa casa con piscina y jardín en reparto Simoni"
                         value={formData.title}
                         onChange={(e) => handleFormChange('title', e.target.value)}
-                        className={`w-full text-xs p-3.5 bg-[#FBF9F5] border rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all ${
+                        className={`w-full text-xs p-3.5 bg-[#FBF9F5] border rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all ${
                           validationErrors.title ? 'border-rose-400' : 'border-[#E2D8C7]'
                         }`}
                       />
@@ -777,7 +777,7 @@ export default function PublicWizardPage() {
                     <div className="grid grid-cols-3 gap-3 sm:col-span-2">
                       <div className="col-span-2 space-y-1.5">
                         <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
-                          Precio Solicitado <span className="text-[#1E67AD]">*</span>
+                          Precio Solicitado <span className="text-brand-primary">*</span>
                         </label>
                         <input
                           type="number"
@@ -785,7 +785,7 @@ export default function PublicWizardPage() {
                           placeholder="Ej. 15000"
                           value={formData.price}
                           onChange={(e) => handleFormChange('price', e.target.value)}
-                          className={`w-full text-xs p-3.5 bg-[#FBF9F5] border rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all ${
+                          className={`w-full text-xs p-3.5 bg-[#FBF9F5] border rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all ${
                             validationErrors.price ? 'border-rose-400' : 'border-[#E2D8C7]'
                           }`}
                         />
@@ -800,7 +800,7 @@ export default function PublicWizardPage() {
                         <select
                           value={formData.currency}
                           onChange={(e) => handleFormChange('currency', e.target.value)}
-                          className="w-full text-xs p-[13.5px] bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#1E67AD] font-bold focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all cursor-pointer"
+                          className="w-full text-xs p-[13.5px] bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-brand-primary font-bold focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all cursor-pointer"
                         >
                           <option value="USD">USD</option>
                           <option value="CUP">CUP</option>
@@ -918,7 +918,7 @@ export default function PublicWizardPage() {
               {currentStep === 7 && (
                 <div className="space-y-6 animate-in fade-in duration-300">
                   <div className="border-b border-[#E8E2D8] pb-4">
-                    <h3 className="text-sm font-black text-[#1E67AD] uppercase tracking-wider flex items-center gap-2">
+                    <h3 className="text-sm font-black text-brand-primary uppercase tracking-wider flex items-center gap-2">
                       <span>📞</span> Información de Contacto
                     </h3>
                     <p className="text-[11px] text-[#5A5245] font-semibold mt-1">
@@ -930,7 +930,7 @@ export default function PublicWizardPage() {
                     {/* NOMBRE DEL PROPIETARIO */}
                     <div className="space-y-1.5">
                       <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
-                        Nombre Completo del Propietario / Solicitante <span className="text-[#1E67AD]">*</span>
+                        Nombre Completo del Propietario / Solicitante <span className="text-brand-primary">*</span>
                       </label>
                       <input
                         type="text"
@@ -938,7 +938,7 @@ export default function PublicWizardPage() {
                         placeholder="Ej. Juan Pérez"
                         value={formData.owner_name}
                         onChange={(e) => handleFormChange('owner_name', e.target.value)}
-                        className={`w-full text-xs p-3.5 bg-[#FBF9F5] border rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all ${
+                        className={`w-full text-xs p-3.5 bg-[#FBF9F5] border rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all ${
                           validationErrors.owner_name ? 'border-rose-400' : 'border-[#E2D8C7]'
                         }`}
                       />
@@ -950,7 +950,7 @@ export default function PublicWizardPage() {
                     {/* TELÉFONO DE CONTACTO */}
                     <div className="space-y-1.5">
                       <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
-                        Teléfono / WhatsApp de Contacto <span className="text-[#1E67AD]">*</span>
+                        Teléfono / WhatsApp de Contacto <span className="text-brand-primary">*</span>
                       </label>
                       <input
                         type="text"
@@ -958,7 +958,7 @@ export default function PublicWizardPage() {
                         placeholder="Ej. +53 51234567 o 51234567"
                         value={formData.contact}
                         onChange={(e) => handleFormChange('contact', e.target.value)}
-                        className={`w-full text-xs p-3.5 bg-[#FBF9F5] border rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all ${
+                        className={`w-full text-xs p-3.5 bg-[#FBF9F5] border rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all ${
                           validationErrors.contact ? 'border-rose-400' : 'border-[#E2D8C7]'
                         }`}
                       />
@@ -977,7 +977,7 @@ export default function PublicWizardPage() {
                         placeholder="Ej. Solo puedo atender llamadas de tarde. Tengo todos los papeles listos para la permuta."
                         value={formData.admin_comment}
                         onChange={(e) => handleFormChange('admin_comment', e.target.value)}
-                        className="w-full text-xs p-4 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all resize-none leading-relaxed"
+                        className="w-full text-xs p-4 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all resize-none leading-relaxed"
                       />
                       <p className="text-[10px] text-amber-800/70 font-bold">⚠️ Este comentario es confidencial. No aparecerá de forma pública en tu anuncio.</p>
                     </div>

@@ -34,7 +34,7 @@ export default function RealMap({ properties }: RealMapProps) {
     return (
       <div className="w-full h-[65vh] rounded-[2rem] bg-slate-100 flex items-center justify-center border border-slate-200">
         <div className="flex flex-col items-center gap-2">
-          <div className="w-8 h-8 rounded-full border-4 border-slate-300 border-t-[#1E67AD] animate-spin" />
+          <div className="w-8 h-8 rounded-full border-4 border-slate-300 border-t-brand-primary animate-spin" />
           <span className="text-xs font-bold text-slate-500">Cargando mapa interactivo...</span>
         </div>
       </div>
@@ -72,8 +72,8 @@ export default function RealMap({ properties }: RealMapProps) {
               <Circle
                 center={[lat, lng]}
                 pathOptions={{
-                  color: '#1E67AD',
-                  fillColor: '#1E67AD',
+                  color: '#1B4D3E',
+                  fillColor: '#1B4D3E',
                   fillOpacity: 0.15,
                   weight: 1.5,
                 }}
@@ -103,7 +103,7 @@ export default function RealMap({ properties }: RealMapProps) {
                         {prop.title}
                       </h4>
                       <p className="text-[10px] text-slate-400 font-bold flex items-center gap-0.5 mt-0.5">
-                        <MapPin className="w-3 h-3 text-[#1E67AD]" />
+                        <MapPin className="w-3 h-3 text-brand-primary" />
                         <span>Zona aproximada</span>
                       </p>
                     </div>

@@ -29,9 +29,9 @@ export default function ActionMenu() {
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        className="inline-flex items-center gap-2 bg-white border border-[#E2D8C7] shadow-xs rounded-2xl pl-2 pr-3 py-1.5 transition-all hover:border-[#1E67AD] active:scale-95 cursor-pointer"
+        className="inline-flex items-center gap-2 bg-white border border-[#E2D8C7] shadow-xs rounded-2xl pl-2 pr-3 py-1.5 transition-all hover:border-brand-primary active:scale-95 cursor-pointer"
       >
-        <span className="w-8 h-8 rounded-xl bg-[#F2ECE1] border border-[#E2D8C7] flex items-center justify-center shrink-0 overflow-hidden text-[#1E67AD]">
+        <span className="w-8 h-8 rounded-xl bg-[#F2ECE1] border border-[#E2D8C7] flex items-center justify-center shrink-0 overflow-hidden text-brand-primary">
           <Home className="w-4 h-4" />
         </span>
         <ChevronDown

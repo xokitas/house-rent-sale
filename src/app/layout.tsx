@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Poppins, Lato } from "next/font/google";
 import "./globals.css";
 import BottomNavigation from "@/components/BottomNavigation";
-import DesktopHeader from "@/components/DesktopHeader";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 const poppins = Poppins({
@@ -29,7 +28,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1E67AD",
+  themeColor: "#1B4D3E",
 };
 
 export default function RootLayout({
@@ -39,17 +38,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${poppins.variable} ${lato.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-bg-main text-text-main pb-16 md:pb-0 font-poppins">
+      <body className="min-h-full flex flex-col bg-bg-main text-text-main pb-24 md:pb-32 font-poppins">
         <ThemeProvider>
-          {/* Cabecera persistente para pantallas medianas/grandes */}
-          <DesktopHeader />
-
-          {/* Contenedor principal de la app */}
-          <main className="flex-1 w-full max-w-xl mx-auto px-4 py-4 md:py-6">
+          {/* Contenedor principal de la app (Responsive) */}
+          <main className="flex-1 w-full max-w-full md:max-w-3xl lg:max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6">
             {children}
           </main>
 
-          {/* Navegación inferior persistente para móviles */}
+          {/* Navegación inferior persistente para móviles y dock en desktop */}
           <BottomNavigation />
         </ThemeProvider>
       </body>

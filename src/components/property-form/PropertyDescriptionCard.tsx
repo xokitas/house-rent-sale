@@ -16,7 +16,7 @@ export default function PropertyDescriptionCard({
 
       {/* SECCIÓN CABECERA */}
       <div className="border-b border-[#E8E2D8] pb-4">
-        <h3 className="text-sm font-black text-[#1E67AD] uppercase tracking-wider flex items-center gap-2">
+        <h3 className="text-sm font-black text-brand-primary uppercase tracking-wider flex items-center gap-2">
           <span>📝</span> Descripción Detallada
         </h3>
         <p className="text-[11px] text-[#5A5245] font-semibold mt-1">
@@ -32,7 +32,7 @@ export default function PropertyDescriptionCard({
           placeholder="Ej. Hermosa casa amplia de 3 habitaciones, portal de corretaje, garaje privado, cisterna y sistema de agua 24 horas. Lista para entrar a vivir..."
           value={description}
           onChange={(e) => onFormChange('description', e.target.value)}
-          className="w-full text-xs p-4 bg-[#FBF9F5] border border-[#E2D8C7] rounded-2xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/40 focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200 resize-none leading-relaxed"
+          className="w-full text-xs p-4 bg-[#FBF9F5] border border-[#E2D8C7] rounded-2xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/40 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all duration-200 resize-none leading-relaxed"
         />
         <div className="flex items-center justify-between text-[10px] text-[#5A5245]/60 font-semibold px-1">
           <span>Sugerencia: Detalla el estado constructivo y servicios disponibles.</span>

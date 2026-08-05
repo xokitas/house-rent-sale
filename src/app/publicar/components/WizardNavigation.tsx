@@ -30,7 +30,7 @@ export default function WizardNavigation({
         className={`px-5 py-3 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer ${
           isFirst
             ? 'opacity-0 pointer-events-none'
-            : 'bg-[#F2ECE1] text-[#1E67AD] border border-[#E2D8C7] hover:bg-[#E2D8C7] active:scale-95 disabled:opacity-55 disabled:cursor-not-allowed'
+            : 'bg-[#F2ECE1] text-brand-primary border border-[#E2D8C7] hover:bg-[#E2D8C7] active:scale-95 disabled:opacity-55 disabled:cursor-not-allowed'
         }`}
       >
         ← Anterior
@@ -41,7 +41,7 @@ export default function WizardNavigation({
         type="button"
         onClick={onNext}
         disabled={isProcessing}
-        className="px-6 py-3.5 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 text-white text-xs font-black uppercase tracking-widest rounded-2xl shadow-md transition-all active:scale-95 disabled:opacity-55 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
+        className="px-6 py-3.5 bg-gradient-to-r from-brand-primary to-emerald-700 hover:opacity-95 text-white text-xs font-black uppercase tracking-widest rounded-2xl shadow-md transition-all active:scale-95 disabled:opacity-55 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
       >
         {isProcessing ? (
           <>

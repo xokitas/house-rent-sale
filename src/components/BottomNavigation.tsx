@@ -21,8 +21,8 @@ export default function BottomNavigation() {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-bg-card/95 backdrop-blur-md border-t border-border-main shadow-[0_-8px_24px_rgba(0,0,0,0.04)] pb-safe-bottom transition-colors duration-200">
-      <div className="max-w-md mx-auto px-6 h-16 flex items-center justify-between">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-bg-card/95 backdrop-blur-md border-t border-border-main shadow-[0_-8px_24px_rgba(0,0,0,0.04)] pb-safe-bottom transition-all duration-300 md:bottom-6 md:left-1/2 md:-translate-x-1/2 md:right-auto md:w-full md:max-w-md md:rounded-[2rem] md:border md:border-border-main md:shadow-[0_12px_40px_rgba(0,0,0,0.08)] md:pb-0">
+      <div className="max-w-md mx-auto px-6 h-16 flex items-center justify-between w-full">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));

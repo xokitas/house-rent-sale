@@ -27,7 +27,7 @@ export default function PropertyLocationCard({
 
       {/* SECCIÓN CABECERA */}
       <div className="border-b border-[#E8E2D8] pb-4">
-        <h3 className="text-sm font-black text-[#1E67AD] uppercase tracking-wider flex items-center gap-2">
+        <h3 className="text-sm font-black text-brand-primary uppercase tracking-wider flex items-center gap-2">
           <span>📍</span> Ubicación de la Propiedad
         </h3>
         <p className="text-[11px] text-[#5A5245] font-semibold mt-1">
@@ -55,13 +55,13 @@ export default function PropertyLocationCard({
         {/* MUNICIPIO (SELECT) */}
         <div className="space-y-1.5">
           <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
-            Municipio <span className="text-[#1E67AD]">*</span>
+            Municipio <span className="text-brand-primary">*</span>
           </label>
           <select
             value={municipality}
             required
             onChange={(e) => onFormChange('municipality', e.target.value)}
-            className="w-full text-xs p-[13.5px] bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200 cursor-pointer"
+            className="w-full text-xs p-[13.5px] bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all duration-200 cursor-pointer"
           >
             <option value="">Seleccione un municipio</option>
             {CAMAGUEY_MUNICIPALITIES.map((mun) => (
@@ -75,7 +75,7 @@ export default function PropertyLocationCard({
         {/* REPARTO / BARRIO (TEXT LIBRE) */}
         <div className="space-y-1.5">
           <label className="block text-[11px] font-black text-[#5A5245] uppercase tracking-wider">
-            Reparto / Barrio <span className="text-[#1E67AD]">*</span>
+            Reparto / Barrio <span className="text-brand-primary">*</span>
           </label>
           <input
             type="text"
@@ -83,7 +83,7 @@ export default function PropertyLocationCard({
             placeholder="Ej. Reparto Simoni"
             value={neighborhood}
             onChange={(e) => onFormChange('neighborhood', e.target.value)}
-            className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200"
+            className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all duration-200"
           />
         </div>
       </div>
@@ -99,7 +99,7 @@ export default function PropertyLocationCard({
             placeholder="21.3804"
             value={latitude}
             onChange={(e) => onFormChange('latitude', e.target.value)}
-            className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200"
+            className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all duration-200"
           />
         </div>
 
@@ -112,7 +112,7 @@ export default function PropertyLocationCard({
             placeholder="-77.9162"
             value={longitude}
             onChange={(e) => onFormChange('longitude', e.target.value)}
-            className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200"
+            className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold placeholder:text-[#5A5245]/30 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all duration-200"
           />
         </div>
       </div>

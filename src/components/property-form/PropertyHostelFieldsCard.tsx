@@ -53,7 +53,7 @@ export default function PropertyHostelFieldsCard({
     <div className="bg-white rounded-3xl p-6 border border-[#E2D8C7] shadow-sm space-y-6 animate-in fade-in duration-300">
       {/* CABECERA */}
       <div className="border-b border-[#E8E2D8] pb-4">
-        <h3 className="text-sm font-black text-[#1E67AD] uppercase tracking-wider flex items-center gap-2">
+        <h3 className="text-sm font-black text-brand-primary uppercase tracking-wider flex items-center gap-2">
           <span>✈️</span> Datos de Hostal / Internacional
         </h3>
         <p className="text-[11px] text-[#5A5245] font-semibold mt-1">
@@ -73,7 +73,7 @@ export default function PropertyHostelFieldsCard({
             placeholder="0"
             value={roomsAvailable}
             onChange={(e) => onFormChange('rooms_available', e.target.value)}
-            className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200"
+            className="w-full text-xs p-3.5 bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all duration-200"
           />
         </div>
 
@@ -86,7 +86,7 @@ export default function PropertyHostelFieldsCard({
             type="time"
             value={checkIn}
             onChange={(e) => onFormChange('check_in', e.target.value)}
-            className="w-full text-xs p-[13px] bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200 cursor-pointer"
+            className="w-full text-xs p-[13px] bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all duration-200 cursor-pointer"
           />
         </div>
 
@@ -99,14 +99,14 @@ export default function PropertyHostelFieldsCard({
             type="time"
             value={checkOut}
             onChange={(e) => onFormChange('check_out', e.target.value)}
-            className="w-full text-xs p-[13px] bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold focus:outline-none focus:ring-2 focus:ring-[#1E67AD] focus:bg-white transition-all duration-200 cursor-pointer"
+            className="w-full text-xs p-[13px] bg-[#FBF9F5] border border-[#E2D8C7] rounded-xl text-[#5A5245] font-semibold focus:outline-none focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all duration-200 cursor-pointer"
           />
         </div>
       </div>
 
       {/* SERVICIOS Y COMODIDADES (CHECKBOXES CARD STYLE) */}
       <div className="space-y-3 pt-4 border-t border-[#E8E2D8]">
-        <h4 className="text-[11px] font-black text-[#1E67AD] uppercase tracking-wider">
+        <h4 className="text-[11px] font-black text-brand-primary uppercase tracking-wider">
           Servicios y Baños
         </h4>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -122,7 +122,7 @@ export default function PropertyHostelFieldsCard({
               key={item.field}
               className={`p-3 rounded-2xl border text-left transition-all duration-300 flex items-center gap-2.5 cursor-pointer select-none ${
                 item.val
-                  ? 'border-[#1E67AD] bg-blue-50/40 text-[#1E67AD] font-bold'
+                  ? 'border-brand-primary bg-blue-50/40 text-brand-primary font-bold'
                   : 'border-[#E2D8C7] text-[#5A5245] bg-[#FBF9F5] hover:bg-[#E2D8C7]/20 font-semibold'
               }`}
             >
@@ -135,7 +135,7 @@ export default function PropertyHostelFieldsCard({
               <span
                 className={`w-4 h-4 rounded-md border flex items-center justify-center transition-all ${
                   item.val
-                    ? 'bg-[#1E67AD] border-[#1E67AD] text-white'
+                    ? 'bg-brand-primary border-brand-primary text-white'
                     : 'border-[#E2D8C7] bg-white'
                 }`}
               >
@@ -160,7 +160,7 @@ export default function PropertyHostelFieldsCard({
 
       {/* IDIOMAS DE ATENCIÓN MULTI-SELECTOR (CHECKBOXES CARD STYLE) */}
       <div className="space-y-3 pt-4 border-t border-[#E8E2D8]">
-        <h4 className="text-[11px] font-black text-[#1E67AD] uppercase tracking-wider">
+        <h4 className="text-[11px] font-black text-brand-primary uppercase tracking-wider">
           Idiomas de Atención
         </h4>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -171,7 +171,7 @@ export default function PropertyHostelFieldsCard({
                 key={lang}
                 className={`p-3 rounded-2xl border text-left transition-all duration-300 flex items-center gap-2.5 cursor-pointer select-none ${
                   isChecked
-                    ? 'border-[#1E67AD] bg-blue-50/40 text-[#1E67AD] font-bold'
+                    ? 'border-brand-primary bg-blue-50/40 text-brand-primary font-bold'
                     : 'border-[#E2D8C7] text-[#5A5245] bg-[#FBF9F5] hover:bg-[#E2D8C7]/20 font-semibold'
                 }`}
               >
@@ -184,7 +184,7 @@ export default function PropertyHostelFieldsCard({
                 <span
                   className={`w-4 h-4 rounded-md border flex items-center justify-center transition-all ${
                     isChecked
-                      ? 'bg-[#1E67AD] border-[#1E67AD] text-white'
+                      ? 'bg-brand-primary border-brand-primary text-white'
                       : 'border-[#E2D8C7] bg-white'
                   }`}
                 >
