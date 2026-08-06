@@ -155,16 +155,16 @@ export default function HomePage() {
         {/* 3. PESTAÑAS DEL MVP (PIXEL-PERFECT TABS) */}
         <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar pb-1">
           {[
-            { id: 'sale', label: 'Venta', icon: Tag },
-            { id: 'swap', label: 'Permuta', icon: ArrowLeftRight },
-            { id: 'long_term', label: 'Alquiler', icon: Calendar },
+            { id: 'sale' as const, label: 'Venta', icon: Tag },
+            { id: 'swap' as const, label: 'Permuta', icon: ArrowLeftRight },
+            { id: 'long_term' as const, label: 'Alquiler', icon: Calendar },
           ].map((t) => {
             const isActive = activeTab === t.id;
             const Icon = t.icon;
             return (
               <button
                 key={t.id}
-                onClick={() => setActiveTab(t.id as any)}
+                onClick={() => setActiveTab(t.id)}
                 className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border flex items-center gap-1.5 cursor-pointer ${
                   isActive
                     ? 'bg-brand-primary text-bg-card border-transparent shadow-sm'

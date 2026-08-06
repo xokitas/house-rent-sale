@@ -1,0 +1,27 @@
+
+> casas-alquiler@0.1.0 dev /app
+> next dev
+
+▲ Next.js 16.2.10 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+✓ Ready in 525ms
+
+○ Compiling / ...
+⨯ Error: Faltan las variables de entorno de Supabase en .env.local
+    at module evaluation (src/lib/supabase.ts:7:9)
+    at module evaluation (src/app/page.tsx:4:1)
+   5 |
+   6 | if (!supabaseUrl || !supabaseAnonKey) {
+>  7 |   throw new Error('Faltan las variables de entorno de Supabase en .env.local');
+     |         ^
+   8 | }
+   9 |
+  10 | export const supabase = createClient(supabaseUrl, supabaseAnonKey); {
+  digest: '2186972009'
+}
+ HEAD / 500 in 6.1s (next.js: 5.2s, application-code: 965ms)
+  Reload env: .env.local
+ HEAD / 200 in 1850ms (next.js: 795ms, application-code: 1054ms)
+ GET / 200 in 91ms (next.js: 6ms, application-code: 86ms)
+ GET / 200 in 70ms (next.js: 4ms, application-code: 65ms)

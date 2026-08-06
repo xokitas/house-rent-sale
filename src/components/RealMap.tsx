@@ -14,20 +14,33 @@ interface RealMapProps {
   properties: Property[];
 }
 
+function getStableOffset(id: string, axis: 'lat' | 'lng'): number {
+  const str = id + axis;
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0; // Convert to 32bit integer
+  }
+  return ((Math.abs(hash) % 1000) / 1000) - 0.5;
+}
+
 export default function RealMap({ properties }: RealMapProps) {
   const { formatPrice } = useCurrency();
   const [isClient, setIsClient] = useState(false);
 
   // Asegurar que Leaflet configure correctamente los iconos por defecto
   useEffect(() => {
-    setIsClient(true);
+    const timer = setTimeout(() => {
+      setIsClient(true);
+    }, 0);
     // Solucionar el problema de las rutas relativas de los marcadores en NextJS/Leaflet
-    delete (L.Icon.Default.prototype as any)._getIconUrl;
+    delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
       iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
     });
+    return () => clearTimeout(timer);
   }, []);
 
   if (!isClient) {
@@ -59,8 +72,8 @@ export default function RealMap({ properties }: RealMapProps) {
 
         {properties.map((prop) => {
           // Si tiene coordenadas, las usamos. Si no, usamos coordenadas simuladas alrededor del centro de Camagüey.
-          const lat = prop.latitude || (CAMAGUEY_CENTER[0] + (Math.random() - 0.5) * 0.02);
-          const lng = prop.longitude || (CAMAGUEY_CENTER[1] + (Math.random() - 0.5) * 0.02);
+          const lat = prop.latitude || (CAMAGUEY_CENTER[0] + getStableOffset(prop.id, 'lat') * 0.02);
+          const lng = prop.longitude || (CAMAGUEY_CENTER[1] + getStableOffset(prop.id, 'lng') * 0.02);
 
           const formattedPrice = formatPrice(prop.price, prop.currency);
 

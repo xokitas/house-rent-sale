@@ -18,11 +18,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('tucasita_theme') as Theme | null;
       if (stored) {
-        setTheme(stored);
+        Promise.resolve().then(() => setTheme(stored));
       } else {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         if (mediaQuery.matches) {
-          setTheme('dark');
+          Promise.resolve().then(() => setTheme('dark'));
         }
       }
     }
