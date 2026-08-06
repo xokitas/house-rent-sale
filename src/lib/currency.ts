@@ -72,7 +72,7 @@ export function useCurrency() {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem(CURRENCY_STORAGE_KEY) as CurrencyType | null;
       if (stored && (stored === 'USD' || stored === 'CUP' || stored === 'EUR')) {
-        setCurrencyState(stored);
+        Promise.resolve().then(() => setCurrencyState(stored));
       }
     }
   }, []);
@@ -90,7 +90,7 @@ export function useCurrency() {
     const handleSync = () => {
       const stored = localStorage.getItem(CURRENCY_STORAGE_KEY) as CurrencyType | null;
       if (stored && stored !== currency) {
-        setCurrencyState(stored);
+        Promise.resolve().then(() => setCurrencyState(stored));
       }
     };
     window.addEventListener('tucasita_currency_changed', handleSync);
