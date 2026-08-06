@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Property, PropertyStatus } from '@/lib/types';
 import Link from 'next/link';
+import { useTheme } from '@/components/ThemeProvider';
 
 // SUBCOMPONENTES (EXCLUSIVOS DEL ADMIN)
 import PropertyProgressSteps from './components/PropertyProgressSteps';
@@ -25,6 +26,7 @@ import PropertyGalleryCard from '@/components/property-form/PropertyGalleryCard'
 import Toast from '@/components/property-form/Toast';
 
 export default function AdminPage() {
+  const { theme } = useTheme();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -614,8 +616,8 @@ export default function AdminPage() {
             }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
               isActive
-                ? 'bg-[#1E67AD] text-white shadow-md shadow-[#1E67AD]/10 font-extrabold'
-                : 'text-[#5A5245] hover:text-[#1E67AD] hover:bg-[#F2ECE1]/50 bg-transparent'
+                ? 'bg-brand-primary text-white shadow-md shadow-brand-primary/10 font-extrabold'
+                : 'text-text-muted hover:text-brand-primary hover:bg-bg-main bg-transparent'
             }`}
           >
             <span className="text-sm shrink-0">{item.icon}</span>
@@ -624,7 +626,7 @@ export default function AdminPage() {
             {item.showBadge && pendingProperties.length > 0 && (
               <span className={`ml-auto px-2 py-0.5 text-[9px] font-black rounded-lg leading-none ${
                 isActive
-                  ? 'bg-white text-[#1E67AD]'
+                  ? 'bg-bg-card text-brand-primary'
                   : 'bg-amber-100 text-amber-800 border border-amber-200'
               }`}>
                 {pendingProperties.length}
@@ -637,11 +639,11 @@ export default function AdminPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#FBF9F5] select-none flex flex-col">
+    <div className="min-h-screen bg-bg-main text-text-main select-none flex flex-col transition-colors duration-200">
 
       {/* 1. HEADER COHESIVO Y UNIFICADO SAAS */}
-      <header className={`sticky top-0 z-40 bg-white transition-all duration-200 ${
-        isScrolled ? 'shadow-md border-b border-[#E2D8C7]/80' : 'shadow-xs border-b border-[#E2D8C7]'
+      <header className={`sticky top-0 z-40 bg-bg-card transition-all duration-200 ${
+        isScrolled ? 'shadow-md border-b border-border-main/80' : 'shadow-xs border-b border-border-main'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
 
@@ -650,25 +652,25 @@ export default function AdminPage() {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 hover:bg-[#F2ECE1] rounded-xl text-[#1E67AD] transition active:scale-95 text-base cursor-pointer"
+              className="md:hidden p-2 hover:bg-bg-main rounded-xl text-brand-primary transition active:scale-95 text-base cursor-pointer"
               title="Abrir menú"
             >
               ☰
             </button>
 
-            <div className="relative w-10 h-10 shrink-0 flex items-center justify-center bg-[#F2ECE1] rounded-2xl border border-[#E2D8C7] overflow-hidden">
-              <img src="/logo.png" alt="TuCasita Logo" className="w-full h-full object-contain" />
+            <div className="relative w-10 h-10 shrink-0 flex items-center justify-center bg-brand-primary/10 rounded-2xl border border-border-main overflow-hidden">
+              <span className="text-xl">🏠</span>
             </div>
 
             <div className="flex flex-col">
               <div className="flex items-baseline text-xl font-extrabold tracking-tight leading-none">
-                <span className="text-[#1E67AD]">Tu</span>
-                <span className="text-[#C8976C] relative">
+                <span className="text-brand-primary">Tu</span>
+                <span className="text-brand-secondary relative">
                   Casita
-                  <span className="absolute -top-1.5 right-4.5 text-[8px] text-[#1E67AD]">♥</span>
+                  <span className="absolute -top-1.5 right-4.5 text-[8px] text-brand-primary">♥</span>
                 </span>
               </div>
-              <span className="text-[8px] font-black text-[#1E67AD] tracking-[0.2em] uppercase mt-0.5">
+              <span className="text-[8px] font-black text-brand-primary tracking-[0.2em] uppercase mt-0.5">
                 Panel Administrativo
               </span>
             </div>
@@ -681,7 +683,7 @@ export default function AdminPage() {
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="px-3.5 py-2 text-xs font-bold text-[#5A5245] hover:text-[#1E67AD] hover:bg-[#F2ECE1] rounded-xl transition border border-[#E2D8C7] bg-white cursor-pointer"
+                  className="px-3.5 py-2 text-xs font-bold text-text-muted hover:text-brand-primary hover:bg-bg-main rounded-xl transition border border-border-main bg-bg-card cursor-pointer"
                 >
                   Cancelar
                 </button>
@@ -689,7 +691,7 @@ export default function AdminPage() {
                 <button
                   type="button"
                   onClick={handleSaveDraft}
-                  className="hidden sm:inline-block px-3.5 py-2 text-xs font-bold text-[#1E67AD] hover:opacity-90 bg-[#F2ECE1] rounded-xl transition border border-[#E2D8C7] cursor-pointer"
+                  className="hidden sm:inline-block px-3.5 py-2 text-xs font-bold text-brand-primary hover:opacity-90 bg-brand-primary/10 rounded-xl transition border border-border-main cursor-pointer"
                 >
                   Guardar borrador
                 </button>
@@ -698,7 +700,7 @@ export default function AdminPage() {
                   type="button"
                   onClick={triggerSubmit}
                   disabled={isProcessing}
-                  className="px-4 py-2 text-xs font-extrabold text-white bg-linear-to-r from-[#1E67AD] to-[#2A93A6] hover:opacity-95 rounded-xl shadow-md transition active:scale-95 disabled:opacity-50 cursor-pointer"
+                  className="px-4 py-2 text-xs font-extrabold text-bg-card bg-brand-primary hover:opacity-95 rounded-xl shadow-md transition active:scale-95 disabled:opacity-50 cursor-pointer"
                 >
                   {isProcessing
                     ? 'Procesando...'
@@ -711,7 +713,7 @@ export default function AdminPage() {
               <button
                 type="button"
                 onClick={() => setActiveView('new_property')}
-                className="px-4 py-2 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] text-white text-xs font-bold rounded-xl shadow-md hover:opacity-95 transition flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
+                className="px-4 py-2 bg-brand-primary text-bg-card text-xs font-bold rounded-xl shadow-md hover:opacity-95 transition flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
               >
                 ➕ Nueva publicación
               </button>
@@ -719,7 +721,7 @@ export default function AdminPage() {
 
             <Link
               href="/"
-              className="hidden sm:inline-flex px-4 py-2 bg-[#F2ECE1] hover:bg-[#E2D8C7] text-[#1E67AD] border border-[#E2D8C7] text-xs font-bold rounded-xl transition items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 shrink-0"
+              className="hidden sm:inline-flex px-4 py-2 bg-brand-primary/10 hover:bg-brand-primary/20 text-brand-primary border border-border-main text-xs font-bold rounded-xl transition items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 shrink-0 animate-in fade-in"
             >
               🏠 Ver principal
             </Link>
@@ -734,13 +736,13 @@ export default function AdminPage() {
             className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="relative flex flex-col w-64 max-w-xs bg-white h-full p-6 shadow-xl border-r border-[#E2D8C7] animate-in slide-in-from-left duration-200">
-            <div className="flex items-center justify-between pb-6 border-b border-[#E8E2D8]">
-              <span className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Menú Panel</span>
+          <div className="relative flex flex-col w-64 max-w-xs bg-bg-card h-full p-6 shadow-xl border-r border-border-main animate-in slide-in-from-left duration-200 text-left">
+            <div className="flex items-center justify-between pb-6 border-b border-border-main">
+              <span className="text-xs font-black text-brand-primary uppercase tracking-wider">Menú Panel</span>
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-[#5A5245] hover:text-[#1E67AD] font-bold text-lg cursor-pointer"
+                className="text-text-muted hover:text-brand-primary font-bold text-lg cursor-pointer"
               >
                 ✕
               </button>
@@ -757,10 +759,10 @@ export default function AdminPage() {
 
         {/* SIDEBAR COLUMNA IZQUIERDA (ESCRITORIO) */}
         <aside className="hidden md:block w-64 shrink-0 space-y-6">
-          <div className="bg-white border border-[#E2D8C7] rounded-3xl p-5 shadow-sm space-y-4">
-            <div className="border-b border-[#E8E2D8] pb-3">
-              <h3 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Navegación</h3>
-              <p className="text-[10px] text-slate-400 font-semibold mt-0.5">Gestión de la plataforma</p>
+          <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-sm space-y-4">
+            <div className="border-b border-border-main pb-3">
+              <h3 className="text-xs font-black text-brand-primary uppercase tracking-wider">Navegación</h3>
+              <p className="text-[10px] text-text-muted font-semibold mt-0.5">Gestión de la plataforma</p>
             </div>
             {renderSidebarContent()}
           </div>
@@ -775,13 +777,13 @@ export default function AdminPage() {
 
               {/* INDICADOR DE PENDIENTES */}
               {pendingProperties.length > 0 ? (
-                <div className="bg-amber-50 border-2 border-amber-300 rounded-3xl p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="bg-amber-500/10 border-2 border-amber-500/30 rounded-3xl p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-left">
                   <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-amber-900 font-black text-base tracking-tight">
+                    <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-black text-base tracking-tight">
                       <span>🔔</span>
                       <span>Publicaciones pendientes</span>
                     </div>
-                    <p className="text-xs text-amber-800 font-semibold">
+                    <p className="text-xs text-text-muted font-semibold">
                       Hay {pendingProperties.length} publicación{pendingProperties.length > 1 ? 'es que esperan' : 'a que espera'} revisión antes de publicarse en la web.
                     </p>
                   </div>
@@ -794,101 +796,101 @@ export default function AdminPage() {
                   </button>
                 </div>
               ) : (
-                <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-5 shadow-xs flex items-center gap-3">
+                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-3xl p-5 shadow-xs flex items-center gap-3 text-left">
                   <span className="text-lg">✅</span>
-                  <span className="text-xs font-black text-emerald-800 tracking-tight">
+                  <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 tracking-tight">
                     No hay publicaciones pendientes de aprobación. ¡Todo está al día!
                   </span>
                 </div>
               )}
 
               {/* TARJETAS DE MÉTRICAS */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white border border-[#E2D8C7] rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all duration-200">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-left">
+                <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all duration-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-[#5A5245]/60 font-black uppercase tracking-wider">Total</span>
+                    <span className="text-[10px] text-text-muted font-black uppercase tracking-wider">Total</span>
                     <span className="text-lg">🏠</span>
                   </div>
-                  <p className="text-3xl font-black text-[#1E67AD] mt-2">{properties.length}</p>
-                  <p className="text-[10px] text-slate-400 font-semibold mt-1">Propiedades registradas</p>
+                  <p className="text-3xl font-black text-brand-primary mt-2">{properties.length}</p>
+                  <p className="text-[10px] text-text-muted font-semibold mt-1">Propiedades registradas</p>
                 </div>
 
-                <div className="bg-white border border-[#E2D8C7] rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all duration-200">
+                <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all duration-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-[#5A5245]/60 font-black uppercase tracking-wider">Pendientes</span>
+                    <span className="text-[10px] text-text-muted font-black uppercase tracking-wider">Pendientes</span>
                     <span className="text-lg">⏳</span>
                   </div>
-                  <p className="text-3xl font-black text-amber-600 mt-2">{pendingProperties.length}</p>
-                  <p className="text-[10px] text-slate-400 font-semibold mt-1">Por revisar y publicar</p>
+                  <p className="text-3xl font-black text-amber-500 mt-2">{pendingProperties.length}</p>
+                  <p className="text-[10px] text-text-muted font-semibold mt-1">Por revisar y publicar</p>
                 </div>
 
-                <div className="bg-white border border-[#E2D8C7] rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all duration-200">
+                <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all duration-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-[#5A5245]/60 font-black uppercase tracking-wider">Destacadas</span>
+                    <span className="text-[10px] text-text-muted font-black uppercase tracking-wider">Destacadas</span>
                     <span className="text-lg">⭐</span>
                   </div>
-                  <p className="text-3xl font-black text-emerald-600 mt-2">
+                  <p className="text-3xl font-black text-brand-primary mt-2">
                     {properties.filter(p => [1, 2, 3].includes(p.priority)).length}
                   </p>
-                  <p className="text-[10px] text-slate-400 font-semibold mt-1">Prioridad 1, 2, 3</p>
+                  <p className="text-[10px] text-text-muted font-semibold mt-1">Prioridad 1, 2, 3</p>
                 </div>
 
-                <div className="bg-white border border-[#E2D8C7] rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all duration-200">
+                <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all duration-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-[#5A5245]/60 font-black uppercase tracking-wider">Vendidas</span>
+                    <span className="text-[10px] text-text-muted font-black uppercase tracking-wider">Vendidas</span>
                     <span className="text-lg">🔴</span>
                   </div>
-                  <p className="text-3xl font-black text-rose-600 mt-2">
+                  <p className="text-3xl font-black text-rose-500 mt-2">
                     {properties.filter(p => p.is_sold).length}
                   </p>
-                  <p className="text-[10px] text-slate-400 font-semibold mt-1">Fuera de catálogo</p>
+                  <p className="text-[10px] text-text-muted font-semibold mt-1">Fuera de catálogo</p>
                 </div>
               </div>
 
               {/* ACCIONES RÁPIDAS EN PANEL */}
-              <div className="space-y-4">
-                <h3 className="text-xs font-black text-[#5A5245]/60 uppercase tracking-widest">Accesos Rápidos</h3>
+              <div className="space-y-4 text-left">
+                <h3 className="text-xs font-black text-text-muted uppercase tracking-widest">Accesos Rápidos</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <button
                     type="button"
                     onClick={() => setActiveView('new_property')}
-                    className="bg-white hover:bg-[#F2ECE1]/10 border border-[#E2D8C7] hover:border-[#1E67AD] p-5 rounded-3xl text-left transition-all duration-300 group cursor-pointer"
+                    className="bg-bg-card hover:bg-bg-main border border-border-main hover:border-brand-primary p-5 rounded-3xl text-left transition-all duration-300 group cursor-pointer"
                   >
                     <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform duration-200">➕</span>
-                    <h4 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Nueva publicación</h4>
-                    <p className="text-[10px] text-[#5A5245]/70 font-semibold mt-1">Abre el formulario para registrar una nueva propiedad en venta o renta.</p>
+                    <h4 className="text-xs font-black text-brand-primary uppercase tracking-wider">Nueva publicación</h4>
+                    <p className="text-[10px] text-text-muted font-semibold mt-1">Abre el formulario para registrar una nueva propiedad en venta o renta.</p>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setActiveView('all_properties')}
-                    className="bg-white hover:bg-[#F2ECE1]/10 border border-[#E2D8C7] hover:border-[#1E67AD] p-5 rounded-3xl text-left transition-all duration-300 group cursor-pointer"
+                    className="bg-bg-card hover:bg-bg-main border border-border-main hover:border-brand-primary p-5 rounded-3xl text-left transition-all duration-300 group cursor-pointer"
                   >
                     <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform duration-200">📋</span>
-                    <h4 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Todas las propiedades</h4>
-                    <p className="text-[10px] text-[#5A5245]/70 font-semibold mt-1">Inspecciona y edita el catálogo general de viviendas sin filtros preestablecidos.</p>
+                    <h4 className="text-xs font-black text-brand-primary uppercase tracking-wider">Todas las propiedades</h4>
+                    <p className="text-[10px] text-text-muted font-semibold mt-1">Inspecciona y edita el catálogo general de viviendas sin filtros preestablecidos.</p>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setActiveView('pending')}
-                    className="bg-white hover:bg-[#F2ECE1]/10 border border-[#E2D8C7] hover:border-[#1E67AD] p-5 rounded-3xl text-left transition-all duration-300 group cursor-pointer"
+                    className="bg-bg-card hover:bg-bg-main border border-border-main hover:border-brand-primary p-5 rounded-3xl text-left transition-all duration-300 group cursor-pointer"
                   >
                     <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform duration-200">⏳</span>
-                    <h4 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Publicaciones pendientes</h4>
-                    <p className="text-[10px] text-[#5A5245]/70 font-semibold mt-1">Revisa el listado de propiedades no aprobadas enviadas por la comunidad.</p>
+                    <h4 className="text-xs font-black text-brand-primary uppercase tracking-wider">Publicaciones pendientes</h4>
+                    <p className="text-[10px] text-text-muted font-semibold mt-1">Revisa el listado de propiedades no aprobadas enviadas por la comunidad.</p>
                   </button>
                 </div>
               </div>
 
               {/* LISTADO DE PENDIENTES SI EXISTEN */}
               {pendingProperties.length > 0 && (
-                <div className="bg-amber-50/50 border border-amber-200 rounded-3xl p-5 shadow-sm space-y-4">
+                <div className="bg-amber-500/5 border border-amber-500/20 rounded-3xl p-5 shadow-sm space-y-4 text-left">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-amber-900 text-sm font-black tracking-tight">
+                    <h2 className="text-amber-600 dark:text-amber-400 text-sm font-black tracking-tight">
                       📝 Solicitudes Pendientes para Aprobación Directa
                     </h2>
-                    <span className="text-[10px] font-bold text-amber-800 bg-amber-200/50 px-2 py-0.5 rounded-lg">
+                    <span className="text-[10px] font-bold text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded-lg">
                       Acciones rápidas
                     </span>
                   </div>
@@ -896,11 +898,11 @@ export default function AdminPage() {
                     {pendingProperties.map((prop) => (
                       <div
                         key={prop.id}
-                        className="bg-white border border-amber-200 rounded-2xl p-4 shadow-xs hover:border-amber-400 transition flex flex-col justify-between gap-4"
+                        className="bg-bg-card border border-border-main rounded-2xl p-4 shadow-xs hover:border-amber-500/50 transition flex flex-col justify-between gap-4"
                       >
                         <div>
-                          <h3 className="font-bold text-gray-900 text-xs line-clamp-1">{prop.title}</h3>
-                          <p className="text-[10px] text-gray-500 mt-1">
+                          <h3 className="font-bold text-text-main text-xs line-clamp-1">{prop.title}</h3>
+                          <p className="text-[10px] text-text-muted mt-1">
                             📍 {prop.neighborhood || prop.municipality || 'Camagüey'} • {prop.price} {prop.currency}
                           </p>
                         </div>
@@ -908,7 +910,7 @@ export default function AdminPage() {
                           <button
                             type="button"
                             onClick={() => handleEdit(prop)}
-                            className="flex-1 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold rounded-xl transition cursor-pointer"
+                            className="flex-1 py-1.5 bg-brand-primary/10 hover:bg-brand-primary/20 text-brand-primary text-xs font-bold rounded-xl transition cursor-pointer"
                           >
                             ✏️ Editar
                           </button>
@@ -935,7 +937,7 @@ export default function AdminPage() {
 
               {/* AVISO SI SE ESTÁ REVISANDO UNA PROPIEDAD PENDIENTE */}
               {editingId && !isPublishedState && (
-                <div className="bg-blue-50 border border-blue-200 text-blue-900 text-xs font-semibold p-4 rounded-xl flex items-center justify-between">
+                <div className="bg-brand-primary/10 border border-brand-primary/20 text-brand-primary text-xs font-semibold p-4 rounded-xl flex items-center justify-between text-left">
                   <span>ℹ️ Estás revisando una solicitud pendiente. Al hacer clic en <strong>Guardar Cambios</strong>, la propiedad quedará aprobada y publicada automáticamente.</span>
                 </div>
               )}
@@ -1087,11 +1089,11 @@ export default function AdminPage() {
 
           {/* VISTA 7: EXTRAS - COMING SOON */}
           {activeView === 'extras' && (
-            <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="bg-white rounded-3xl p-6 border border-[#E2D8C7] shadow-sm">
+            <div className="space-y-6 animate-in fade-in duration-300 text-left">
+              <div className="bg-bg-card rounded-3xl p-6 border border-border-main shadow-sm">
                 <span className="text-3xl block mb-2">🚧</span>
-                <h2 className="text-lg font-black text-[#1E67AD] tracking-tight">Próximamente</h2>
-                <p className="text-xs text-[#5A5245] font-semibold mt-0.5">
+                <h2 className="text-lg font-black text-brand-primary tracking-tight">Próximamente</h2>
+                <p className="text-xs text-text-muted font-semibold mt-0.5">
                   Estamos trabajando en nuevas herramientas avanzadas para optimizar la gestión de Tu Casita.
                 </p>
               </div>
@@ -1099,49 +1101,49 @@ export default function AdminPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                 {/* ESTADÍSTICAS */}
-                <div className="bg-white border border-[#E2D8C7]/80 rounded-3xl p-5 shadow-xs relative overflow-hidden group">
-                  <div className="absolute top-4 right-4 bg-amber-50 border border-amber-200 text-amber-800 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
+                <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-xs relative overflow-hidden group">
+                  <div className="absolute top-4 right-4 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
                     Próximamente
                   </div>
                   <span className="text-2xl block mb-2">📊</span>
-                  <h3 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Estadísticas</h3>
-                  <p className="text-[10px] text-[#5A5245]/70 font-semibold mt-1.5 leading-relaxed">
+                  <h3 className="text-xs font-black text-brand-primary uppercase tracking-wider">Estadísticas</h3>
+                  <p className="text-[10px] text-text-muted font-semibold mt-1.5 leading-relaxed">
                     Gráficos detallados sobre visitas a tus propiedades, interacciones de clientes por WhatsApp, y clics en las clasificaciones más populares.
                   </p>
                 </div>
 
                 {/* REPORTES */}
-                <div className="bg-white border border-[#E2D8C7]/80 rounded-3xl p-5 shadow-xs relative overflow-hidden group">
-                  <div className="absolute top-4 right-4 bg-amber-50 border border-amber-200 text-amber-800 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
+                <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-xs relative overflow-hidden group">
+                  <div className="absolute top-4 right-4 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
                     Próximamente
                   </div>
                   <span className="text-2xl block mb-2">📋</span>
-                  <h3 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Reportes</h3>
-                  <p className="text-[10px] text-[#5A5245]/70 font-semibold mt-1.5 leading-relaxed">
+                  <h3 className="text-xs font-black text-brand-primary uppercase tracking-wider">Reportes</h3>
+                  <p className="text-[10px] text-text-muted font-semibold mt-1.5 leading-relaxed">
                     Generación y exportación de informes automatizados en formato PDF, Excel o CSV para analizar el rendimiento del catálogo de bienes raíces.
                   </p>
                 </div>
 
                 {/* USUARIOS */}
-                <div className="bg-white border border-[#E2D8C7]/80 rounded-3xl p-5 shadow-xs relative overflow-hidden group">
-                  <div className="absolute top-4 right-4 bg-amber-50 border border-amber-200 text-amber-800 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
+                <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-xs relative overflow-hidden group">
+                  <div className="absolute top-4 right-4 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
                     Próximamente
                   </div>
                   <span className="text-2xl block mb-2">👥</span>
-                  <h3 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Usuarios</h3>
-                  <p className="text-[10px] text-[#5A5245]/70 font-semibold mt-1.5 leading-relaxed">
+                  <h3 className="text-xs font-black text-brand-primary uppercase tracking-wider">Usuarios</h3>
+                  <p className="text-[10px] text-text-muted font-semibold mt-1.5 leading-relaxed">
                     Administración de agentes inmobiliarios, asignación de roles de visualización y permisos de edición para colaboradores de la plataforma.
                   </p>
                 </div>
 
                 {/* MESSAGING */}
-                <div className="bg-white border border-[#E2D8C7]/80 rounded-3xl p-5 shadow-xs relative overflow-hidden group">
-                  <div className="absolute top-4 right-4 bg-amber-50 border border-amber-200 text-amber-800 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
+                <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-xs relative overflow-hidden group">
+                  <div className="absolute top-4 right-4 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
                     Próximamente
                   </div>
                   <span className="text-2xl block mb-2">💬</span>
-                  <h3 className="text-xs font-black text-[#1E67AD] uppercase tracking-wider">Mensajería</h3>
-                  <p className="text-[10px] text-[#5A5245]/70 font-semibold mt-1.5 leading-relaxed">
+                  <h3 className="text-xs font-black text-brand-primary uppercase tracking-wider">Mensajería</h3>
+                  <p className="text-[10px] text-text-muted font-semibold mt-1.5 leading-relaxed">
                     Centralización de consultas recibidas, historial de contactos y notificaciones directas para coordinar visitas físicas o virtuales a las viviendas.
                   </p>
                 </div>

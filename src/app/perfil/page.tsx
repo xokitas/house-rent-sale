@@ -1,26 +1,24 @@
 'use client';
 
-import { useState } from 'react';
 import { useCurrency } from '@/lib/currency';
+import { useTheme } from '@/components/ThemeProvider';
 import {
-  User,
-  Shield,
   Heart,
   FileText,
-  TrendingUp,
   Settings,
   HelpCircle,
   Moon,
   Sun,
   Star,
   Check,
-  Languages,
+  Shield,
 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PerfilPage() {
   const { currency, changeCurrency } = useCurrency();
-  const [darkMode, setDarkMode] = useState(false);
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === 'dark';
 
   // Estadísticas del agente ficticio Carlos Reyes (Mockup de Figma Make)
   const stats = [
@@ -42,7 +40,7 @@ export default function PerfilPage() {
   ];
 
   return (
-    <div className="max-w-xl mx-auto space-y-6 pb-24 text-left">
+    <div className="max-w-xl mx-auto space-y-6 pb-24 text-left transition-colors duration-200">
       {/* 1. HERO CARD DEL AGENTE PREMIUM (MOCKUP DE FIGMA MAKE) */}
       <section className="relative rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-[#1B4D3E] to-emerald-800 text-white p-6 shadow-md shadow-emerald-950/10 border border-emerald-700/30">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,#5EEAD4,transparent_50%)] opacity-20 pointer-events-none" />
@@ -89,29 +87,29 @@ export default function PerfilPage() {
       </section>
 
       {/* 2. PREFERENCIAS DEL USUARIO */}
-      <section className="bg-white rounded-[2rem] border border-slate-100 p-5 space-y-4 shadow-2xs">
-        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+      <section className="bg-bg-card rounded-[2rem] border border-border-main p-5 space-y-4 shadow-2xs transition-colors duration-200">
+        <h3 className="text-xs font-black text-text-muted uppercase tracking-widest flex items-center gap-2">
           <Settings className="w-4 h-4 text-brand-primary" />
           Preferencias de visualización
         </h3>
 
         {/* SELECTOR DE MONEDA GLOBAL (SOPORTE ARQUITECTÓNICO) */}
-        <div className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-2xl">
+        <div className="flex items-center justify-between p-3 bg-bg-main border border-border-main rounded-2xl transition-colors duration-200">
           <div className="space-y-0.5">
-            <p className="text-xs font-black text-slate-800">Moneda preferida</p>
-            <p className="text-[10px] text-slate-400 font-bold">Conversión automática en todo el catálogo</p>
+            <p className="text-xs font-black text-text-main">Moneda preferida</p>
+            <p className="text-[10px] text-text-muted font-bold">Conversión automática en todo el catálogo</p>
           </div>
 
-          <div className="flex bg-slate-200/50 p-1 rounded-xl border border-slate-200">
+          <div className="flex bg-bg-main p-1 rounded-xl border border-border-main transition-colors duration-200">
             {(['USD', 'CUP', 'EUR'] as const).map((curr) => (
               <button
                 key={curr}
                 type="button"
                 onClick={() => changeCurrency(curr)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
                   currency === curr
-                    ? 'bg-brand-primary text-white shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-brand-primary text-bg-card shadow-sm'
+                    : 'text-text-muted hover:text-text-main'
                 }`}
               >
                 {curr}
@@ -120,26 +118,26 @@ export default function PerfilPage() {
           </div>
         </div>
 
-        {/* MODO NOCTURNO (SIMULACIÓN DE APARIENCIA) */}
-        <div className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-2xl">
+        {/* MODO NOCTURNO (SOPORTE DE TEMA GLOBAL) */}
+        <div className="flex items-center justify-between p-3 bg-bg-main border border-border-main rounded-2xl transition-colors duration-200">
           <div className="space-y-0.5">
-            <p className="text-xs font-black text-slate-800">Modo oscuro</p>
-            <p className="text-[10px] text-slate-400 font-bold">Optimizar lectura por las noches</p>
+            <p className="text-xs font-black text-text-main">Modo oscuro</p>
+            <p className="text-[10px] text-text-muted font-bold">Optimizar lectura por las noches</p>
           </div>
 
           <button
             type="button"
-            onClick={() => setDarkMode(!darkMode)}
+            onClick={toggleTheme}
             className={`w-11 h-6 rounded-full transition-colors relative flex items-center p-1 cursor-pointer ${
-              darkMode ? 'bg-brand-primary' : 'bg-slate-300'
+              isDark ? 'bg-brand-primary' : 'bg-slate-300'
             }`}
           >
             <div
-              className={`w-4 h-4 rounded-full bg-white shadow-sm flex items-center justify-center transition-transform ${
-                darkMode ? 'translate-x-5' : 'translate-x-0'
+              className={`w-4 h-4 rounded-full bg-bg-card shadow-sm flex items-center justify-center transition-transform ${
+                isDark ? 'translate-x-5' : 'translate-x-0'
               }`}
             >
-              {darkMode ? (
+              {isDark ? (
                 <Moon className="w-2.5 h-2.5 text-brand-primary" />
               ) : (
                 <Sun className="w-2.5 h-2.5 text-slate-500" />
@@ -150,17 +148,17 @@ export default function PerfilPage() {
       </section>
 
       {/* 3. MENÚ DE OPCIONES DEL PERFIL */}
-      <section className="bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-2xs">
-        <div className="divide-y divide-slate-100">
+      <section className="bg-bg-card rounded-[2rem] border border-border-main overflow-hidden shadow-2xs transition-colors duration-200">
+        <div className="divide-y divide-border-main">
           {menuItems.map((item) => (
             <Link
               key={item.label}
               href={item.href}
-              className="w-full flex items-center justify-between px-5 py-4 text-left transition hover:bg-slate-50 cursor-pointer"
+              className="w-full flex items-center justify-between px-5 py-4 text-left transition hover:bg-bg-main cursor-pointer"
             >
               <div className="flex items-center gap-3">
                 <span className="text-base shrink-0 w-6 text-center">{item.icon}</span>
-                <span className="text-xs font-black text-slate-700">{item.label}</span>
+                <span className="text-xs font-black text-text-main">{item.label}</span>
               </div>
               <div className="flex items-center gap-2">
                 {item.badge && (
@@ -168,7 +166,7 @@ export default function PerfilPage() {
                     {item.badge}
                   </span>
                 )}
-                <span className="text-slate-300 font-bold">›</span>
+                <span className="text-text-muted/65 font-bold">›</span>
               </div>
             </Link>
           ))}
@@ -176,8 +174,8 @@ export default function PerfilPage() {
       </section>
 
       {/* 4. SOPORTE Y AYUDA */}
-      <section className="bg-white rounded-[2rem] border border-slate-100 p-5 space-y-4 shadow-2xs">
-        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">
+      <section className="bg-bg-card rounded-[2rem] border border-border-main p-5 space-y-4 shadow-2xs transition-colors duration-200">
+        <h3 className="text-xs font-black text-text-muted uppercase tracking-widest">
           Soporte y Cuenta
         </h3>
 
@@ -187,29 +185,19 @@ export default function PerfilPage() {
             return (
               <div
                 key={item.label}
-                className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-2xl border border-slate-50 transition cursor-pointer"
+                className="flex items-center gap-3 p-3 hover:bg-bg-main rounded-2xl border border-transparent hover:border-border-main transition cursor-pointer"
               >
-                <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-bg-main flex items-center justify-center text-text-muted shrink-0 transition-colors duration-200">
                   <Icon className="w-4.5 h-4.5" />
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-xs font-black text-slate-800 leading-none">{item.label}</p>
-                  <p className="text-[10px] text-slate-400 font-bold leading-relaxed">{item.desc}</p>
+                  <p className="text-xs font-black text-text-main leading-none">{item.label}</p>
+                  <p className="text-[10px] text-text-muted font-bold leading-relaxed">{item.desc}</p>
                 </div>
               </div>
             );
           })}
         </div>
-      </section>
-
-      {/* 5. ACCESO ADMINISTRATIVO */}
-      <section className="pt-4 text-center">
-        <Link
-          href="/zert"
-          className="inline-flex items-center gap-2 text-xs font-black tracking-wider text-slate-400 hover:text-brand-primary bg-slate-100/50 hover:bg-brand-primary/5 border border-dashed border-slate-200 hover:border-slate-300 px-6 py-3 rounded-2xl transition"
-        >
-          🔐 Ir al Panel Administrativo (/zert)
-        </Link>
       </section>
     </div>
   );

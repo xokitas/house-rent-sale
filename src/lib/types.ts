@@ -121,3 +121,31 @@ export const PROPERTY_TYPE_OPTIONS = [
   'Solar',
   'Otro',
 ];
+
+// ==========================================
+// ARQUITECTURA DE MENSAJERÍA FUTURA
+// ==========================================
+
+export interface Conversation {
+  id: string;
+  property_id: string;
+  buyer_id: string;
+  seller_id: string;
+  created_at: string;
+  updated_at: string;
+
+  // Opcionales para facilidad en frontend
+  property_title?: string;
+  property_image?: string;
+  last_message?: string;
+  unread_count?: number;
+}
+
+export interface Message {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  content: string;
+  created_at: string;
+  is_read: boolean;
+}

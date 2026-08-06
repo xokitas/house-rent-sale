@@ -55,7 +55,7 @@ export default function RegisteredPropertiesList({
     if (propsList.length === 0) {
       return (
         <tr>
-          <td colSpan={5} className="py-8 text-center text-xs text-[#5A5245]/60 font-semibold bg-[#FBF9F5]/40 rounded-2xl">
+          <td colSpan={5} className="py-8 text-center text-xs text-text-muted font-semibold bg-bg-main/40 rounded-2xl">
             No hay propiedades para mostrar en esta sección.
           </td>
         </tr>
@@ -66,24 +66,24 @@ export default function RegisteredPropertiesList({
       const propStatuses = Array.isArray(prop.status) ? prop.status : [prop.status];
 
       return (
-        <tr key={prop.id} className="hover:bg-[#FBF9F5]/40 transition-colors group">
+        <tr key={prop.id} className="hover:bg-bg-main/40 transition-colors group">
           {/* INFO PRINCIPAL */}
-          <td className="py-4 px-4">
+          <td className="py-4 px-4 text-left">
             <div className="flex items-center gap-3">
               {prop.images && prop.images.length > 0 ? (
-                <div className="w-12 h-12 rounded-xl overflow-hidden border border-[#E2D8C7] shrink-0 bg-stone-100">
+                <div className="w-12 h-12 rounded-xl overflow-hidden border border-border-main shrink-0 bg-stone-100">
                   <img src={prop.images[0]} alt="" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                 </div>
               ) : (
-                <div className="w-12 h-12 rounded-xl bg-[#F2ECE1] border border-[#E2D8C7] flex items-center justify-center text-lg shrink-0 select-none">
+                <div className="w-12 h-12 rounded-xl bg-bg-main border border-border-main flex items-center justify-center text-lg shrink-0 select-none">
                   🏠
                 </div>
               )}
               <div className="max-w-[180px] sm:max-w-xs md:max-w-md lg:max-w-lg">
-                <h3 className="text-xs font-black text-[#1E67AD] truncate tracking-tight leading-snug">
+                <h3 className="text-xs font-black text-brand-primary truncate tracking-tight leading-snug">
                   {prop.title}
                 </h3>
-                <p className="text-[10px] text-[#5A5245]/70 font-semibold truncate mt-0.5">
+                <p className="text-[10px] text-text-muted font-semibold truncate mt-0.5">
                   📍 {prop.address}
                 </p>
               </div>
@@ -91,7 +91,7 @@ export default function RegisteredPropertiesList({
           </td>
 
           {/* CLASIFICACIÓN STATUS */}
-          <td className="py-4 px-4">
+          <td className="py-4 px-4 text-left">
             <div className="flex flex-wrap gap-1 max-w-[150px]">
               {propStatuses.map((st) => {
                 const badge = getStatusBadge(st);
@@ -108,36 +108,36 @@ export default function RegisteredPropertiesList({
           </td>
 
           {/* PRECIO */}
-          <td className="py-4 px-4 whitespace-nowrap">
-            <div className="text-xs font-extrabold text-[#1E67AD]">
+          <td className="py-4 px-4 text-left whitespace-nowrap">
+            <div className="text-xs font-extrabold text-brand-primary">
               {Number(prop.price).toLocaleString('en-US')}{' '}
-              <span className="text-[10px] text-[#C8976C] font-black">
+              <span className="text-[10px] text-brand-secondary font-black">
                 {prop.currency}
               </span>
             </div>
             {prop.is_sold && (
-              <span className="inline-block mt-1 px-1.5 py-0.5 bg-rose-50 border border-rose-200 text-rose-700 text-[8px] font-black uppercase rounded-md tracking-wider leading-none">
+              <span className="inline-block mt-1 px-1.5 py-0.5 bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[8px] font-black uppercase rounded-md tracking-wider leading-none">
                 🔴 Vendida
               </span>
             )}
           </td>
 
           {/* PRIORIDAD */}
-          <td className="py-4 px-4 whitespace-nowrap">
+          <td className="py-4 px-4 text-left whitespace-nowrap">
             {prop.priority === 1 ? (
-              <span className="px-2 py-0.5 bg-amber-50 border border-amber-200 text-[#C8976C] text-[9px] font-black uppercase rounded-lg tracking-wider">
+              <span className="px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 text-brand-secondary text-[9px] font-black uppercase rounded-lg tracking-wider">
                 ⭐ Patrocinada
               </span>
             ) : prop.priority === 2 ? (
-              <span className="px-2 py-0.5 bg-blue-50 border border-blue-200 text-blue-700 text-[9px] font-black uppercase rounded-lg tracking-wider">
+              <span className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[9px] font-black uppercase rounded-lg tracking-wider">
                 💼 Agente
               </span>
             ) : prop.priority === 3 ? (
-              <span className="px-2 py-0.5 bg-teal-50 border border-teal-200 text-[#2A93A6] text-[9px] font-black uppercase rounded-lg tracking-wider">
+              <span className="px-2 py-0.5 bg-teal-500/10 border border-teal-500/20 text-teal-500 text-[9px] font-black uppercase rounded-lg tracking-wider">
                 🏠 Estándar
               </span>
             ) : (
-              <span className="px-2 py-0.5 bg-slate-50 border border-slate-200 text-slate-700 text-[9px] font-black uppercase rounded-lg tracking-wider">
+              <span className="px-2 py-0.5 bg-slate-500/10 border border-slate-500/20 text-text-muted text-[9px] font-black uppercase rounded-lg tracking-wider">
                 📄 Básica
               </span>
             )}
@@ -149,14 +149,14 @@ export default function RegisteredPropertiesList({
               <button
                 type="button"
                 onClick={() => onEdit(prop)}
-                className="px-3 py-1.5 bg-[#F2ECE1] hover:bg-[#E2D8C7] text-[#1E67AD] text-xs font-black rounded-xl transition cursor-pointer"
+                className="px-3 py-1.5 bg-brand-primary/10 hover:bg-brand-primary/20 text-brand-primary text-xs font-black rounded-xl transition cursor-pointer"
               >
                 ✏️ Editar
               </button>
               <button
                 type="button"
                 onClick={() => onDelete(prop.id)}
-                className="w-8 h-8 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center transition border border-rose-100 cursor-pointer text-xs font-black"
+                className="w-8 h-8 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-xl flex items-center justify-center transition border border-rose-500/10 cursor-pointer text-xs font-black"
                 title="Eliminar propiedad"
               >
                 🗑️
@@ -178,17 +178,17 @@ export default function RegisteredPropertiesList({
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#E2D8C7] space-y-6 animate-in fade-in duration-300">
+    <div className="bg-bg-card rounded-3xl p-6 shadow-sm border border-border-main space-y-6 animate-in fade-in duration-300 text-left">
       {/* CABECERA CON PESTAÑAS */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-[#E8E2D8] pb-4">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-border-main pb-4">
         <div>
-          <h2 className="text-lg font-black text-[#1E67AD] tracking-tight">
+          <h2 className="text-lg font-black text-brand-primary tracking-tight">
             {view === 'all' && 'Todas las propiedades'}
             {view === 'pending' && 'Publicaciones pendientes'}
             {view === 'featured' && 'Propiedades destacadas'}
             {view === 'sold' && 'Propiedades vendidas'}
           </h2>
-          <p className="text-xs text-[#5A5245] font-semibold mt-0.5">
+          <p className="text-xs text-text-muted font-semibold mt-0.5">
             {view === 'all' && 'Administra, edita o elimina todas las propiedades de tu base de datos.'}
             {view === 'pending' && 'Propiedades pendientes de aprobación enviadas por los usuarios.'}
             {view === 'featured' && 'Propiedades premium destacadas organizadas según su nivel de prioridad.'}
@@ -203,8 +203,8 @@ export default function RegisteredPropertiesList({
             onClick={() => onFilterChange('all')}
             className={`px-3 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
               adminFilter === 'all'
-                ? 'bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] text-white shadow-md shadow-[#1E67AD]/10'
-                : 'bg-[#F2ECE1]/55 text-[#5A5245] hover:bg-[#E2D8C7]/50 border border-transparent'
+                ? 'bg-brand-primary text-bg-card shadow-md shadow-brand-primary/10'
+                : 'bg-bg-main text-text-muted hover:bg-border-main border border-transparent'
             }`}
           >
             Todas ({viewFilteredProperties.length})
@@ -226,8 +226,8 @@ export default function RegisteredPropertiesList({
                 onClick={() => onFilterChange(opt.value)}
                 className={`px-3 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
                   adminFilter === opt.value
-                    ? 'bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] text-white shadow-md shadow-[#1E67AD]/10'
-                    : 'bg-[#F2ECE1]/55 text-[#5A5245] hover:bg-[#E2D8C7]/50 border border-transparent'
+                    ? 'bg-brand-primary text-bg-card shadow-md shadow-brand-primary/10'
+                    : 'bg-bg-main text-text-muted hover:bg-border-main border border-transparent'
                 }`}
                 title={opt.label}
               >
@@ -241,14 +241,14 @@ export default function RegisteredPropertiesList({
       {/* CONTENIDO DE LA TABLA/LISTA */}
       {loading ? (
         <div className="py-12 flex flex-col items-center justify-center space-y-2">
-          <div className="w-8 h-8 border-4 border-[#1E67AD] border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-xs text-[#5A5245] font-semibold">Cargando propiedades de Supabase...</p>
+          <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-xs text-text-muted font-semibold">Cargando propiedades de Supabase...</p>
         </div>
       ) : filteredProperties.length === 0 ? (
-        <div className="py-12 text-center bg-[#FBF9F5] rounded-2xl border border-dashed border-[#E2D8C7]">
+        <div className="py-12 text-center bg-bg-main rounded-2xl border border-dashed border-border-main">
           <span className="text-3xl block mb-2">📂</span>
-          <p className="text-xs text-[#5A5245] font-black uppercase tracking-wider">Sin propiedades</p>
-          <p className="text-[11px] text-[#5A5245]/60 font-semibold mt-1">
+          <p className="text-xs text-text-muted font-black uppercase tracking-wider">Sin propiedades</p>
+          <p className="text-[11px] text-text-muted/65 font-semibold mt-1">
             No hay propiedades en esta clasificación actualmente.
           </p>
         </div>
@@ -256,12 +256,12 @@ export default function RegisteredPropertiesList({
         <div className="space-y-12">
           {/* GROUP 1: PRIORIDAD 1 */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 border-b border-[#E8E2D8] pb-2">
+            <div className="flex items-center gap-2 border-b border-border-main pb-2">
               <span className="text-base">⭐</span>
-              <h3 className="text-sm font-black text-[#5A5245] uppercase tracking-wider">
+              <h3 className="text-sm font-black text-text-main uppercase tracking-wider">
                 Prioridad 1 - Patrocinadas
               </h3>
-              <span className="text-xs bg-[#F2ECE1] text-[#1E67AD] px-2 py-0.5 rounded-lg font-bold">
+              <span className="text-xs bg-bg-main text-brand-primary px-2 py-0.5 rounded-lg font-bold">
                 {featuredGroups.p1.length}
               </span>
             </div>
@@ -269,7 +269,7 @@ export default function RegisteredPropertiesList({
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-[#E8E2D8] text-[10px] text-[#5A5245]/50 font-black uppercase tracking-widest bg-[#FBF9F5]/40">
+                    <tr className="border-b border-border-main text-[10px] text-text-muted font-black uppercase tracking-widest bg-bg-main/40">
                       <th className="py-3 px-4 font-black">Detalle Propiedad</th>
                       <th className="py-3 px-4 font-black">Clasificación</th>
                       <th className="py-3 px-4 font-black">Precio solicitado</th>
@@ -277,24 +277,24 @@ export default function RegisteredPropertiesList({
                       <th className="py-3 px-4 text-right font-black">Acciones</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#E8E2D8]/50">
+                  <tbody className="divide-y divide-border-main/50">
                     {renderTableContent(featuredGroups.p1)}
                   </tbody>
                 </table>
               </div>
             ) : (
-              <p className="text-xs text-[#5A5245]/50 italic pl-6">No hay propiedades con Prioridad 1.</p>
+              <p className="text-xs text-text-muted italic pl-6">No hay propiedades con Prioridad 1.</p>
             )}
           </div>
 
           {/* GROUP 2: PRIORIDAD 2 */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 border-b border-[#E8E2D8] pb-2">
+            <div className="flex items-center gap-2 border-b border-border-main pb-2">
               <span className="text-base">🥈</span>
-              <h3 className="text-sm font-black text-[#5A5245] uppercase tracking-wider">
+              <h3 className="text-sm font-black text-text-main uppercase tracking-wider">
                 Prioridad 2 - Agente
               </h3>
-              <span className="text-xs bg-[#F2ECE1] text-[#1E67AD] px-2 py-0.5 rounded-lg font-bold">
+              <span className="text-xs bg-bg-main text-brand-primary px-2 py-0.5 rounded-lg font-bold">
                 {featuredGroups.p2.length}
               </span>
             </div>
@@ -302,7 +302,7 @@ export default function RegisteredPropertiesList({
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-[#E8E2D8] text-[10px] text-[#5A5245]/50 font-black uppercase tracking-widest bg-[#FBF9F5]/40">
+                    <tr className="border-b border-border-main text-[10px] text-text-muted font-black uppercase tracking-widest bg-bg-main/40">
                       <th className="py-3 px-4 font-black">Detalle Propiedad</th>
                       <th className="py-3 px-4 font-black">Clasificación</th>
                       <th className="py-3 px-4 font-black">Precio solicitado</th>
@@ -310,24 +310,24 @@ export default function RegisteredPropertiesList({
                       <th className="py-3 px-4 text-right font-black">Acciones</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#E8E2D8]/50">
+                  <tbody className="divide-y divide-border-main/50">
                     {renderTableContent(featuredGroups.p2)}
                   </tbody>
                 </table>
               </div>
             ) : (
-              <p className="text-xs text-[#5A5245]/50 italic pl-6">No hay propiedades con Prioridad 2.</p>
+              <p className="text-xs text-text-muted italic pl-6">No hay propiedades con Prioridad 2.</p>
             )}
           </div>
 
           {/* GROUP 3: PRIORIDAD 3 */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 border-b border-[#E8E2D8] pb-2">
+            <div className="flex items-center gap-2 border-b border-border-main pb-2">
               <span className="text-base">🏠</span>
-              <h3 className="text-sm font-black text-[#5A5245] uppercase tracking-wider">
+              <h3 className="text-sm font-black text-text-main uppercase tracking-wider">
                 Prioridad 3 - Estándar Destacada
               </h3>
-              <span className="text-xs bg-[#F2ECE1] text-[#1E67AD] px-2 py-0.5 rounded-lg font-bold">
+              <span className="text-xs bg-bg-main text-brand-primary px-2 py-0.5 rounded-lg font-bold">
                 {featuredGroups.p3.length}
               </span>
             </div>
@@ -335,7 +335,7 @@ export default function RegisteredPropertiesList({
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-[#E8E2D8] text-[10px] text-[#5A5245]/50 font-black uppercase tracking-widest bg-[#FBF9F5]/40">
+                    <tr className="border-b border-border-main text-[10px] text-text-muted font-black uppercase tracking-widest bg-bg-main/40">
                       <th className="py-3 px-4 font-black">Detalle Propiedad</th>
                       <th className="py-3 px-4 font-black">Clasificación</th>
                       <th className="py-3 px-4 font-black">Precio solicitado</th>
@@ -343,21 +343,21 @@ export default function RegisteredPropertiesList({
                       <th className="py-3 px-4 text-right font-black">Acciones</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#E8E2D8]/50">
+                  <tbody className="divide-y divide-border-main/50">
                     {renderTableContent(featuredGroups.p3)}
                   </tbody>
                 </table>
               </div>
             ) : (
-              <p className="text-xs text-[#5A5245]/50 italic pl-6">No hay propiedades con Prioridad 3.</p>
+              <p className="text-xs text-text-muted italic pl-6">No hay propiedades con Prioridad 3.</p>
             )}
           </div>
         </div>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto animate-in fade-in">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-[#E8E2D8] text-[10px] text-[#5A5245]/50 font-black uppercase tracking-widest bg-[#FBF9F5]/40">
+              <tr className="border-b border-border-main text-[10px] text-text-muted font-black uppercase tracking-widest bg-bg-main/40">
                 <th className="py-3 px-4 font-black">Detalle Propiedad</th>
                 <th className="py-3 px-4 font-black">Clasificación</th>
                 <th className="py-3 px-4 font-black">Precio solicitado</th>
@@ -365,7 +365,7 @@ export default function RegisteredPropertiesList({
                 <th className="py-3 px-4 text-right font-black">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E8E2D8]/50">
+            <tbody className="divide-y divide-border-main/50">
               {renderTableContent(filteredProperties)}
             </tbody>
           </table>

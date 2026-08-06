@@ -46,11 +46,14 @@ export default function HomePage() {
           .order('priority', { ascending: true })
           .order('created_at', { ascending: false });
 
-        if (!error && data) {
+        if (error) {
+          console.error('Error fetching properties from Supabase:', error);
+        } else if (data) {
+          console.log(`Loaded ${data.length} real properties from Supabase.`);
           setProperties(data as Property[]);
         }
       } catch (err) {
-        console.error('Error fetching properties:', err);
+        console.error('Error fetching properties from Supabase:', err);
       } finally {
         setLoading(false);
       }
