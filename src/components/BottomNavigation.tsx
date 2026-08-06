@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, MapPin, Plus, Heart, User } from 'lucide-react';
+import { Search, MapPin, Plus, MessageSquare, User } from 'lucide-react';
 
 export default function BottomNavigation() {
   const pathname = usePathname();
@@ -16,7 +16,7 @@ export default function BottomNavigation() {
     { href: '/', label: 'Explorar', icon: Search },
     { href: '/mapa', label: 'Mapa', icon: MapPin },
     { href: '/publicar', label: 'Publicar', icon: Plus, isCenter: true },
-    { href: '/favoritos', label: 'Favoritos', icon: Heart },
+    { href: '/mensajes', label: 'Mensajes', icon: MessageSquare },
     { href: '/perfil', label: 'Perfil', icon: User },
   ];
 

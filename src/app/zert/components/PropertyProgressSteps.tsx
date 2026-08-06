@@ -15,9 +15,9 @@ export default function PropertyProgressSteps({ currentStep = 1 }: PropertyProgr
   ];
 
   return (
-    <div className="bg-white rounded-3xl p-5 border border-[#E2D8C7] shadow-xs">
+    <div className="bg-bg-card rounded-3xl p-5 border border-border-main shadow-xs text-left transition-colors duration-200">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <span className="text-[11px] font-black text-[#5A5245]/60 uppercase tracking-widest">
+        <span className="text-[11px] font-black text-text-muted uppercase tracking-widest">
           Progreso del registro
         </span>
         <div className="flex flex-wrap items-center gap-3 sm:gap-6">
@@ -28,15 +28,15 @@ export default function PropertyProgressSteps({ currentStep = 1 }: PropertyProgr
                 <div
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-300 ${
                     isActive
-                      ? 'bg-gradient-to-r from-[#1E67AD] to-[#2A93A6] text-white shadow-md shadow-[#1E67AD]/10'
-                      : 'bg-[#F2ECE1]/60 text-[#5A5245]/50 border border-transparent'
+                      ? 'bg-brand-primary text-bg-card shadow-md shadow-brand-primary/10'
+                      : 'bg-bg-main text-text-muted/50 border border-transparent'
                   }`}
                 >
                   <span className="text-sm leading-none font-extrabold">{step.number}</span>
                   <span className="leading-none">{step.label}</span>
                 </div>
                 {index < steps.length - 1 && (
-                  <span className="text-xs text-[#5A5245]/20 hidden md:inline">➔</span>
+                  <span className="text-xs text-text-muted/20 hidden md:inline">➔</span>
                 )}
               </div>
             );

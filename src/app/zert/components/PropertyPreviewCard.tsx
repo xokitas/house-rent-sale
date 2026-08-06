@@ -51,28 +51,28 @@ export default function PropertyPreviewCard({
   const displayDescription = formData.description.trim() || 'Aquí aparecerá la descripción detallada que redactes para tu propiedad...';
 
   return (
-    <div className="bg-white rounded-3xl border border-[#E2D8C7] shadow-lg sticky top-24 overflow-hidden flex flex-col transition-all duration-300 transform hover:shadow-xl">
+    <div className="bg-bg-card rounded-3xl border border-border-main shadow-lg sticky top-24 overflow-hidden flex flex-col transition-all duration-300 transform hover:shadow-xl text-left transition-colors duration-200">
 
       {/* SECCIÓN CABECERA VISTA PREVIA */}
-      <div className="px-5 py-4 bg-linear-to-r from-[#1E67AD]/5 to-[#2A93A6]/5 border-b border-[#E8E2D8] flex items-center justify-between">
-        <span className="text-[10px] font-black text-[#1E67AD] uppercase tracking-wider flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-[#1E67AD] animate-pulse"></span>
+      <div className="px-5 py-4 bg-linear-to-r from-brand-primary/5 to-brand-primary/10 border-b border-border-main flex items-center justify-between">
+        <span className="text-[10px] font-black text-brand-primary uppercase tracking-wider flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-brand-primary animate-pulse"></span>
           Vista Previa en Tiempo Real
         </span>
-        <span className="px-2 py-0.5 bg-[#F2ECE1] border border-[#E2D8C7] rounded-lg text-[9px] font-black text-[#5A5245] uppercase tracking-wider">
+        <span className="px-2 py-0.5 bg-bg-main border border-border-main rounded-lg text-[9px] font-black text-text-muted uppercase tracking-wider">
           Público
         </span>
       </div>
 
       {/* IMAGEN DE LA PROPIEDAD */}
-      <div className="relative aspect-video w-full bg-[#F2ECE1]/30 overflow-hidden border-b border-[#E8E2D8] flex items-center justify-center">
+      <div className="relative aspect-video w-full bg-bg-main overflow-hidden border-b border-border-main flex items-center justify-center">
         {isPlaceholder ? (
           <div className="flex flex-col items-center justify-center text-center p-6 space-y-2 select-none">
             <span className="text-4xl animate-bounce-short">🏠</span>
-            <h4 className="text-xs font-black text-[#1E67AD] uppercase tracking-wide">
+            <h4 className="text-xs font-black text-brand-primary uppercase tracking-wide">
               Vista previa de la propiedad
             </h4>
-            <p className="text-[10px] text-[#5A5245]/60 font-medium max-w-50 leading-relaxed">
+            <p className="text-[10px] text-text-muted font-medium max-w-50 leading-relaxed">
               Las imágenes aparecerán aquí una vez sean cargadas.
             </p>
           </div>
@@ -105,7 +105,7 @@ export default function PropertyPreviewCard({
           {/* BADGES */}
           <div className="flex flex-wrap gap-1.5">
             {selectedStatuses.length === 0 ? (
-              <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase border bg-slate-50 text-slate-400 border-slate-200">
+              <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase border bg-bg-main text-text-muted/50 border-border-main">
                 Sin categoría
               </span>
             ) : (
@@ -125,29 +125,29 @@ export default function PropertyPreviewCard({
 
           {/* TÍTULO Y DIRECCIÓN */}
           <div className="space-y-1">
-            <h3 className="text-base font-black text-[#1E67AD] tracking-tight leading-tight line-clamp-1">
+            <h3 className="text-base font-black text-brand-primary tracking-tight leading-tight line-clamp-1">
               {displayTitle}
             </h3>
-            <p className="text-[10px] font-bold text-[#5A5245] flex items-center gap-1">
+            <p className="text-[10px] font-bold text-text-muted flex items-center gap-1">
               📍 {displayAddress}
             </p>
           </div>
 
           {/* DESCRIPCIÓN ACORTADA */}
-          <p className="text-[11px] text-[#5A5245]/80 font-medium leading-relaxed line-clamp-3">
+          <p className="text-[11px] text-text-muted/80 font-medium leading-relaxed line-clamp-3">
             {displayDescription}
           </p>
         </div>
 
         {/* PRECIO Y ACCIONES */}
-        <div className="pt-4 border-t border-[#E8E2D8] flex items-end justify-between gap-4">
+        <div className="pt-4 border-t border-border-main flex items-end justify-between gap-4">
           <div>
-            <span className="text-[8px] text-[#5A5245]/60 font-black uppercase tracking-wider">
+            <span className="text-[8px] text-text-muted font-black uppercase tracking-wider">
               Precio de venta
             </span>
-            <div className="text-lg font-black text-[#1E67AD] leading-none mt-0.5">
+            <div className="text-lg font-black text-brand-primary leading-none mt-0.5">
               {displayPrice}{' '}
-              <span className="text-xs font-bold text-[#C8976C]">
+              <span className="text-xs font-bold text-brand-secondary">
                 {displayCurrency}
               </span>
             </div>
@@ -157,14 +157,14 @@ export default function PropertyPreviewCard({
           <div className="flex items-center gap-1.5">
             <button
               type="button"
-              className="w-8 h-8 rounded-xl bg-[#F2ECE1] hover:bg-[#E2D8C7] text-[#1E67AD] flex items-center justify-center text-xs transition duration-200"
+              className="w-8 h-8 rounded-xl bg-bg-main hover:bg-border-main text-brand-primary flex items-center justify-center text-xs transition duration-200"
               title="Llamar"
             >
               📞
             </button>
             <button
               type="button"
-              className="px-3 h-8 bg-linear-to-r from-[#1E67AD] to-[#2A93A6] text-white text-[10px] font-black uppercase rounded-xl transition duration-200 shadow-sm"
+              className="px-3 h-8 bg-brand-primary text-bg-card text-[10px] font-black uppercase rounded-xl transition duration-200 shadow-sm"
             >
               💬 Mensaje
             </button>
