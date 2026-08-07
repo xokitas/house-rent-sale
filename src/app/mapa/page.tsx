@@ -44,8 +44,8 @@ export default async function MapaPage() {
 
     return {
       ...property,
-      latitude: obfuscateCoordinate(property.latitude, property.id, 'lat'),
-      longitude: obfuscateCoordinate(property.longitude, property.id, 'lng'),
+      latitude: obfuscateCoordinate(property.latitude, String(property.id), 'lat'),
+      longitude: obfuscateCoordinate(property.longitude, String(property.id), 'lng'),
     };
   });
 
