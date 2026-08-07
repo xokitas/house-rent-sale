@@ -9,9 +9,6 @@ import Link from 'next/link';
 import PropertyLocationCard from '@/components/property-form/PropertyLocationCard';
 import PropertyStructuralCard from '@/components/property-form/PropertyStructuralCard';
 import PropertyAmenitiesCard from '@/components/property-form/PropertyAmenitiesCard';
-import PropertyHostelFieldsCard from '@/components/property-form/PropertyHostelFieldsCard';
-import PropertyDayPassFieldsCard from '@/components/property-form/PropertyDayPassFieldsCard';
-import PropertyCommercialFieldsCard from '@/components/property-form/PropertyCommercialFieldsCard';
 import PropertyDescriptionCard from '@/components/property-form/PropertyDescriptionCard';
 import PropertyGalleryCard from '@/components/property-form/PropertyGalleryCard';
 import Toast from '@/components/property-form/Toast';
@@ -84,29 +81,6 @@ export default function PublicWizardPage() {
     owner_name: '',
     contact: '',
     admin_comment: '',
-
-    // HOSTAL SPECIFIC
-    rooms_available: '',
-    private_bathroom: false,
-    shared_bathroom: false,
-    breakfast: false,
-    lunch: false,
-    dinner: false,
-    airport_pickup: false,
-    check_in: '',
-    check_out: '',
-    languages: [] as string[],
-
-    // DAY PASS SPECIFIC
-    capacity: '',
-    event_schedule: '',
-    music_allowed: false,
-
-    // COMMERCIAL SPECIFIC
-    commercial_front: false,
-    warehouse: false,
-    office: false,
-    industrial_power: false,
   });
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -432,26 +406,6 @@ export default function PublicWizardPage() {
 
         amenities: formData.amenities,
 
-        rooms_available: formData.rooms_available ? Number(formData.rooms_available) : null,
-        private_bathroom: formData.private_bathroom,
-        shared_bathroom: formData.shared_bathroom,
-        breakfast: formData.breakfast,
-        lunch: formData.lunch,
-        dinner: formData.dinner,
-        airport_pickup: formData.airport_pickup,
-        check_in: formData.check_in || null,
-        check_out: formData.check_out || null,
-        languages: formData.languages,
-
-        capacity: formData.capacity ? Number(formData.capacity) : null,
-        event_schedule: formData.event_schedule || null,
-        music_allowed: formData.music_allowed,
-
-        commercial_front: formData.commercial_front,
-        warehouse: formData.warehouse,
-        office: formData.office,
-        industrial_power: formData.industrial_power,
-
         is_published: false,
       };
 
@@ -639,23 +593,6 @@ export default function PublicWizardPage() {
                     owner_name: '',
                     contact: '',
                     admin_comment: '',
-                    rooms_available: '',
-                    private_bathroom: false,
-                    shared_bathroom: false,
-                    breakfast: false,
-                    lunch: false,
-                    dinner: false,
-                    airport_pickup: false,
-                    check_in: '',
-                    check_out: '',
-                    languages: [],
-                    capacity: '',
-                    event_schedule: '',
-                    music_allowed: false,
-                    commercial_front: false,
-                    warehouse: false,
-                    office: false,
-                    industrial_power: false,
                   });
                 }}
                 className="px-6 py-3 bg-linear-to-r from-brand-primary to-emerald-700 text-white text-xs font-black uppercase rounded-xl hover:opacity-95 shadow-md transition tracking-widest active:scale-95 cursor-pointer"

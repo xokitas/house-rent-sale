@@ -40,12 +40,10 @@ export default function PropertyStructuralCard({
   constructionArea,
   landArea,
   onFormChange,
-  category,
 }: PropertyStructuralCardProps) {
   // INTELLIGENCE FIELD VISIBILITY LOGIC
   const isTerrenoOrSolar = propertyType === 'Terreno' || propertyType === 'Solar';
-  const isCommercialSpace = propertyType === 'Local Comercial' || category === 'commercial_space';
-  const isHostelOrRoom = propertyType === 'Hostal' || propertyType === 'Habitación' || category === 'international_hostel';
+  const isRoom = propertyType === 'Habitación';
 
   // Determine what structural fields to display
   const showConstructionArea = !isTerrenoOrSolar;
@@ -78,13 +76,8 @@ export default function PropertyStructuralCard({
   if (isTerrenoOrSolar) {
     // Terrenos and Solars don't show any room distributions
     visibleDistributionFields = [];
-  } else if (isCommercialSpace) {
-    // Only show relevant fields for commercial spaces
-    visibleDistributionFields = allDistributionFields.filter(item =>
-      ['bathrooms', 'garages', 'floors'].includes(item.field)
-    );
-  } else if (isHostelOrRoom) {
-    // Only show relevant fields for hostels / independent rooms
+  } else if (isRoom) {
+    // Only show relevant fields for independent rooms
     visibleDistributionFields = allDistributionFields.filter(item =>
       ['bedrooms', 'bathrooms', 'floors'].includes(item.field)
     );

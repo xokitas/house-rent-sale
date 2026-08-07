@@ -32,6 +32,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
   const formattedPrice = formatPrice(property.price, property.currency);
   const isAlquiler = property.status.includes('long_term');
   const mainBadge = getStatusBadge(property.status[0]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const p = property as any; // Cast temporal hasta migrar types.ts
 
   const nextImage = () => {

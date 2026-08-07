@@ -18,9 +18,6 @@ import RegisteredPropertiesList from './components/RegisteredPropertiesList';
 import PropertyLocationCard from '@/components/property-form/PropertyLocationCard';
 import PropertyStructuralCard from '@/components/property-form/PropertyStructuralCard';
 import PropertyAmenitiesCard from '@/components/property-form/PropertyAmenitiesCard';
-import PropertyHostelFieldsCard from '@/components/property-form/PropertyHostelFieldsCard';
-import PropertyDayPassFieldsCard from '@/components/property-form/PropertyDayPassFieldsCard';
-import PropertyCommercialFieldsCard from '@/components/property-form/PropertyCommercialFieldsCard';
 import PropertyDescriptionCard from '@/components/property-form/PropertyDescriptionCard';
 import PropertyGalleryCard from '@/components/property-form/PropertyGalleryCard';
 import Toast from '@/components/property-form/Toast';
@@ -28,7 +25,6 @@ import Toast from '@/components/property-form/Toast';
 // ============================================
 // TIPOS LOCALES DEL FORMULARIO (NO TOCAN types.ts)
 // ============================================
-type ExtendedPropertyStatus = PropertyStatus | 'international_hostel' | 'day_pass' | 'commercial_space';
 
 interface FormData {
   title: string;
@@ -65,29 +61,6 @@ interface FormData {
 
   // AMENIDADES
   amenities: string[];
-
-  // CAMPOS HOSTAL / INTERNACIONAL
-  rooms_available: string;
-  private_bathroom: boolean;
-  shared_bathroom: boolean;
-  breakfast: boolean;
-  lunch: boolean;
-  dinner: boolean;
-  airport_pickup: boolean;
-  check_in: string;
-  check_out: string;
-  languages: string[];
-
-  // CAMPOS PASADIA / EVENTOS
-  capacity: string;
-  event_schedule: string;
-  music_allowed: boolean;
-
-  // CAMPOS LOCAL COMERCIAL
-  commercial_front: boolean;
-  warehouse: boolean;
-  office: boolean;
-  industrial_power: boolean;
 }
 
 export default function AdminPage() {
@@ -168,32 +141,9 @@ export default function AdminPage() {
 
     // AMENIDADES
     amenities: [],
-
-    // CAMPOS HOSTAL / INTERNACIONAL
-    rooms_available: '',
-    private_bathroom: false,
-    shared_bathroom: false,
-    breakfast: false,
-    lunch: false,
-    dinner: false,
-    airport_pickup: false,
-    check_in: '',
-    check_out: '',
-    languages: [],
-
-    // CAMPOS PASADIA / EVENTOS
-    capacity: '',
-    event_schedule: '',
-    music_allowed: false,
-
-    // CAMPOS LOCAL COMERCIAL
-    commercial_front: false,
-    warehouse: false,
-    office: false,
-    industrial_power: false,
   });
 
-  const [selectedStatuses, setSelectedStatuses] = useState<ExtendedPropertyStatus[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<PropertyStatus[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isSold, setIsSold] = useState<boolean>(false);
@@ -209,6 +159,7 @@ export default function AdminPage() {
     setIsPublishedState(!!property.is_published);
 
     // Cast temporal para acceder a campos que aun no estan en types.ts
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const p = property as any;
 
     setFormData({
@@ -243,31 +194,11 @@ export default function AdminPage() {
       land_area: property.land_area != null && property.land_area !== undefined ? String(property.land_area) : '',
 
       amenities: Array.isArray(p.amenities) ? p.amenities : [],
-
-      rooms_available: p.rooms_available != null && p.rooms_available !== undefined ? String(p.rooms_available) : '',
-      private_bathroom: !!p.private_bathroom,
-      shared_bathroom: !!p.shared_bathroom,
-      breakfast: !!p.breakfast,
-      lunch: !!p.lunch,
-      dinner: !!p.dinner,
-      airport_pickup: !!p.airport_pickup,
-      check_in: p.check_in || '',
-      check_out: p.check_out || '',
-      languages: Array.isArray(p.languages) ? p.languages : [],
-
-      capacity: p.capacity != null && p.capacity !== undefined ? String(p.capacity) : '',
-      event_schedule: p.event_schedule || '',
-      music_allowed: !!p.music_allowed,
-
-      commercial_front: !!p.commercial_front,
-      warehouse: !!p.warehouse,
-      office: !!p.office,
-      industrial_power: !!p.industrial_power,
     });
 
     const statuses = Array.isArray(property.status) ? property.status : [property.status];
 
-    setSelectedStatuses(statuses as ExtendedPropertyStatus[]);
+    setSelectedStatuses(statuses as PropertyStatus[]);
     setSelectedFiles([]);
     setIsSold(!!property.is_sold);
 
@@ -431,11 +362,10 @@ export default function AdminPage() {
   };
 
   const toggleStatus = (status: PropertyStatus) => {
-    const s = status as ExtendedPropertyStatus;
-    if (selectedStatuses.includes(s)) {
-      setSelectedStatuses(selectedStatuses.filter((x) => x !== s));
+    if (selectedStatuses.includes(status)) {
+      setSelectedStatuses(selectedStatuses.filter((x) => x !== status));
     } else {
-      setSelectedStatuses([...selectedStatuses, s]);
+      setSelectedStatuses([...selectedStatuses, status]);
     }
   };
 
@@ -476,6 +406,7 @@ export default function AdminPage() {
     try {
       const newImageUrls = await uploadImages();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const propertyData: Record<string, any> = {
         title: formData.title,
         description: formData.description,
@@ -513,29 +444,6 @@ export default function AdminPage() {
 
         // AMENIDADES
         amenities: formData.amenities,
-
-        // HOSTAL
-        rooms_available: formData.rooms_available ? Number(formData.rooms_available) : null,
-        private_bathroom: formData.private_bathroom,
-        shared_bathroom: formData.shared_bathroom,
-        breakfast: formData.breakfast,
-        lunch: formData.lunch,
-        dinner: formData.dinner,
-        airport_pickup: formData.airport_pickup,
-        check_in: formData.check_in || null,
-        check_out: formData.check_out || null,
-        languages: formData.languages,
-
-        // PASADIA
-        capacity: formData.capacity ? Number(formData.capacity) : null,
-        event_schedule: formData.event_schedule || null,
-        music_allowed: formData.music_allowed,
-
-        // LOCAL COMERCIAL
-        commercial_front: formData.commercial_front,
-        warehouse: formData.warehouse,
-        office: formData.office,
-        industrial_power: formData.industrial_power,
 
         // SI SE GUARDA DESDE EL ADMIN, QUEDA PUBLICADA POR DEFECTO
         is_published: true,
@@ -682,26 +590,6 @@ export default function AdminPage() {
       land_area: '',
 
       amenities: [],
-
-      rooms_available: '',
-      private_bathroom: false,
-      shared_bathroom: false,
-      breakfast: false,
-      lunch: false,
-      dinner: false,
-      airport_pickup: false,
-      check_in: '',
-      check_out: '',
-      languages: [],
-
-      capacity: '',
-      event_schedule: '',
-      music_allowed: false,
-
-      commercial_front: false,
-      warehouse: false,
-      office: false,
-      industrial_power: false,
     });
     setSelectedStatuses([]);
     setExistingImages([]);
@@ -1119,128 +1007,96 @@ export default function AdminPage() {
               {/* INDICADOR DE PROGRESO */}
               <PropertyProgressSteps currentStep={calculateStep()} />
 
-              {/* GRID PRINCIPAL DEL FORMULARIO Y PREVIEW */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                <form ref={formRef} onSubmit={handleSubmit} className="lg:col-span-8 space-y-8">
-                  <PropertyBasicInfoCard
-                    title={formData.title}
-                    price={formData.price}
-                    currency={formData.currency}
-                    address={formData.address}
-                    contact={formData.contact}
-                    selectedStatuses={selectedStatuses as PropertyStatus[]}
-                    onFormChange={handleFormChange}
-                    onToggleStatus={toggleStatus}
-                  />
-
-                  <PropertyLocationCard
-                    province={formData.province}
-                    municipality={formData.municipality}
-                    neighborhood={formData.neighborhood}
-                    latitude={formData.latitude}
-                    longitude={formData.longitude}
-                    onFormChange={handleFormChange}
-                  />
-
-                  <PropertyStructuralCard
-                    propertyType={formData.property_type}
-                    bedrooms={formData.bedrooms}
-                    bathrooms={formData.bathrooms}
-                    livingRooms={formData.living_rooms}
-                    diningRooms={formData.dining_rooms}
-                    kitchens={formData.kitchens}
-                    indoorPatios={formData.indoor_patios}
-                    outdoorPatios={formData.outdoor_patios}
-                    garages={formData.garages}
-                    terraces={formData.terraces}
-                    balconies={formData.balconies}
-                    portals={formData.portals}
-                    floors={formData.floors}
-                    constructionArea={formData.construction_area}
-                    landArea={formData.land_area}
-                    onFormChange={handleFormChange}
-                  />
-
-                  <PropertyAmenitiesCard
-                    amenities={formData.amenities}
-                    onChange={(newAmenities) => handleFormChange('amenities', newAmenities)}
-                  />
-
-                  {selectedStatuses.includes('international_hostel' as ExtendedPropertyStatus) && (
-                    <PropertyHostelFieldsCard
-                      roomsAvailable={formData.rooms_available}
-                      privateBathroom={formData.private_bathroom}
-                      sharedBathroom={formData.shared_bathroom}
-                      breakfast={formData.breakfast}
-                      lunch={formData.lunch}
-                      dinner={formData.dinner}
-                      airportPickup={formData.airport_pickup}
-                      checkIn={formData.check_in}
-                      checkOut={formData.check_out}
-                      languages={formData.languages}
+              <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
+                {/* GRID PRINCIPAL DEL FORMULARIO Y PREVIEW */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                  <div className="lg:col-span-8 space-y-8">
+                    <PropertyBasicInfoCard
+                      title={formData.title}
+                      price={formData.price}
+                      currency={formData.currency}
+                      address={formData.address}
+                      contact={formData.contact}
+                      selectedStatuses={selectedStatuses as PropertyStatus[]}
                       onFormChange={handleFormChange}
-                      onLanguagesChange={(langs) => handleFormChange('languages', langs)}
+                      onToggleStatus={toggleStatus}
                     />
-                  )}
 
-                  {selectedStatuses.includes('day_pass' as ExtendedPropertyStatus) && (
-                    <PropertyDayPassFieldsCard
-                      capacity={formData.capacity}
-                      eventSchedule={formData.event_schedule}
-                      musicAllowed={formData.music_allowed}
+                    <PropertyLocationCard
+                      province={formData.province}
+                      municipality={formData.municipality}
+                      neighborhood={formData.neighborhood}
+                      latitude={formData.latitude}
+                      longitude={formData.longitude}
                       onFormChange={handleFormChange}
                     />
-                  )}
 
-                  {selectedStatuses.includes('commercial_space' as ExtendedPropertyStatus) && (
-                    <PropertyCommercialFieldsCard
-                      commercialFront={formData.commercial_front}
-                      warehouse={formData.warehouse}
-                      office={formData.office}
-                      industrialPower={formData.industrial_power}
+                    <PropertyStructuralCard
+                      propertyType={formData.property_type}
+                      bedrooms={formData.bedrooms}
+                      bathrooms={formData.bathrooms}
+                      livingRooms={formData.living_rooms}
+                      diningRooms={formData.dining_rooms}
+                      kitchens={formData.kitchens}
+                      indoorPatios={formData.indoor_patios}
+                      outdoorPatios={formData.outdoor_patios}
+                      garages={formData.garages}
+                      terraces={formData.terraces}
+                      balconies={formData.balconies}
+                      portals={formData.portals}
+                      floors={formData.floors}
+                      constructionArea={formData.construction_area}
+                      landArea={formData.land_area}
                       onFormChange={handleFormChange}
                     />
-                  )}
 
-                  <PropertyDescriptionCard
-                    description={formData.description}
-                    onFormChange={handleFormChange}
-                  />
+                    <PropertyAmenitiesCard
+                      amenities={formData.amenities}
+                      onChange={(newAmenities) => handleFormChange('amenities', newAmenities)}
+                    />
 
-                  <PropertyGalleryCard
-                    existingImages={existingImages}
-                    selectedFiles={selectedFiles}
-                    onFileChange={handleFileChange}
-                    onRemoveExistingImage={removeExistingImage}
-                    onRemoveSelectedFile={removeSelectedFile}
-                  />
+                    <PropertyDescriptionCard
+                      description={formData.description}
+                      onFormChange={handleFormChange}
+                    />
 
-                  <PropertySettingsCard
-                    editingId={editingId}
-                    priority={formData.priority}
-                    isSold={isSold}
-                    onFormChange={handleFormChange}
-                    onToggleSold={setIsSold}
-                  />
+                    <PropertyGalleryCard
+                      existingImages={existingImages}
+                      selectedFiles={selectedFiles}
+                      onFileChange={handleFileChange}
+                      onRemoveExistingImage={removeExistingImage}
+                      onRemoveSelectedFile={removeSelectedFile}
+                    />
 
-                  <PropertyActionsBar
-                    editingId={editingId}
-                    isProcessing={isProcessing}
-                    onCancel={resetForm}
-                    onSaveDraft={handleSaveDraft}
-                  />
-                </form>
+                    <PropertySettingsCard
+                      editingId={editingId}
+                      priority={formData.priority}
+                      isSold={isSold}
+                      onFormChange={handleFormChange}
+                      onToggleSold={setIsSold}
+                    />
+                  </div>
 
-                <div className="lg:col-span-4 lg:sticky lg:top-28 space-y-6">
-                  <PropertyPreviewCard
-                    formData={formData as any}
-                    selectedStatuses={selectedStatuses as PropertyStatus[]}
-                    existingImages={existingImages}
-                    selectedFiles={selectedFiles}
-                    isSold={isSold}
-                  />
+                  <div className="lg:col-span-4 lg:sticky lg:top-28 space-y-6">
+                    <PropertyPreviewCard
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      formData={formData as any}
+                      selectedStatuses={selectedStatuses as PropertyStatus[]}
+                      existingImages={existingImages}
+                      selectedFiles={selectedFiles}
+                      isSold={isSold}
+                    />
+                  </div>
                 </div>
-              </div>
+
+                {/* ACCIONES INFERIORES OCUPANDO TODO EL ANCHO DISPONIBLE */}
+                <PropertyActionsBar
+                  editingId={editingId}
+                  isProcessing={isProcessing}
+                  onCancel={resetForm}
+                  onSaveDraft={handleSaveDraft}
+                />
+              </form>
             </div>
           )}
 
