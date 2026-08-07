@@ -231,7 +231,7 @@ export default function PublicWizardPage() {
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.webp`;
 
         const { data, error } = await supabase.storage
-          .from('property-images')
+          .from('properties')
           .upload(fileName, compressedBlob, {
             contentType: 'image/webp',
           });
@@ -242,7 +242,7 @@ export default function PublicWizardPage() {
         }
 
         const { data: publicUrlData } = supabase.storage
-          .from('property-images')
+          .from('properties')
           .getPublicUrl(fileName);
 
         if (publicUrlData?.publicUrl) {
@@ -397,26 +397,23 @@ export default function PublicWizardPage() {
       // Construct address
       const constructedAddress = `${formData.neighborhood}, ${formData.municipality}, Camagüey`;
 
-      const propertyData = {
+            const propertyData = {
         title: formData.title,
         description: formattedDescription,
         price: Number(formData.price) || 0,
         currency: formData.currency,
         address: constructedAddress,
         contact: formData.contact,
-        images: uploadedImageUrls,
-        status: [formData.status], // Only ONE status/category in array
+        status: [formData.status],
         latitude: formData.latitude ? Number(formData.latitude) : null,
         longitude: formData.longitude ? Number(formData.longitude) : null,
         is_sold: false,
-        priority: 4, // Default basic priority for public requests
+        priority: 4,
 
-        // UBICACIÓN
         province: 'Camagüey',
         municipality: formData.municipality || null,
         neighborhood: formData.neighborhood || null,
 
-        // CARACTERÍSTICAS ESTRUCTURALES
         property_type: formData.property_type || null,
         bedrooms: formData.bedrooms ? Number(formData.bedrooms) : 0,
         bathrooms: formData.bathrooms ? Number(formData.bathrooms) : 0,
@@ -433,10 +430,8 @@ export default function PublicWizardPage() {
         construction_area: formData.construction_area ? Number(formData.construction_area) : null,
         land_area: formData.land_area ? Number(formData.land_area) : null,
 
-        // AMENIDADES
         amenities: formData.amenities,
 
-        // HOSTAL / INTERNACIONAL
         rooms_available: formData.rooms_available ? Number(formData.rooms_available) : null,
         private_bathroom: formData.private_bathroom,
         shared_bathroom: formData.shared_bathroom,
@@ -448,19 +443,16 @@ export default function PublicWizardPage() {
         check_out: formData.check_out || null,
         languages: formData.languages,
 
-        // PASADÍA / EVENTOS
         capacity: formData.capacity ? Number(formData.capacity) : null,
         event_schedule: formData.event_schedule || null,
         music_allowed: formData.music_allowed,
 
-        // LOCAL COMERCIAL
         commercial_front: formData.commercial_front,
         warehouse: formData.warehouse,
         office: formData.office,
         industrial_power: formData.industrial_power,
 
-        // CONTROL DE ESTADO
-        is_published: false, // Always un-published initially
+        is_published: false,
       };
 
       const { data, error } = await supabase
@@ -469,6 +461,26 @@ export default function PublicWizardPage() {
         .select();
 
       if (error) throw error;
+
+      // GUARDAR IMÁGENES EN LA TABLA property_images
+      if (data && data.length > 0) {
+        const propertyId = data[0].id;
+
+        if (uploadedImageUrls.length > 0) {
+          const imageRecords = uploadedImageUrls.map((url, index) => ({
+            property_id: propertyId,
+            image_url: url,
+            display_order: index,
+            is_cover: index === 0,
+          }));
+
+                    const { error: imgError } = await supabase
+            .from('property_images')
+            .insert(imageRecords);
+
+          if (imgError) throw imgError;
+        }
+      }
 
       // Triggers Telegram notification layer (loosely coupled)
       if (data && data.length > 0) {
@@ -551,7 +563,7 @@ export default function PublicWizardPage() {
               <button
                 type="button"
                 onClick={handleRecoverDraft}
-                className="px-4 py-3 bg-gradient-to-r from-brand-primary to-emerald-700 text-white text-xs font-black rounded-xl uppercase tracking-wider shadow-md transition hover:opacity-95 active:scale-95 cursor-pointer"
+                className="px-4 py-3 bg-linear-to-r from-brand-primary to-emerald-700 text-white text-xs font-black rounded-xl uppercase tracking-wider shadow-md transition hover:opacity-95 active:scale-95 cursor-pointer"
               >
                 Continuar Borrador
               </button>
@@ -646,7 +658,7 @@ export default function PublicWizardPage() {
                     industrial_power: false,
                   });
                 }}
-                className="px-6 py-3 bg-gradient-to-r from-brand-primary to-emerald-700 text-white text-xs font-black uppercase rounded-xl hover:opacity-95 shadow-md transition tracking-widest active:scale-95 cursor-pointer"
+                className="px-6 py-3 bg-linear-to-r from-brand-primary to-emerald-700 text-white text-xs font-black uppercase rounded-xl hover:opacity-95 shadow-md transition tracking-widest active:scale-95 cursor-pointer"
               >
                 Publicar otra propiedad
               </button>
@@ -848,43 +860,6 @@ export default function PublicWizardPage() {
                     onFormChange={handleFormChange}
                     category={formData.status}
                   />
-
-                  {/* Bloques de especialidad condicionales */}
-                  {formData.status === 'international_hostel' && (
-                    <PropertyHostelFieldsCard
-                      roomsAvailable={formData.rooms_available}
-                      privateBathroom={formData.private_bathroom}
-                      sharedBathroom={formData.shared_bathroom}
-                      breakfast={formData.breakfast}
-                      lunch={formData.lunch}
-                      dinner={formData.dinner}
-                      airportPickup={formData.airport_pickup}
-                      checkIn={formData.check_in}
-                      checkOut={formData.check_out}
-                      languages={formData.languages}
-                      onFormChange={handleFormChange}
-                      onLanguagesChange={(langs) => handleFormChange('languages', langs)}
-                    />
-                  )}
-
-                  {formData.status === 'day_pass' && (
-                    <PropertyDayPassFieldsCard
-                      capacity={formData.capacity}
-                      eventSchedule={formData.event_schedule}
-                      musicAllowed={formData.music_allowed}
-                      onFormChange={handleFormChange}
-                    />
-                  )}
-
-                  {formData.status === 'commercial_space' && (
-                    <PropertyCommercialFieldsCard
-                      commercialFront={formData.commercial_front}
-                      warehouse={formData.warehouse}
-                      office={formData.office}
-                      industrialPower={formData.industrial_power}
-                      onFormChange={handleFormChange}
-                    />
-                  )}
                 </div>
               )}
 

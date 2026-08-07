@@ -207,8 +207,7 @@ export default function PropertyModal({ property, isOpen, onClose }: PropertyMod
             </a>
 
             <a
-              href={`https://wa.me/${property.contact.replace('+', '')}`}
-              target="_blank"
+              href={`tel:${property.contact || ''}`}              target="_blank"
               rel="noopener noreferrer"
               className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl transition text-center shadow-md active:scale-95"
             >

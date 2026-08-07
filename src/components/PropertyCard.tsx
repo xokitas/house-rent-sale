@@ -15,6 +15,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   const [liked, setLiked] = useState(false);
 
   const mainImage = property.images && property.images.length > 0 ? property.images[0] : null;
+  const p = property as any; // Cast temporal hasta migrar types.ts
 
   // El precio formateado dinámicamente con useCurrency
   const formattedPrice = formatPrice(property.price, property.currency);
@@ -24,7 +25,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   return (
     <div className="bg-bg-card rounded-[2.5rem] border border-border-main overflow-hidden flex flex-col transition-all duration-300 hover:shadow-[0_12px_32px_rgba(0,0,0,0.06)] group text-left">
       {/* SECCIÓN IMAGEN */}
-      <div className="relative h-[220px] w-full bg-bg-main overflow-hidden">
+      <div className="relative h-55 w-full bg-bg-main overflow-hidden">
         {mainImage ? (
           <img
             src={mainImage}
@@ -40,7 +41,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         )}
 
         {/* Gradiente sutil inferior */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
 
         {/* Badge Favorito */}
         <button
@@ -73,7 +74,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         {!property.is_sold && (
           <div className="absolute top-4 right-15">
             <span className="text-[10px] px-2.5 py-1 rounded-full flex items-center gap-1 bg-brand-primary/20 text-brand-primary font-black backdrop-blur-md border border-brand-primary/30 shadow-xs">
-              <Check className="w-3 h-3 stroke-[3]" /> Verificado
+              <Check className="w-3 h-3 stroke-3" /> Verificado
             </span>
           </div>
         )}
@@ -138,10 +139,10 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             )}
           </div>
 
-          {/* Características Adicionales destacadas */}
-          {property.amenities && property.amenities.length > 0 && (
+                    {/* Características Adicionales destacadas */}
+          {p.amenities && p.amenities.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-5">
-              {property.amenities.slice(0, 3).map((amenity) => (
+              {p.amenities.slice(0, 3).map((amenity: string) => (
                 <span
                   key={amenity}
                   className="inline-flex items-center gap-1 bg-brand-primary/10 text-brand-primary text-[10px] font-bold px-2.5 py-1 rounded-full border border-brand-primary/5"
@@ -154,18 +155,16 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         </Link>
 
         {/* Acciones de contacto (Fuera del Link para evitar anidación de <a>) */}
-        <div
-          className="mt-auto pt-4 border-t border-border-main flex items-center gap-2"
-        >
+                <div className="mt-auto pt-4 border-t border-border-main flex items-center gap-2">
           <a
-            href={`tel:${property.contact}`}
+            href={`tel:${property.contact || ''}`}
             className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-bg-main hover:bg-border-main text-text-main border border-border-main transition shrink-0 active:scale-95 cursor-pointer"
-            title={`Llamar al ${property.contact}`}
+            title={`Llamar al ${property.contact || ''}`}
           >
             <Phone className="w-4 h-4" />
           </a>
           <a
-            href={`https://wa.me/${property.contact.replace('+', '').replace(/\s+/g, '')}`}
+            href={`https://wa.me/${(property.contact || '').replace('+', '').replace(/\s+/g, '')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 h-10 text-xs font-black rounded-xl text-white bg-[#25D366] hover:opacity-95 transition shadow-sm active:scale-95 cursor-pointer"

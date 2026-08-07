@@ -32,6 +32,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
   const formattedPrice = formatPrice(property.price, property.currency);
   const isAlquiler = property.status.includes('long_term');
   const mainBadge = getStatusBadge(property.status[0]);
+  const p = property as any; // Cast temporal hasta migrar types.ts
 
   const nextImage = () => {
     setActiveImageIdx((prev) => (prev + 1) % images.length);
@@ -50,8 +51,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
           alt={property.title}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-black/30 pointer-events-none" />
-
+        <div className="absolute inset-0 bg-linear-to-t from-slate-950/70 via-transparent to-black/30 pointer-events-none" />
         {/* Acciones superiores */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
           <button
@@ -182,19 +182,19 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
         </div>
 
         {/* Atributos locales / Amenidades */}
-        {property.amenities && property.amenities.length > 0 && (
+        {p.amenities && p.amenities.length > 0 && (
           <div className="space-y-3 pt-4 border-t border-border-main">
             <h2 className="text-sm font-black text-text-main uppercase tracking-wider">
               Comodidades y Atributos
             </h2>
             <div className="grid grid-cols-2 gap-2.5">
-              {property.amenities.map((amenity) => (
+              {p.amenities.map((amenity: string) => (
                 <div
                   key={amenity}
                   className="flex items-center gap-2 p-3 bg-bg-main rounded-xl border border-border-main"
                 >
                   <span className="w-5 h-5 rounded-lg bg-brand-primary/10 border border-brand-primary/10 flex items-center justify-center text-brand-primary shrink-0">
-                    <Check className="w-3 h-3 stroke-[3]" />
+                    <Check className="w-3 h-3 stroke-3" />
                   </span>
                   <span className="text-xs font-black text-text-main">{amenity}</span>
                 </div>
@@ -205,7 +205,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
 
         {/* Información de contacto / Propietario */}
         <div className="p-4 bg-bg-main border border-border-main rounded-3xl flex items-center gap-4 transition-colors duration-200">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white shrink-0 font-black shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white shrink-0 font-black shadow-sm">
             <User className="w-6 h-6" />
           </div>
 
@@ -235,7 +235,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
           </a>
 
           <a
-            href={`https://wa.me/${property.contact.replace('+', '').replace(/\s+/g, '')}`}
+            href={`tel:${property.contact || ''}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 inline-flex items-center justify-center gap-2 h-12 rounded-2xl bg-[#25D366] text-white font-black text-xs shadow-md shadow-[#25D366]/20 hover:opacity-95 transition active:scale-95"

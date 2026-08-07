@@ -79,7 +79,7 @@ export default function RegisteredPropertiesList({
                   🏠
                 </div>
               )}
-              <div className="max-w-[180px] sm:max-w-xs md:max-w-md lg:max-w-lg">
+              <div className="max-w-45 sm:max-w-xs md:max-w-md lg:max-w-lg">
                 <h3 className="text-xs font-black text-brand-primary truncate tracking-tight leading-snug">
                   {prop.title}
                 </h3>
@@ -92,7 +92,7 @@ export default function RegisteredPropertiesList({
 
           {/* CLASIFICACIÓN STATUS */}
           <td className="py-4 px-4 text-left">
-            <div className="flex flex-wrap gap-1 max-w-[150px]">
+            <div className="flex flex-wrap gap-1 max-w-37.5">
               {propStatuses.map((st) => {
                 const badge = getStatusBadge(st);
                 return (
@@ -155,7 +155,7 @@ export default function RegisteredPropertiesList({
               </button>
               <button
                 type="button"
-                onClick={() => onDelete(prop.id)}
+                onClick={() => onDelete(String(prop.id))}
                 className="w-8 h-8 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-xl flex items-center justify-center transition border border-rose-500/10 cursor-pointer text-xs font-black"
                 title="Eliminar propiedad"
               >
