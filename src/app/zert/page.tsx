@@ -14,7 +14,7 @@ import PropertyPreviewCard from './components/PropertyPreviewCard';
 import PropertyActionsBar from './components/PropertyActionsBar';
 import RegisteredPropertiesList from './components/RegisteredPropertiesList';
 
-// COMPONENTES COMPARTIDOS (ÚNICA FUENTE DE VERDAD)
+// COMPONENTES COMPARTIDOS (UNICA FUENTE DE VERDAD)
 import PropertyLocationCard from '@/components/property-form/PropertyLocationCard';
 import PropertyStructuralCard from '@/components/property-form/PropertyStructuralCard';
 import PropertyAmenitiesCard from '@/components/property-form/PropertyAmenitiesCard';
@@ -25,6 +25,71 @@ import PropertyDescriptionCard from '@/components/property-form/PropertyDescript
 import PropertyGalleryCard from '@/components/property-form/PropertyGalleryCard';
 import Toast from '@/components/property-form/Toast';
 
+// ============================================
+// TIPOS LOCALES DEL FORMULARIO (NO TOCAN types.ts)
+// ============================================
+type ExtendedPropertyStatus = PropertyStatus | 'international_hostel' | 'day_pass' | 'commercial_space';
+
+interface FormData {
+  title: string;
+  description: string;
+  price: string;
+  currency: string;
+  address: string;
+  contact: string;
+  latitude: string;
+  longitude: string;
+  priority: number;
+
+  // UBICACION
+  province: string;
+  municipality: string;
+  neighborhood: string;
+
+  // CARACTERISTICAS ESTRUCTURALES
+  property_type: string;
+  bedrooms: string;
+  bathrooms: string;
+  living_rooms: string;
+  dining_rooms: string;
+  kitchens: string;
+  indoor_patios: string;
+  outdoor_patios: string;
+  garages: string;
+  terraces: string;
+  balconies: string;
+  portals: string;
+  floors: string;
+  construction_area: string;
+  land_area: string;
+
+  // AMENIDADES
+  amenities: string[];
+
+  // CAMPOS HOSTAL / INTERNACIONAL
+  rooms_available: string;
+  private_bathroom: boolean;
+  shared_bathroom: boolean;
+  breakfast: boolean;
+  lunch: boolean;
+  dinner: boolean;
+  airport_pickup: boolean;
+  check_in: string;
+  check_out: string;
+  languages: string[];
+
+  // CAMPOS PASADIA / EVENTOS
+  capacity: string;
+  event_schedule: string;
+  music_allowed: boolean;
+
+  // CAMPOS LOCAL COMERCIAL
+  commercial_front: boolean;
+  warehouse: boolean;
+  office: boolean;
+  industrial_power: boolean;
+}
+
 export default function AdminPage() {
   const { theme } = useTheme();
   const [properties, setProperties] = useState<Property[]>([]);
@@ -33,13 +98,13 @@ export default function AdminPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
 
-  // FILTRO RÁPIDO PARA LA LISTA DEL ADMIN ('all', 'published', 'pending')
+  // FILTRO RAPIDO PARA LA LISTA DEL ADMIN ('all', 'published', 'pending')
   const [adminFilter, setAdminFilter] = useState<string>('all');
 
-  // NAVEGACIÓN ACTIVA DEL SIDEBAR
+  // NAVEGACION ACTIVA DEL SIDEBAR
   const [activeView, setActiveView] = useState<'dashboard' | 'new_property' | 'all_properties' | 'pending' | 'featured' | 'sold' | 'extras'>('dashboard');
 
-  // ESTADO DE MENÚ MÓVIL
+  // ESTADO DE MENU MOVIL
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // ESTADO DE SCROLL PARA SOMBRA EN HEADER
@@ -68,7 +133,7 @@ export default function AdminPage() {
   }, []);
 
   // ESTADOS DEL FORMULARIO
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
     price: '',
@@ -79,12 +144,12 @@ export default function AdminPage() {
     longitude: '',
     priority: 3,
 
-    // UBICACIÓN
-    province: 'Camagüey',
+    // UBICACION
+    province: 'Camaguey',
     municipality: '',
     neighborhood: '',
 
-    // CARACTERÍSTICAS ESTRUCTURALES
+    // CARACTERISTICAS ESTRUCTURALES
     property_type: '',
     bedrooms: '',
     bathrooms: '',
@@ -102,7 +167,7 @@ export default function AdminPage() {
     land_area: '',
 
     // AMENIDADES
-    amenities: [] as string[],
+    amenities: [],
 
     // CAMPOS HOSTAL / INTERNACIONAL
     rooms_available: '',
@@ -114,9 +179,9 @@ export default function AdminPage() {
     airport_pickup: false,
     check_in: '',
     check_out: '',
-    languages: [] as string[],
+    languages: [],
 
-    // CAMPOS PASADÍA / EVENTOS
+    // CAMPOS PASADIA / EVENTOS
     capacity: '',
     event_schedule: '',
     music_allowed: false,
@@ -128,20 +193,24 @@ export default function AdminPage() {
     industrial_power: false,
   });
 
-  const [selectedStatuses, setSelectedStatuses] = useState<PropertyStatus[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<ExtendedPropertyStatus[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isSold, setIsSold] = useState<boolean>(false);
-  const [isPublishedState, setIsPublishedState] = useState<boolean>(true); // Por defecto el admin publica directo
+  const [isPublishedState, setIsPublishedState] = useState<boolean>(true);
 
   const formRef = useRef<HTMLFormElement>(null);
 
-  // EDICIÓN DE PROPIEDAD
+  // EDICION DE PROPIEDAD
   const handleEdit = (property: Property) => {
-    setActiveView('new_property'); // Cambia a la vista del formulario
-    setEditingId(property.id);
+    setActiveView('new_property');
+    setEditingId(String(property.id));
     setEditingProperty(property);
     setIsPublishedState(!!property.is_published);
+
+    // Cast temporal para acceder a campos que aun no estan en types.ts
+    const p = property as any;
+
     setFormData({
       title: property.title || '',
       description: property.description || '',
@@ -153,7 +222,7 @@ export default function AdminPage() {
       longitude: property.longitude ? String(property.longitude) : '',
       priority: property.priority || 3,
 
-      province: property.province || 'Camagüey',
+      province: property.province || 'Camaguey',
       municipality: property.municipality || '',
       neighborhood: property.neighborhood || '',
 
@@ -170,38 +239,49 @@ export default function AdminPage() {
       balconies: property.balconies !== undefined ? String(property.balconies) : '',
       portals: property.portals !== undefined ? String(property.portals) : '',
       floors: property.floors !== undefined ? String(property.floors) : '',
-      construction_area: property.construction_area !== null && property.construction_area !== undefined ? String(property.construction_area) : '',
-      land_area: property.land_area !== null && property.land_area !== undefined ? String(property.land_area) : '',
+      construction_area: property.construction_area != null && property.construction_area !== undefined ? String(property.construction_area) : '',
+      land_area: property.land_area != null && property.land_area !== undefined ? String(property.land_area) : '',
 
-      amenities: Array.isArray(property.amenities) ? property.amenities : [],
+      amenities: Array.isArray(p.amenities) ? p.amenities : [],
 
-      rooms_available: property.rooms_available !== null && property.rooms_available !== undefined ? String(property.rooms_available) : '',
-      private_bathroom: !!property.private_bathroom,
-      shared_bathroom: !!property.shared_bathroom,
-      breakfast: !!property.breakfast,
-      lunch: !!property.lunch,
-      dinner: !!property.dinner,
-      airport_pickup: !!property.airport_pickup,
-      check_in: property.check_in || '',
-      check_out: property.check_out || '',
-      languages: Array.isArray(property.languages) ? property.languages : [],
+      rooms_available: p.rooms_available != null && p.rooms_available !== undefined ? String(p.rooms_available) : '',
+      private_bathroom: !!p.private_bathroom,
+      shared_bathroom: !!p.shared_bathroom,
+      breakfast: !!p.breakfast,
+      lunch: !!p.lunch,
+      dinner: !!p.dinner,
+      airport_pickup: !!p.airport_pickup,
+      check_in: p.check_in || '',
+      check_out: p.check_out || '',
+      languages: Array.isArray(p.languages) ? p.languages : [],
 
-      capacity: property.capacity !== null && property.capacity !== undefined ? String(property.capacity) : '',
-      event_schedule: property.event_schedule || '',
-      music_allowed: !!property.music_allowed,
+      capacity: p.capacity != null && p.capacity !== undefined ? String(p.capacity) : '',
+      event_schedule: p.event_schedule || '',
+      music_allowed: !!p.music_allowed,
 
-      commercial_front: !!property.commercial_front,
-      warehouse: !!property.warehouse,
-      office: !!property.office,
-      industrial_power: !!property.industrial_power,
+      commercial_front: !!p.commercial_front,
+      warehouse: !!p.warehouse,
+      office: !!p.office,
+      industrial_power: !!p.industrial_power,
     });
 
     const statuses = Array.isArray(property.status) ? property.status : [property.status];
 
-    setSelectedStatuses(statuses);
-    setExistingImages(property.images || []);
+    setSelectedStatuses(statuses as ExtendedPropertyStatus[]);
     setSelectedFiles([]);
     setIsSold(!!property.is_sold);
+
+    // Cargar imagenes desde la tabla property_images
+    const loadImages = async () => {
+      const { data: imgData } = await supabase
+        .from('property_images')
+        .select('image_url')
+        .eq('property_id', property.id)
+        .order('display_order', { ascending: true });
+      setExistingImages(imgData?.map((img) => img.image_url) || []);
+    };
+    loadImages();
+
     showToast(`Editando: ${property.title}`, 'info');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -209,18 +289,37 @@ export default function AdminPage() {
   // CARGAR PROPIEDADES AL INICIAR
   const fetchProperties = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase
+    const { data: propsData, error: propsError } = await supabase
       .from('properties')
       .select('*')
       .order('priority', { ascending: true })
       .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error al cargar propiedades:', error);
+    if (propsError) {
+      console.error('Error al cargar propiedades:', propsError);
       showToast('Error al conectar con la base de datos', 'error');
-    } else {
-      setProperties(data || []);
+      setLoading(false);
+      return;
     }
+
+    const { data: imagesData, error: imagesError } = await supabase
+      .from('property_images')
+      .select('*')
+      .order('display_order', { ascending: true });
+
+    if (imagesError) {
+      console.error('Error al cargar imagenes:', imagesError);
+    }
+
+    const propertiesWithImages = (propsData || []).map((prop) => {
+      const propImages = (imagesData || [])
+        .filter((img) => img.property_id === prop.id)
+        .sort((a, b) => a.display_order - b.display_order)
+        .map((img) => img.image_url);
+      return { ...prop, images: propImages };
+    });
+
+    setProperties(propertiesWithImages);
     setLoading(false);
   }, [showToast]);
 
@@ -231,7 +330,7 @@ export default function AdminPage() {
     return () => clearTimeout(timer);
   }, [fetchProperties]);
 
-  // DETECTAR PARÁMETRO EN LA URL (?pending=ID O ?edit=ID) VIENEN DE TELEGRAM
+  // DETECTAR PARAMETRO EN LA URL (?pending=ID O ?edit=ID) VIENEN DE TELEGRAM
   const urlProcessedRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -252,12 +351,12 @@ export default function AdminPage() {
     }
   }, [properties, showToast]);
 
-  // SUBIDA Y COMPRESIÓN DE IMÁGENES
+  // SUBIDA Y COMPRESION DE IMAGENES
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
       setSelectedFiles((prev) => [...prev, ...filesArray]);
-      showToast(`Imágenes añadidas temporalmente (${filesArray.length})`, 'info');
+      showToast(`Imagenes anadidas temporalmente (${filesArray.length})`, 'info');
     }
   };
 
@@ -306,7 +405,7 @@ export default function AdminPage() {
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.webp`;
 
         const { data, error } = await supabase.storage
-          .from('property-images')
+          .from('properties')
           .upload(fileName, compressedBlob, {
             contentType: 'image/webp',
           });
@@ -317,7 +416,7 @@ export default function AdminPage() {
         }
 
         const { data: publicUrlData } = supabase.storage
-          .from('property-images')
+          .from('properties')
           .getPublicUrl(fileName);
 
         if (publicUrlData?.publicUrl) {
@@ -332,14 +431,15 @@ export default function AdminPage() {
   };
 
   const toggleStatus = (status: PropertyStatus) => {
-    if (selectedStatuses.includes(status)) {
-      setSelectedStatuses(selectedStatuses.filter((s) => s !== status));
+    const s = status as ExtendedPropertyStatus;
+    if (selectedStatuses.includes(s)) {
+      setSelectedStatuses(selectedStatuses.filter((x) => x !== s));
     } else {
-      setSelectedStatuses([...selectedStatuses, status]);
+      setSelectedStatuses([...selectedStatuses, s]);
     }
   };
 
-  // FUNCIONALIDAD: APROBAR PUBLICACIÓN DIRECTA
+  // FUNCIONALIDAD: APROBAR PUBLICACION DIRECTA
   const handleApproveProperty = async (propertyId: string) => {
     try {
       setIsProcessing(true);
@@ -366,32 +466,30 @@ export default function AdminPage() {
     if (e) e.preventDefault();
 
     if (selectedStatuses.length === 0) {
-      showToast('Por favor, selecciona al menos una clasificación', 'warning');
+      showToast('Por favor, selecciona al menos una clasificacion', 'warning');
       return;
     }
 
     setIsProcessing(true);
-    showToast('Procesando solicitud e imágenes...', 'info');
+    showToast('Procesando solicitud e imagenes...', 'info');
 
     try {
       const newImageUrls = await uploadImages();
-      const allImages = [...existingImages, ...newImageUrls];
 
-      const propertyData = {
+      const propertyData: Record<string, any> = {
         title: formData.title,
         description: formData.description,
         price: Number(formData.price) || 0,
         currency: formData.currency,
         address: formData.address,
         contact: formData.contact,
-        images: allImages,
         status: selectedStatuses,
         latitude: formData.latitude ? Number(formData.latitude) : null,
         longitude: formData.longitude ? Number(formData.longitude) : null,
         is_sold: isSold,
         priority: Number(formData.priority),
 
-        // UBICACIÓN
+        // UBICACION
         province: formData.province,
         municipality: formData.municipality || null,
         neighborhood: formData.neighborhood || null,
@@ -428,7 +526,7 @@ export default function AdminPage() {
         check_out: formData.check_out || null,
         languages: formData.languages,
 
-        // PASADÍA
+        // PASADIA
         capacity: formData.capacity ? Number(formData.capacity) : null,
         event_schedule: formData.event_schedule || null,
         music_allowed: formData.music_allowed,
@@ -443,6 +541,8 @@ export default function AdminPage() {
         is_published: true,
       };
 
+      let propertyId: string | null = editingId;
+
       if (editingId) {
         const { error } = await supabase
           .from('properties')
@@ -452,12 +552,30 @@ export default function AdminPage() {
         if (error) throw error;
         showToast('✅ Propiedad actualizada y aprobada', 'success');
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('properties')
-          .insert([propertyData]);
+          .insert([propertyData])
+          .select();
 
         if (error) throw error;
+        propertyId = data?.[0]?.id ?? null;
         showToast('✅ Propiedad guardada y publicada', 'success');
+      }
+
+      // GUARDAR NUEVAS IMAGENES EN LA TABLA property_images
+      if (propertyId && newImageUrls.length > 0) {
+        const imageRecords = newImageUrls.map((url, index) => ({
+          property_id: propertyId,
+          image_url: url,
+          display_order: index,
+          is_cover: index === 0,
+        }));
+
+        const { error: imgError } = await supabase
+          .from('property_images')
+          .insert(imageRecords);
+
+        if (imgError) throw imgError;
       }
 
       resetForm();
@@ -472,16 +590,59 @@ export default function AdminPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('¿Estás seguro de que deseas eliminar esta propiedad?')) return;
+    const confirmed = window.confirm(
+      '¿Seguro que deseas eliminar esta propiedad?'
+    );
+
+    if (!confirmed) return;
 
     try {
-      const { error } = await supabase.from('properties').delete().eq('id', id);
-      if (error) throw error;
-      showToast('🗑️ Propiedad eliminada', 'success');
+      // Eliminar imagenes asociadas primero
+      const { error: imgDeleteError } = await supabase
+        .from('property_images')
+        .delete()
+        .eq('property_id', id);
+
+      if (imgDeleteError) {
+        console.error('Error eliminando imagenes:', imgDeleteError);
+      }
+
+      const { data, error } = await supabase
+        .from('properties')
+        .delete()
+        .eq('id', id)
+        .select();
+
+      console.log('DELETE RESPONSE:', data);
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data || data.length === 0) {
+        throw new Error(
+          'No se elimino ninguna propiedad. Posible problema de permisos RLS.'
+        );
+      }
+
+      showToast(
+        '🗑️ Propiedad eliminada correctamente',
+        'success'
+      );
+
       fetchProperties();
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Ocurrió un problema';
-      showToast(`Error al eliminar: ${errorMessage}`, 'error');
+    } catch(err){
+      const message =
+        err instanceof Error
+        ? err.message
+        : 'Error desconocido';
+
+      console.error(err);
+
+      showToast(
+        `Error eliminando: ${message}`,
+        'error'
+      );
     }
   };
 
@@ -500,7 +661,7 @@ export default function AdminPage() {
       longitude: '',
       priority: 3,
 
-      province: 'Camagüey',
+      province: 'Camaguey',
       municipality: '',
       neighborhood: '',
 
@@ -546,20 +707,33 @@ export default function AdminPage() {
     setExistingImages([]);
     setSelectedFiles([]);
     setIsSold(false);
-    setActiveView('dashboard'); // Vuelve al dashboard al cancelar
+    setActiveView('dashboard');
   };
 
   const handleSaveDraft = () => {
-    showToast('Esta funcionalidad estará disponible próximamente.', 'info');
+    showToast('Esta funcionalidad estara disponible proximamente.', 'info');
   };
 
   const handleFormChange = (field: string, value: string | number | boolean | string[]) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value } as FormData));
   };
 
-  const removeExistingImage = (idx: number) => {
+  const removeExistingImage = async (idx: number) => {
+    const urlToRemove = existingImages[idx];
+    if (editingId && urlToRemove) {
+      const { error } = await supabase
+        .from('property_images')
+        .delete()
+        .eq('property_id', editingId)
+        .eq('image_url', urlToRemove);
+      if (error) {
+        console.error('Error eliminando imagen:', error);
+        showToast('Error al eliminar imagen de la base de datos', 'error');
+        return;
+      }
+    }
     setExistingImages(existingImages.filter((_, i) => i !== idx));
-    showToast('Imagen eliminada de la lista guardada', 'warning');
+    showToast('Imagen eliminada correctamente', 'warning');
   };
 
   const removeSelectedFile = (idx: number) => {
@@ -583,7 +757,7 @@ export default function AdminPage() {
   // FILTRAR SOLICITUDES PENDIENTES
   const pendingProperties = properties.filter((p) => !p.is_published);
 
-  // CONFIGURACIÓN DE ITEMS DE NAVEGACIÓN
+  // CONFIGURACION DE ITEMS DE NAVEGACION
   interface NavigationItem {
     id: 'dashboard' | 'new_property' | 'all_properties' | 'pending' | 'featured' | 'sold' | 'extras';
     label: string;
@@ -593,7 +767,7 @@ export default function AdminPage() {
 
   const navigationItems: NavigationItem[] = [
     { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
-    { id: 'new_property', label: 'Nueva publicación', icon: '➕' },
+    { id: 'new_property', label: 'Nueva publicacion', icon: '➕' },
     { id: 'all_properties', label: 'Todas las propiedades', icon: '📋' },
     { id: 'pending', label: 'Publicaciones pendientes', icon: '⏳', showBadge: true },
     { id: 'featured', label: 'Destacadas', icon: '⭐' },
@@ -647,13 +821,13 @@ export default function AdminPage() {
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
 
-          {/* LOGO DE LA MARCA DE TU CASITA Y MENÚ MÓVIL */}
+          {/* LOGO DE LA MARCA DE TU CASITA Y MENU MOVIL */}
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden p-2 hover:bg-bg-main rounded-xl text-brand-primary transition active:scale-95 text-base cursor-pointer"
-              title="Abrir menú"
+              title="Abrir menu"
             >
               ☰
             </button>
@@ -676,7 +850,7 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* BOTONES PRINCIPALES DE ACCIÓN DENTRO DEL HEADER */}
+          {/* BOTONES PRINCIPALES DE ACCION DENTRO DEL HEADER */}
           <div className="flex items-center gap-2">
             {activeView === 'new_property' ? (
               <div className="flex items-center gap-1.5">
@@ -715,7 +889,7 @@ export default function AdminPage() {
                 onClick={() => setActiveView('new_property')}
                 className="px-4 py-2 bg-brand-primary text-bg-card text-xs font-bold rounded-xl shadow-md hover:opacity-95 transition flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0"
               >
-                ➕ Nueva publicación
+                ➕ Nueva publicacion
               </button>
             )}
 
@@ -738,7 +912,7 @@ export default function AdminPage() {
           />
           <div className="relative flex flex-col w-64 max-w-xs bg-bg-card h-full p-6 shadow-xl border-r border-border-main animate-in slide-in-from-left duration-200 text-left">
             <div className="flex items-center justify-between pb-6 border-b border-border-main">
-              <span className="text-xs font-black text-brand-primary uppercase tracking-wider">Menú Panel</span>
+              <span className="text-xs font-black text-brand-primary uppercase tracking-wider">Menu Panel</span>
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -754,15 +928,15 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* 2. DISEÑO PRINCIPAL DE DOS COLUMNAS */}
+      {/* 2. DISENO PRINCIPAL DE DOS COLUMNAS */}
       <div className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 flex flex-col md:flex-row gap-8">
 
         {/* SIDEBAR COLUMNA IZQUIERDA (ESCRITORIO) */}
         <aside className="hidden md:block w-64 shrink-0 space-y-6">
           <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-sm space-y-4">
             <div className="border-b border-border-main pb-3">
-              <h3 className="text-xs font-black text-brand-primary uppercase tracking-wider">Navegación</h3>
-              <p className="text-[10px] text-text-muted font-semibold mt-0.5">Gestión de la plataforma</p>
+              <h3 className="text-xs font-black text-brand-primary uppercase tracking-wider">Navegacion</h3>
+              <p className="text-[10px] text-text-muted font-semibold mt-0.5">Gestion de la plataforma</p>
             </div>
             {renderSidebarContent()}
           </div>
@@ -784,7 +958,7 @@ export default function AdminPage() {
                       <span>Publicaciones pendientes</span>
                     </div>
                     <p className="text-xs text-text-muted font-semibold">
-                      Hay {pendingProperties.length} publicación{pendingProperties.length > 1 ? 'es que esperan' : 'a que espera'} revisión antes de publicarse en la web.
+                      Hay {pendingProperties.length} publicacion{pendingProperties.length > 1 ? 'es que esperan' : 'a que espera'} revision antes de publicarse en la web.
                     </p>
                   </div>
                   <button
@@ -799,12 +973,12 @@ export default function AdminPage() {
                 <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-3xl p-5 shadow-xs flex items-center gap-3 text-left">
                   <span className="text-lg">✅</span>
                   <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 tracking-tight">
-                    No hay publicaciones pendientes de aprobación. ¡Todo está al día!
+                    No hay publicaciones pendientes de aprobacion. ¡Todo esta al dia!
                   </span>
                 </div>
               )}
 
-              {/* TARJETAS DE MÉTRICAS */}
+              {/* TARJETAS DE METRICAS */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-left">
                 <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all duration-200">
                   <div className="flex items-center justify-between">
@@ -843,13 +1017,13 @@ export default function AdminPage() {
                   <p className="text-3xl font-black text-rose-500 mt-2">
                     {properties.filter(p => p.is_sold).length}
                   </p>
-                  <p className="text-[10px] text-text-muted font-semibold mt-1">Fuera de catálogo</p>
+                  <p className="text-[10px] text-text-muted font-semibold mt-1">Fuera de catalogo</p>
                 </div>
               </div>
 
-              {/* ACCIONES RÁPIDAS EN PANEL */}
+              {/* ACCIONES RAPIDAS EN PANEL */}
               <div className="space-y-4 text-left">
-                <h3 className="text-xs font-black text-text-muted uppercase tracking-widest">Accesos Rápidos</h3>
+                <h3 className="text-xs font-black text-text-muted uppercase tracking-widest">Accesos Rapidos</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <button
                     type="button"
@@ -857,7 +1031,7 @@ export default function AdminPage() {
                     className="bg-bg-card hover:bg-bg-main border border-border-main hover:border-brand-primary p-5 rounded-3xl text-left transition-all duration-300 group cursor-pointer"
                   >
                     <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform duration-200">➕</span>
-                    <h4 className="text-xs font-black text-brand-primary uppercase tracking-wider">Nueva publicación</h4>
+                    <h4 className="text-xs font-black text-brand-primary uppercase tracking-wider">Nueva publicacion</h4>
                     <p className="text-[10px] text-text-muted font-semibold mt-1">Abre el formulario para registrar una nueva propiedad en venta o renta.</p>
                   </button>
 
@@ -868,7 +1042,7 @@ export default function AdminPage() {
                   >
                     <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform duration-200">📋</span>
                     <h4 className="text-xs font-black text-brand-primary uppercase tracking-wider">Todas las propiedades</h4>
-                    <p className="text-[10px] text-text-muted font-semibold mt-1">Inspecciona y edita el catálogo general de viviendas sin filtros preestablecidos.</p>
+                    <p className="text-[10px] text-text-muted font-semibold mt-1">Inspecciona y edita el catalogo general de viviendas sin filtros preestablecidos.</p>
                   </button>
 
                   <button
@@ -888,10 +1062,10 @@ export default function AdminPage() {
                 <div className="bg-amber-500/5 border border-amber-500/20 rounded-3xl p-5 shadow-sm space-y-4 text-left">
                   <div className="flex items-center justify-between">
                     <h2 className="text-amber-600 dark:text-amber-400 text-sm font-black tracking-tight">
-                      📝 Solicitudes Pendientes para Aprobación Directa
+                      📝 Solicitudes Pendientes para Aprobacion Directa
                     </h2>
                     <span className="text-[10px] font-bold text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded-lg">
-                      Acciones rápidas
+                      Acciones rapidas
                     </span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -903,7 +1077,7 @@ export default function AdminPage() {
                         <div>
                           <h3 className="font-bold text-text-main text-xs line-clamp-1">{prop.title}</h3>
                           <p className="text-[10px] text-text-muted mt-1">
-                            📍 {prop.neighborhood || prop.municipality || 'Camagüey'} • {prop.price} {prop.currency}
+                            📍 {prop.neighborhood || prop.municipality || 'Camaguey'} • {prop.price} {prop.currency}
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
@@ -916,7 +1090,7 @@ export default function AdminPage() {
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleApproveProperty(prop.id)}
+                            onClick={() => handleApproveProperty(String(prop.id))}
                             disabled={isProcessing}
                             className="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition shadow-xs cursor-pointer"
                           >
@@ -931,14 +1105,14 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* VISTA 2: FORMULARIO NUEVA PUBLICACIÓN / EDICIÓN */}
+          {/* VISTA 2: FORMULARIO NUEVA PUBLICACION / EDICION */}
           {activeView === 'new_property' && (
             <div className="space-y-8 animate-in fade-in duration-300">
 
-              {/* AVISO SI SE ESTÁ REVISANDO UNA PROPIEDAD PENDIENTE */}
+              {/* AVISO SI SE ESTA REVISANDO UNA PROPIEDAD PENDIENTE */}
               {editingId && !isPublishedState && (
                 <div className="bg-brand-primary/10 border border-brand-primary/20 text-brand-primary text-xs font-semibold p-4 rounded-xl flex items-center justify-between text-left">
-                  <span>ℹ️ Estás revisando una solicitud pendiente. Al hacer clic en <strong>Guardar Cambios</strong>, la propiedad quedará aprobada y publicada automáticamente.</span>
+                  <span>ℹ️ Estas revisando una solicitud pendiente. Al hacer clic en <strong>Guardar Cambios</strong>, la propiedad quedara aprobada y publicada automaticamente.</span>
                 </div>
               )}
 
@@ -954,7 +1128,7 @@ export default function AdminPage() {
                     currency={formData.currency}
                     address={formData.address}
                     contact={formData.contact}
-                    selectedStatuses={selectedStatuses}
+                    selectedStatuses={selectedStatuses as PropertyStatus[]}
                     onFormChange={handleFormChange}
                     onToggleStatus={toggleStatus}
                   />
@@ -992,7 +1166,7 @@ export default function AdminPage() {
                     onChange={(newAmenities) => handleFormChange('amenities', newAmenities)}
                   />
 
-                  {selectedStatuses.includes('international_hostel') && (
+                  {selectedStatuses.includes('international_hostel' as ExtendedPropertyStatus) && (
                     <PropertyHostelFieldsCard
                       roomsAvailable={formData.rooms_available}
                       privateBathroom={formData.private_bathroom}
@@ -1009,7 +1183,7 @@ export default function AdminPage() {
                     />
                   )}
 
-                  {selectedStatuses.includes('day_pass') && (
+                  {selectedStatuses.includes('day_pass' as ExtendedPropertyStatus) && (
                     <PropertyDayPassFieldsCard
                       capacity={formData.capacity}
                       eventSchedule={formData.event_schedule}
@@ -1018,7 +1192,7 @@ export default function AdminPage() {
                     />
                   )}
 
-                  {selectedStatuses.includes('commercial_space') && (
+                  {selectedStatuses.includes('commercial_space' as ExtendedPropertyStatus) && (
                     <PropertyCommercialFieldsCard
                       commercialFront={formData.commercial_front}
                       warehouse={formData.warehouse}
@@ -1059,8 +1233,8 @@ export default function AdminPage() {
 
                 <div className="lg:col-span-4 lg:sticky lg:top-28 space-y-6">
                   <PropertyPreviewCard
-                    formData={formData}
-                    selectedStatuses={selectedStatuses}
+                    formData={formData as any}
+                    selectedStatuses={selectedStatuses as PropertyStatus[]}
                     existingImages={existingImages}
                     selectedFiles={selectedFiles}
                     isSold={isSold}
@@ -1070,7 +1244,7 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* VISTAS DE TABLA FILTRADAS (REUTILIZACIÓN TOTAL) */}
+          {/* VISTAS DE TABLA FILTRADAS (REUTILIZACION TOTAL) */}
           {(activeView === 'all_properties' || activeView === 'pending' || activeView === 'featured' || activeView === 'sold') && (
             <RegisteredPropertiesList
               properties={properties}
@@ -1092,59 +1266,59 @@ export default function AdminPage() {
             <div className="space-y-6 animate-in fade-in duration-300 text-left">
               <div className="bg-bg-card rounded-3xl p-6 border border-border-main shadow-sm">
                 <span className="text-3xl block mb-2">🚧</span>
-                <h2 className="text-lg font-black text-brand-primary tracking-tight">Próximamente</h2>
+                <h2 className="text-lg font-black text-brand-primary tracking-tight">Proximamente</h2>
                 <p className="text-xs text-text-muted font-semibold mt-0.5">
-                  Estamos trabajando en nuevas herramientas avanzadas para optimizar la gestión de Tu Casita.
+                  Estamos trabajando en nuevas herramientas avanzadas para optimizar la gestion de Tu Casita.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                {/* ESTADÍSTICAS */}
+                {/* ESTADISTICAS */}
                 <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-xs relative overflow-hidden group">
                   <div className="absolute top-4 right-4 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
-                    Próximamente
+                    Proximamente
                   </div>
                   <span className="text-2xl block mb-2">📊</span>
-                  <h3 className="text-xs font-black text-brand-primary uppercase tracking-wider">Estadísticas</h3>
+                  <h3 className="text-xs font-black text-brand-primary uppercase tracking-wider">Estadisticas</h3>
                   <p className="text-[10px] text-text-muted font-semibold mt-1.5 leading-relaxed">
-                    Gráficos detallados sobre visitas a tus propiedades, interacciones de clientes por WhatsApp, y clics en las clasificaciones más populares.
+                    Graficos detallados sobre visitas a tus propiedades, interacciones de clientes por WhatsApp, y clics en las clasificaciones mas populares.
                   </p>
                 </div>
 
                 {/* REPORTES */}
                 <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-xs relative overflow-hidden group">
                   <div className="absolute top-4 right-4 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
-                    Próximamente
+                    Proximamente
                   </div>
                   <span className="text-2xl block mb-2">📋</span>
                   <h3 className="text-xs font-black text-brand-primary uppercase tracking-wider">Reportes</h3>
                   <p className="text-[10px] text-text-muted font-semibold mt-1.5 leading-relaxed">
-                    Generación y exportación de informes automatizados en formato PDF, Excel o CSV para analizar el rendimiento del catálogo de bienes raíces.
+                    Generacion y exportacion de informes automatizados en formato PDF, Excel o CSV para analizar el rendimiento del catalogo de bienes raices.
                   </p>
                 </div>
 
                 {/* USUARIOS */}
                 <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-xs relative overflow-hidden group">
                   <div className="absolute top-4 right-4 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
-                    Próximamente
+                    Proximamente
                   </div>
                   <span className="text-2xl block mb-2">👥</span>
                   <h3 className="text-xs font-black text-brand-primary uppercase tracking-wider">Usuarios</h3>
                   <p className="text-[10px] text-text-muted font-semibold mt-1.5 leading-relaxed">
-                    Administración de agentes inmobiliarios, asignación de roles de visualización y permisos de edición para colaboradores de la plataforma.
+                    Administracion de agentes inmobiliarios, asignacion de roles de visualizacion y permisos de edicion para colaboradores de la plataforma.
                   </p>
                 </div>
 
                 {/* MESSAGING */}
                 <div className="bg-bg-card border border-border-main rounded-3xl p-5 shadow-xs relative overflow-hidden group">
                   <div className="absolute top-4 right-4 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
-                    Próximamente
+                    Proximamente
                   </div>
                   <span className="text-2xl block mb-2">💬</span>
-                  <h3 className="text-xs font-black text-brand-primary uppercase tracking-wider">Mensajería</h3>
+                  <h3 className="text-xs font-black text-brand-primary uppercase tracking-wider">Mensajeria</h3>
                   <p className="text-[10px] text-text-muted font-semibold mt-1.5 leading-relaxed">
-                    Centralización de consultas recibidas, historial de contactos y notificaciones directas para coordinar visitas físicas o virtuales a las viviendas.
+                    Centralizacion de consultas recibidas, historial de contactos y notificaciones directas para coordinar visitas fisicas o virtuales a las viviendas.
                   </p>
                 </div>
               </div>

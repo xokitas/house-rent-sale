@@ -1,101 +1,113 @@
-export type PropertyStatus = 
-  | 'sale' 
-  | 'swap' 
-  | 'long_term' 
-  | 'local_rent' 
-  | 'international_hostel' 
-  | 'day_pass' 
-  | 'commercial_space';
+// ==========================================
+// TIPOS PRINCIPALES TU CASITA MVP
+// ==========================================
+
+export type PropertyStatus =
+  | 'sale'
+  | 'swap'
+  | 'long_term';
+
+
+export type Currency =
+  | 'USD'
+  | 'EUR'
+  | 'CUP';
+
 
 export interface Property {
-  // 1. CAMPOS UNIVERSALES (Obligatorios y base)
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  currency: string;
-  contact: string;
-  images: string[];
-  status: PropertyStatus[];
-  priority: number;
-  created_at?: string;
-  is_sold?: boolean;
-  
-  // CONTROL DE ESTADO
-  is_published?: boolean;
 
-  // 2. UBICACIÓN
+  // IDENTIFICACIÓN
+  id: string | number;
+  created_at?: string;
+  updated_at?: string;
+
+  // INFORMACIÓN PRINCIPAL
+  title: string;
+  description?: string;
+
+  price: number;
+  currency: Currency;
+
+  status: PropertyStatus[];
+
+  // PUBLICACIÓN
+  is_published?: boolean;
+  is_sold?: boolean;
+
+  priority: number;
+
+  // IMÁGENES
+  images: string[];
+
+  // UBICACIÓN
   address: string;
+
   province?: string;
   municipality?: string | null;
   neighborhood?: string | null;
+
   latitude?: number | null;
   longitude?: number | null;
 
-  // 3. CARACTERÍSTICAS ESTRUCTURALES
-  property_type?: string | null;
+  // TIPO DE PROPIEDAD MVP
+  property_type?: PropertyType | null;
+
+
+  // CARACTERÍSTICAS
   bedrooms?: number;
   bathrooms?: number;
+
   living_rooms?: number;
   dining_rooms?: number;
   kitchens?: number;
+
   indoor_patios?: number;
   outdoor_patios?: number;
+
   garages?: number;
+
   terraces?: number;
   balconies?: number;
   portals?: number;
+
   floors?: number;
+
   construction_area?: number | null;
   land_area?: number | null;
 
-  // 4. AMENIDADES
-  amenities?: string[];
 
-  // 5. CAMPOS ESPECÍFICOS: HOSTAL / INTERNACIONAL
-  rooms_available?: number | null;
-  private_bathroom?: boolean;
-  shared_bathroom?: boolean;
-  breakfast?: boolean;
-  lunch?: boolean;
-  dinner?: boolean;
-  airport_pickup?: boolean;
-  check_in?: string | null;
-  check_out?: string | null;
-  languages?: string[];
+  // CONTACTO
+  contact?: string;
 
-  // 6. CAMPOS ESPECÍFICOS: PASADÍA / EVENTOS
-  capacity?: number | null;
-  event_schedule?: string | null;
-  music_allowed?: boolean;
+  contact_name?: string;
+  contact_phone?: string;
+  contact_whatsapp?: string;
 
-  // 7. CAMPOS ESPECÍFICOS: LOCAL COMERCIAL
-  commercial_front?: boolean;
-  warehouse?: boolean;
-  office?: boolean;
-  industrial_power?: boolean;
+  show_contact?: boolean;
+
+  // SEGURIDAD UBICACIÓN
+  show_exact_address?: boolean;
+
+
+  // MÉTRICAS
+  views_count?: number;
+  contacts_count?: number;
+  favorites_count?: number;
+  shares_count?: number;
+
+
+  // USUARIO
+  created_by?: string;
+  publisher_id?: string;
 }
 
-export const STATUS_OPTIONS: { value: PropertyStatus; label: string }[] = [
-  { value: 'sale', label: '🏷️ Venta' },
-  { value: 'swap', label: '🔄 Permuta' },
-  { value: 'long_term', label: '📅 Alquiler Larga Estadía' },
-  { value: 'local_rent', label: '💵 Renta Nacional (CUP)' },
-  { value: 'international_hostel', label: '✈️ Hostal / Internacional' },
-  { value: 'day_pass', label: '🎉 Pasadía / Eventos' },
-  { value: 'commercial_space', label: '🏢 Renta de Local / Espacio Comercial' },
-];
+// ==========================================
+// MUNICIPIOS DE CAMAGÜEY
+// ==========================================
 
-export const PRIORITY_OPTIONS = [
-  { value: 1, label: '⭐ Prioridad 1: Patrocinada / De Pago (Aparece Primero)' },
-  { value: 2, label: '💼 Prioridad 2: Agente / Inmobiliaria' },
-  { value: 3, label: '🏠 Prioridad 3: Estándar Destacada (Buena Calidad)' },
-  { value: 4, label: '📄 Prioridad 4: Estándar Básica' },
-];
-
-export const CAMAGUEY_MUNICIPALITIES = [
+export const CAMAGUEY_MUNICIPALITIES: string[] = [
   'Camagüey',
-  'Carlos Manuel de Céspedes',
+  'Carlos M. de Céspedes',
   'Esmeralda',
   'Florida',
   'Guáimaro',
@@ -109,43 +121,136 @@ export const CAMAGUEY_MUNICIPALITIES = [
   'Vertientes',
 ];
 
-export const PROPERTY_TYPE_OPTIONS = [
+
+
+// ==========================================
+// TIPOS DE INMUEBLE MVP
+// ==========================================
+
+export type PropertyType =
+  | 'Casa'
+  | 'Apartamento'
+  | 'Finca'
+  | 'Terreno'
+  | 'Habitación'
+  | 'Otro';
+
+
+
+export const STATUS_OPTIONS: {
+  value: PropertyStatus;
+  label: string;
+}[] = [
+
+  {
+    value: 'sale',
+    label: '🏷️ Venta'
+  },
+
+  {
+    value: 'swap',
+    label: '🔄 Permuta'
+  },
+
+  {
+    value: 'long_term',
+    label: '📅 Alquiler larga estancia'
+  }
+
+];
+
+
+
+export const PROPERTY_TYPE_OPTIONS: PropertyType[] = [
   'Casa',
   'Apartamento',
   'Finca',
   'Terreno',
-  'Local Comercial',
-  'Hostal',
   'Habitación',
-  'Edificio',
-  'Solar',
-  'Otro',
+  'Otro'
 ];
 
+
+
+export const PRIORITY_OPTIONS = [
+
+  {
+    value: 1,
+    label: '⭐ Prioridad 1'
+  },
+
+  {
+    value: 2,
+    label: '💼 Prioridad 2'
+  },
+
+  {
+    value: 3,
+    label: '🏠 Prioridad 3'
+  },
+
+  {
+    value: 4,
+    label: '📄 Prioridad 4'
+  }
+
+];
+
+
+
 // ==========================================
-// ARQUITECTURA DE MENSAJERÍA FUTURA
+// MENSAJERÍA FUTURA
 // ==========================================
+
 
 export interface Conversation {
+
   id: string;
-  property_id: string;
+
+  property_id?: number;
+
   buyer_id: string;
-  seller_id: string;
+
+  owner_id: string;
+
+
+  last_message?: string;
+
+  last_message_at?: string;
+
+  is_active: boolean;
+
+
   created_at: string;
+
   updated_at: string;
 
-  // Opcionales para facilidad en frontend
+
+  // Datos auxiliares frontend
   property_title?: string;
+
   property_image?: string;
-  last_message?: string;
+
   unread_count?: number;
+
 }
 
+
+
 export interface Message {
+
   id: string;
+
   conversation_id: string;
+
   sender_id: string;
+
   content: string;
-  created_at: string;
+
   is_read: boolean;
+
+  read_at?: string | null;
+
+  created_at: string;
+
 }

@@ -14,12 +14,12 @@ interface RealMapProps {
   properties: Property[];
 }
 
-function getStableOffset(id: string, axis: 'lat' | 'lng'): number {
-  const str = id + axis;
+function getStableOffset(id: string | number, axis: 'lat' | 'lng'): number {
+  const str = String(id) + axis;
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     hash = (hash << 5) - hash + str.charCodeAt(i);
-    hash |= 0; // Convert to 32bit integer
+    hash |= 0;
   }
   return ((Math.abs(hash) % 1000) / 1000) - 0.5;
 }
@@ -28,12 +28,10 @@ export default function RealMap({ properties }: RealMapProps) {
   const { formatPrice } = useCurrency();
   const [isClient, setIsClient] = useState(false);
 
-  // Asegurar que Leaflet configure correctamente los iconos por defecto
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsClient(true);
     }, 0);
-    // Solucionar el problema de las rutas relativas de los marcadores en NextJS/Leaflet
     delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -45,7 +43,7 @@ export default function RealMap({ properties }: RealMapProps) {
 
   if (!isClient) {
     return (
-      <div className="w-full h-[65vh] rounded-[2rem] bg-slate-100 flex items-center justify-center border border-slate-200">
+      <div className="w-full h-[65vh] rounded-4xl bg-slate-100 flex items-center justify-center border border-slate-200">
         <div className="flex flex-col items-center gap-2">
           <div className="w-8 h-8 rounded-full border-4 border-slate-300 border-t-brand-primary animate-spin" />
           <span className="text-xs font-bold text-slate-500">Cargando mapa interactivo...</span>
@@ -54,7 +52,6 @@ export default function RealMap({ properties }: RealMapProps) {
     );
   }
 
-  // Coordenadas del centro de Camagüey (Parque Agramonte)
   const CAMAGUEY_CENTER: [number, number] = [21.3831, -77.9158];
 
   return (
@@ -71,17 +68,13 @@ export default function RealMap({ properties }: RealMapProps) {
         />
 
         {properties.map((prop) => {
-          // Si tiene coordenadas, las usamos. Si no, usamos coordenadas simuladas alrededor del centro de Camagüey.
           const lat = prop.latitude || (CAMAGUEY_CENTER[0] + getStableOffset(prop.id, 'lat') * 0.02);
           const lng = prop.longitude || (CAMAGUEY_CENTER[1] + getStableOffset(prop.id, 'lng') * 0.02);
 
           const formattedPrice = formatPrice(prop.price, prop.currency);
 
-          // Diseño de niveles de precisión (requisito de arquitectura)
-          // Nivel Invitado / Usuario actual: Mostramos un círculo de área aproximada de 150m sin pin preciso.
           return (
             <div key={prop.id}>
-              {/* Círculo que representa la zona aproximada (privacidad) */}
               <Circle
                 center={[lat, lng]}
                 pathOptions={{
@@ -93,10 +86,9 @@ export default function RealMap({ properties }: RealMapProps) {
                 radius={200}
               />
 
-              {/* Marcador representativo */}
               <Marker position={[lat, lng]}>
                 <Popup className="property-popup">
-                  <div className="p-1 space-y-2.5 max-w-[200px] text-left">
+                  <div className="p-1 space-y-2.5 max-w-50 text-left">
                     <div className="relative h-20 bg-slate-100 rounded-xl overflow-hidden">
                       {prop.images && prop.images[0] ? (
                         <img
@@ -137,7 +129,7 @@ export default function RealMap({ properties }: RealMapProps) {
                       </Link>
 
                       <a
-                        href={`https://wa.me/${prop.contact.replace('+', '')}`}
+                        href={`https://wa.me/${(prop.contact || '').replace('+', '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-1 inline-flex items-center justify-center gap-1 bg-[#25D366] text-white text-[10px] font-black py-1.5 rounded-lg transition"

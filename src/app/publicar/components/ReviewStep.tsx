@@ -33,26 +33,6 @@ interface ReviewStepProps {
     owner_name: string;
     contact: string;
     admin_comment: string;
-    // Hostel
-    rooms_available: string;
-    private_bathroom: boolean;
-    shared_bathroom: boolean;
-    breakfast: boolean;
-    lunch: boolean;
-    dinner: boolean;
-    airport_pickup: boolean;
-    check_in: string;
-    check_out: string;
-    languages: string[];
-    // Day Pass
-    capacity: string;
-    event_schedule: string;
-    music_allowed: boolean;
-    // Commercial
-    commercial_front: boolean;
-    warehouse: boolean;
-    office: boolean;
-    industrial_power: boolean;
   };
   existingImages: string[];
   selectedFiles: File[];
@@ -216,49 +196,6 @@ export default function ReviewStep({ formData, existingImages, selectedFiles, on
             </div>
           )}
 
-          {/* Características Específicas de Categoría */}
-          {formData.status === 'international_hostel' && (
-            <div className="pt-3 border-t border-[#E8E2D8]/50 space-y-1 bg-emerald-50/20 p-3 rounded-xl">
-              <span className="text-[9px] uppercase font-black text-brand-primary block">Hostal / Internacional</span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold text-[#5A5245]/80">
-                <div>🛏️ Disp: {formData.rooms_available || '0'} habitacion(es)</div>
-                <div>🕒 Entrada: {formData.check_in || '-'} | Salida: {formData.check_out || '-'}</div>
-                <div className="col-span-2">
-                  🗣️ Idiomas: {formData.languages.length > 0 ? formData.languages.join(', ') : 'Solo Español'}
-                </div>
-                <div className="col-span-2 flex flex-wrap gap-2 pt-1">
-                  {formData.private_bathroom && <span className="bg-white px-2 py-0.5 rounded-lg border text-[10px]">🚿 Baño Privado</span>}
-                  {formData.breakfast && <span className="bg-white px-2 py-0.5 rounded-lg border text-[10px]">🍳 Desayuno</span>}
-                  {formData.airport_pickup && <span className="bg-white px-2 py-0.5 rounded-lg border text-[10px]">🚗 Aeropuerto</span>}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {formData.status === 'day_pass' && (
-            <div className="pt-3 border-t border-[#E8E2D8]/50 space-y-1 bg-emerald-50/20 p-3 rounded-xl">
-              <span className="text-[9px] uppercase font-black text-brand-primary block">Pasadía / Evento</span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold text-[#5A5245]/80">
-                <div>👥 Capacidad: {formData.capacity || '-'} personas</div>
-                <div>🕒 Horario: {formData.event_schedule || '-'}</div>
-                <div className="col-span-2">
-                  🎵 Música: {formData.music_allowed ? '✅ Permitida' : '❌ No permitida'}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {formData.status === 'commercial_space' && (
-            <div className="pt-3 border-t border-[#E8E2D8]/50 space-y-1 bg-purple-50/20 p-3 rounded-xl">
-              <span className="text-[9px] uppercase font-black text-brand-primary block">Espacio Comercial</span>
-              <div className="flex flex-wrap gap-2 text-xs font-semibold text-[#5A5245]/80">
-                {formData.commercial_front && <span className="bg-white px-2 py-0.5 rounded-lg border text-[10px]">🏪 Frente Comercial</span>}
-                {formData.warehouse && <span className="bg-white px-2 py-0.5 rounded-lg border text-[10px]">📦 Almacén</span>}
-                {formData.office && <span className="bg-white px-2 py-0.5 rounded-lg border text-[10px]">💼 Oficina</span>}
-                {formData.industrial_power && <span className="bg-white px-2 py-0.5 rounded-lg border text-[10px]">⚡ Corriente Trifásica</span>}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* PASO 5: AMENIDADES */}

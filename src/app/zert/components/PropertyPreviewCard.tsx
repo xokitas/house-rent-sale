@@ -51,7 +51,7 @@ export default function PropertyPreviewCard({
   const displayDescription = formData.description.trim() || 'Aquí aparecerá la descripción detallada que redactes para tu propiedad...';
 
   return (
-    <div className="bg-bg-card rounded-3xl border border-border-main shadow-lg sticky top-24 overflow-hidden flex flex-col transition-all duration-300 transform hover:shadow-xl text-left transition-colors duration-200">
+        <div className="bg-bg-card rounded-3xl border border-border-main shadow-lg sticky top-24 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl text-left">
 
       {/* SECCIÓN CABECERA VISTA PREVIA */}
       <div className="px-5 py-4 bg-linear-to-r from-brand-primary/5 to-brand-primary/10 border-b border-border-main flex items-center justify-between">

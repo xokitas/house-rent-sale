@@ -34,11 +34,12 @@ export default function HomePage() {
   const [maxPriceFilter, setMaxPriceFilter] = useState<string>('');
 
   // Cargar propiedades reales de Supabase
+    // Cargar propiedades reales de Supabase
   useEffect(() => {
     async function fetchProperties() {
       setLoading(true);
       try {
-        const { data, error } = await supabase
+        const { data: propsData, error: propsError } = await supabase
           .from('properties')
           .select('*')
           .eq('is_published', true)
@@ -46,12 +47,37 @@ export default function HomePage() {
           .order('priority', { ascending: true })
           .order('created_at', { ascending: false });
 
-        if (error) {
-          console.error('Error fetching properties from Supabase:', error);
-        } else if (data) {
-          console.log(`Loaded ${data.length} real properties from Supabase.`);
-          setProperties(data as Property[]);
+        if (propsError) {
+          console.error('Error fetching properties from Supabase:', propsError);
+          setLoading(false);
+          return;
         }
+
+        // Cargar imagenes desde la tabla relacional property_images
+        const { data: imagesData, error: imagesError } = await supabase
+          .from('property_images')
+          .select('*')
+          .order('display_order', { ascending: true });
+
+        if (imagesError) {
+          console.error('Error fetching property images:', imagesError);
+        }
+
+        // Unir propiedades con sus imagenes (fallback a columna legacy images)
+        const propertiesWithImages = (propsData || []).map((prop) => {
+          const relImages = (imagesData || [])
+            .filter((img) => img.property_id === prop.id)
+            .sort((a, b) => a.display_order - b.display_order)
+            .map((img) => img.image_url);
+
+          // Fallback: si no hay imagenes en property_images, usar la columna legacy
+          const finalImages = relImages.length > 0 ? relImages : (prop.images || []);
+
+          return { ...prop, images: finalImages } as Property;
+        });
+
+        console.log(`Loaded ${propertiesWithImages.length} real properties from Supabase.`);
+        setProperties(propertiesWithImages);
       } catch (err) {
         console.error('Error fetching properties from Supabase:', err);
       } finally {
