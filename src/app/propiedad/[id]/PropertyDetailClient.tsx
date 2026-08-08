@@ -28,7 +28,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
   const [liked, setLiked] = useState(false);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
 
-  const images = property.images && property.images.length > 0 ? property.images : [''];
+  const images = (property.images || []).filter((url): url is string => !!url && url.trim() !== '');
   const formattedPrice = formatPrice(property.price, property.currency);
   const isAlquiler = property.status.includes('long_term');
   const mainBadge = getStatusBadge(property.status[0]);
@@ -47,17 +47,24 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
     <div className="bg-bg-card rounded-[2.5rem] border border-border-main overflow-hidden shadow-xs relative text-left transition-colors duration-200">
       {/* 1. CABECERA CON IMAGEN Y ACCIONES RÁPIDAS (ESTILO MOBILE FIRST) */}
       <div className="relative h-[40vh] sm:h-[45vh] w-full bg-bg-main overflow-hidden">
-        <img
-          src={images[activeImageIdx]}
-          alt={property.title}
-          className="w-full h-full object-cover"
-        />
+        {images.length > 0 ? (
+          <img
+            src={images[activeImageIdx]}
+            alt={property.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-bg-main text-text-muted">
+            <span className="text-4xl mb-2">🏠</span>
+            <span className="text-xs font-bold">Sin imagen disponible</span>
+          </div>
+        )}
         <div className="absolute inset-0 bg-linear-to-t from-slate-950/70 via-transparent to-black/30 pointer-events-none" />
         {/* Acciones superiores */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
           <button
             type="button"
-            onClick={() => router.back()}
+            onClick={() => router.push('/')}
             className="w-10 h-10 rounded-full bg-slate-950/45 backdrop-blur-md text-white flex items-center justify-center hover:bg-slate-950/60 active:scale-95 transition cursor-pointer border border-white/5"
             title="Atrás"
           >
@@ -108,11 +115,13 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
         )}
 
         {/* Contador de fotos */}
-        <div className="absolute bottom-6 right-6 z-10">
-          <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-black px-2.5 py-1 rounded-lg">
-            {activeImageIdx + 1} / {images.length} fotos
-          </span>
-        </div>
+        {images.length > 0 && (
+          <div className="absolute bottom-6 right-6 z-10">
+            <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-black px-2.5 py-1 rounded-lg">
+              {activeImageIdx + 1} / {images.length} fotos
+            </span>
+          </div>
+        )}
       </div>
 
       {/* 2. CONTENIDO PRINCIPAL */}

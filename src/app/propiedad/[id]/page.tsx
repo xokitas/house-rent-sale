@@ -15,7 +15,7 @@ interface PropertyPageProps {
 export default async function PropertyDetailPage({ params }: PropertyPageProps) {
   const { id } = await params;
 
-  // Consultamos únicamente propiedades públicas y visibles dentro del MVP
+  // 1. Cargar la propiedad
   const { data: property, error } = await supabase
     .from('properties')
     .select('*')
@@ -28,9 +28,24 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
     notFound();
   }
 
+  // 2. Cargar imagenes desde la tabla relacional
+  const { data: imagesData } = await supabase
+    .from('property_images')
+    .select('image_url, display_order')
+    .eq('property_id', id)
+    .order('display_order', { ascending: true });
+
+  const relImages = (imagesData || []).map((img) => img.image_url);
+  const finalImages = relImages.length > 0 ? relImages : (property.images || []);
+
+  const propertyWithImages = {
+    ...property,
+    images: finalImages,
+  } as Property;
+
   return (
     <div className="max-w-4xl mx-auto py-2 md:py-6 pb-24">
-      <PropertyDetailClient property={property as Property} />
+      <PropertyDetailClient property={propertyWithImages} />
     </div>
   );
 }

@@ -5,6 +5,8 @@ import { supabase } from '@/lib/supabase';
 import { Property, PropertyStatus } from '@/lib/types';
 import Link from 'next/link';
 import { useTheme } from '@/components/ThemeProvider';
+import { deleteImageFromStorage } from '@/lib/storage';
+
 
 // SUBCOMPONENTES (EXCLUSIVOS DEL ADMIN)
 import PropertyProgressSteps from './components/PropertyProgressSteps';
@@ -497,60 +499,42 @@ export default function AdminPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    const confirmed = window.confirm(
-      '¿Seguro que deseas eliminar esta propiedad?'
-    );
-
+    const handleDelete = async (id: string) => {
+    const confirmed = window.confirm('¿Seguro que deseas eliminar esta propiedad?');
     if (!confirmed) return;
 
     try {
-      // Eliminar imagenes asociadas primero
-      const { error: imgDeleteError } = await supabase
+      // 1. Cargar todas las URLs de imagen de esta propiedad
+      const { data: imgData } = await supabase
         .from('property_images')
-        .delete()
+        .select('image_url')
         .eq('property_id', id);
 
-      if (imgDeleteError) {
-        console.error('Error eliminando imagenes:', imgDeleteError);
+      // 2. Borrar cada imagen del bucket
+      if (imgData && imgData.length > 0) {
+        for (const img of imgData) {
+          await deleteImageFromStorage(img.image_url, 'properties');
+        }
       }
 
+      // 3. Borrar registros de property_images
+      await supabase.from('property_images').delete().eq('property_id', id);
+
+      // 4. Borrar la propiedad
       const { data, error } = await supabase
         .from('properties')
         .delete()
         .eq('id', id)
         .select();
 
-      console.log('DELETE RESPONSE:', data);
+      if (error) throw error;
 
-      if (error) {
-        throw error;
-      }
-
-      if (!data || data.length === 0) {
-        throw new Error(
-          'No se elimino ninguna propiedad. Posible problema de permisos RLS.'
-        );
-      }
-
-      showToast(
-        '🗑️ Propiedad eliminada correctamente',
-        'success'
-      );
-
+      showToast('🗑️ Propiedad eliminada correctamente', 'success');
       fetchProperties();
-    } catch(err){
-      const message =
-        err instanceof Error
-        ? err.message
-        : 'Error desconocido';
-
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error desconocido';
       console.error(err);
-
-      showToast(
-        `Error eliminando: ${message}`,
-        'error'
-      );
+      showToast(`Error eliminando: ${message}`, 'error');
     }
   };
 
@@ -608,6 +592,13 @@ export default function AdminPage() {
 
   const removeExistingImage = async (idx: number) => {
     const urlToRemove = existingImages[idx];
+    
+    // 1. Borrar del bucket de Storage
+    if (urlToRemove) {
+      await deleteImageFromStorage(urlToRemove, 'properties');
+    }
+    
+    // 2. Borrar de la tabla property_images
     if (editingId && urlToRemove) {
       const { error } = await supabase
         .from('property_images')
@@ -620,6 +611,7 @@ export default function AdminPage() {
         return;
       }
     }
+    
     setExistingImages(existingImages.filter((_, i) => i !== idx));
     showToast('Imagen eliminada correctamente', 'warning');
   };
