@@ -35,7 +35,7 @@ export default function HomePage() {
 
   // Cargar propiedades reales de Supabase
     // Cargar propiedades reales de Supabase
-  useEffect(() => {
+    useEffect(() => {
     async function fetchProperties() {
       setLoading(true);
       try {
@@ -48,38 +48,43 @@ export default function HomePage() {
           .order('created_at', { ascending: false });
 
         if (propsError) {
-          console.error('Error fetching properties from Supabase:', propsError);
+          console.error('Error fetching properties:', propsError);
           setLoading(false);
           return;
         }
 
-        // Cargar imagenes desde la tabla relacional property_images
         const { data: imagesData, error: imagesError } = await supabase
           .from('property_images')
           .select('*')
           .order('display_order', { ascending: true });
 
         if (imagesError) {
-          console.error('Error fetching property images:', imagesError);
+          console.error('Error fetching images:', imagesError);
         }
 
-        // Unir propiedades con sus imagenes (fallback a columna legacy images)
         const propertiesWithImages = (propsData || []).map((prop) => {
+          // FIX: Convertir ambos a String para evitar mismatch de tipos (bigint vs number)
           const relImages = (imagesData || [])
-            .filter((img) => img.property_id === prop.id)
+            .filter((img) => String(img.property_id) === String(prop.id))
             .sort((a, b) => a.display_order - b.display_order)
             .map((img) => img.image_url);
 
-          // Fallback: si no hay imagenes en property_images, usar la columna legacy
-          const finalImages = relImages.length > 0 ? relImages : (prop.images || []);
+          // Fallback legacy: filtrar strings vacíos también
+          const legacyImages = (prop.images || []).filter(
+            (url: string) => !!url && url.trim() !== ''
+          );
+
+          const finalImages = relImages.length > 0 ? relImages : legacyImages;
+
+          // DEBUG: ver en consola del navegador qué pasa con cada propiedad
+          console.log(`Prop ${prop.id} (${prop.title}): rel=${relImages.length}, legacy=${legacyImages.length}, final=${finalImages.length}`);
 
           return { ...prop, images: finalImages } as Property;
         });
 
-        console.log(`Loaded ${propertiesWithImages.length} real properties from Supabase.`);
         setProperties(propertiesWithImages);
       } catch (err) {
-        console.error('Error fetching properties from Supabase:', err);
+        console.error('Error:', err);
       } finally {
         setLoading(false);
       }
@@ -112,7 +117,7 @@ export default function HomePage() {
   return (
     <div className="w-full flex flex-col min-h-screen bg-bg-main transition-colors duration-200 text-left">
       {/* 1. CABECERA (PIXEL PERFECT FIGMA) */}
-      <div className="bg-bg-card border-b border-border-main px-4 py-4.5 sticky top-0 z-30 shadow-xs transition-colors duration-200 rounded-3xl md:rounded-[2rem] md:mt-2">
+      <div className="bg-bg-card border-b border-border-main px-4 py-4.5 sticky top-0 z-30 shadow-xs transition-colors duration-200 rounded-3xl md:rounded-4xl md:mt-2">
         <div className="flex flex-row items-center justify-between gap-4 mb-3.5">
           <div className="space-y-0.5 min-w-0 shrink">
             <p className="text-[9px] sm:text-[10px] font-black tracking-[0.12em] text-brand-secondary uppercase truncate">

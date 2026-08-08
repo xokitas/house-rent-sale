@@ -15,6 +15,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   const [liked, setLiked] = useState(false);
 
   const mainImage = property.images && property.images.length > 0 ? property.images[0] : null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const p = property as any; // Cast temporal hasta migrar types.ts
 
   // El precio formateado dinámicamente con useCurrency
